@@ -3,75 +3,192 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\CampusStudent;
+use App\Models\CampusTeacher;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
-use Illuminate\Support\Str; 
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
-        // Crear usuarios con diferentes roles
+        // Usuari ADMINISTRADOR
         $admin = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => Hash::make(Str::random(12)),
-	        'email_verified_at' => Carbon::now(),
+            'name' => 'Administrador Centre',
+            'email' => 'admin@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
+            'email_verified_at' => Carbon::now(),
+            'locale' => 'ca',
         ]);
         $admin->assignRole('admin');
 
+        // Usuari GESTOR
         $gestor = User::create([
-            'name' => 'Gestor User',
-            'email' => 'gestor@example.com',
-            'password' => Hash::make(Str::random(12)),
+            'name' => 'Gemma Gestió',
+            'email' => 'gestio@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
             'email_verified_at' => Carbon::now(),
+            'locale' => 'ca',
         ]);
         $gestor->assignRole('gestor');
 
-        $editor = User::create([
-            'name' => 'Editor Uno',
-            'email' => 'editor1@example.com',
-            'password' => Hash::make(Str::random(12)),
+        // Usuari EDITOR 1
+        $editor1 = User::create([
+            'name' => 'Eduard Editor',
+            'email' => 'editor@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
             'email_verified_at' => Carbon::now(),
+            'locale' => 'ca',
         ]);
-        $editor->assignRole('editor');
+        $editor1->assignRole('editor');
 
-         $editor2 = User::create([
-            'name' => 'Editor Uno',
-            'email' => 'editor2@example.com',
-            'password' => Hash::make(Str::random(12)),
+        // Usuari EDITOR 2
+        $editor2 = User::create([
+            'name' => 'Elisabet Edició',
+            'email' => 'editora@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
+            'locale' => 'ca',
         ]);
         $editor2->assignRole('editor');
 
-        $user1 = User::create([
-            'name' => 'User Uno',
-            'email' => 'user1@example.com',
-            'password' => Hash::make(Str::random(12)),
+        // PROFESSOR 1
+        $teacher1 = User::create([
+            'name' => 'Joan Prat i Soler',
+            'email' => 'teacher@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
             'email_verified_at' => Carbon::now(),
+            'locale' => 'ca',
+        ]);
+        $teacher1->assignRole('teacher');
+        
+        // Crear perfil de professor
+        $teacherProfile1 = CampusTeacher::create([
+            'user_id' => $teacher1->id,
+            'teacher_code' => 'PROF001',
+            'first_name' => 'Joan',
+            'last_name' => 'Prat i Soler',
+            'dni' => '12345678A',
+            'email' => 'teacher@upg.test',
+            'phone' => '+34 600 111 222',
+            'specialization' => 'Informàtica',
+            'title' => 'Dr.',
+            'areas' => ['Programació', 'Bases de Dades'],
+            'status' => 'active',
+            'hiring_date' => '2023-09-01',
+        ]);
+
+        // PROFESSORA 2
+        $teacher2 = User::create([
+            'name' => 'Maria García i López',
+            'email' => 'profe@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
+            'locale' => 'ca',
+        ]);
+        $teacher2->assignRole('teacher');
+        
+        $teacherProfile2 = CampusTeacher::create([
+            'user_id' => $teacher2->id,
+            'teacher_code' => 'PROF002',
+            'first_name' => 'Maria',
+            'last_name' => 'García i López',
+            'dni' => '87654321B',
+            'email' => 'profe@upg.test',
+            'phone' => '+34 600 333 444',
+            'specialization' => 'Matemàtiques',
+            'title' => 'Dra.',
+            'areas' => ['Àlgebra', 'Càlcul'],
+            'status' => 'active',
+            'hiring_date' => '2023-09-01',
+        ]);
+
+        // ESTUDIANT 1
+        $student1 = User::create([
+            'name' => 'Anna Martínez i Roca',
+            'email' => 'alumne@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
+            'email_verified_at' => Carbon::now(),
+            'locale' => 'ca',
+        ]);
+        $student1->assignRole('student');
+        
+        $studentProfile1 = CampusStudent::create([
+            'user_id' => $student1->id,
+            'student_code' => 'EST001',
+            'first_name' => 'Anna',
+            'last_name' => 'Martínez i Roca',
+            'dni' => '11223344C',
+            'birth_date' => '2000-05-15',
+            'phone' => '+34 600 555 666',
+            'address' => 'Carrer Principal 123, Barcelona',
+            'email' => 'alumne@upg.test',
+            'emergency_contact' => 'Pare - Josep Martínez',
+            'emergency_phone' => '+34 600 777 888',
+            'status' => 'active',
+            'enrollment_date' => '2024-09-01',
+        ]);
+
+        // ESTUDIANT 2
+        $student2 = User::create([
+            'name' => 'Carles Ruiz i Navarro',
+            'email' => 'student@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
+            'locale' => 'ca',
+        ]);
+        $student2->assignRole('student');
+        
+        $studentProfile2 = CampusStudent::create([
+            'user_id' => $student2->id,
+            'student_code' => 'EST002',
+            'first_name' => 'Carles',
+            'last_name' => 'Ruiz i Navarro',
+            'dni' => '55667788D',
+            'birth_date' => '2001-03-22',
+            'phone' => '+34 600 999 000',
+            'address' => 'Avinguda Central 456, L\'Hospitalet',
+            'email' => 'student@upg.test',
+            'emergency_contact' => 'Mare - Laura Navarro',
+            'emergency_phone' => '+34 600 111 222',
+            'status' => 'active',
+            'enrollment_date' => '2024-09-01',
+        ]);
+
+        // USUARI BÀSIC 1
+        $user1 = User::create([
+            'name' => 'Usuari Bàsic',
+            'email' => 'usuari@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
+            'email_verified_at' => Carbon::now(),
+            'locale' => 'ca',
         ]);
         $user1->assignRole('user');
 
+        // USUARI BÀSIC 2
         $user2 = User::create([
-            'name' => 'User Dos',
-            'email' => 'user2@example.com',
-            'password' => Hash::make(Str::random(12)),
+            'name' => 'Usuari Secundari',
+            'email' => 'usuari2@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
+            'locale' => 'ca',
         ]);
         $user2->assignRole('user');
 
+        // CONVIDAT 1
         $invited1 = User::create([
-            'name' => 'Invited Uno',
-            'email' => 'invited1@example.com',
-            'password' => Hash::make(Str::random(12)),
+            'name' => 'Convidat Extern',
+            'email' => 'convidat@empresa.cat',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
             'email_verified_at' => Carbon::now(),
+            'locale' => 'ca',
         ]);
         $invited1->assignRole('invited');
 
+        // CONVIDAT 2
         $invited2 = User::create([
-            'name' => 'Invited Dos',
-            'email' => 'invited2@example.com',
-            'password' => Hash::make(Str::random(12)),
+            'name' => 'Col·laborador Temporal',
+            'email' => 'col·laborador@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
+            'locale' => 'ca',
         ]);
-
+        $invited2->assignRole('invited');
     }
 }

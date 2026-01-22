@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email')->nullable(); // si no hay usuario autenticado
             $table->string('type')->default('general'); // general, error, sugerencia, etc.
             $table->text('message');
+            status->string('status')->default('pending'); // pending, resolved
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

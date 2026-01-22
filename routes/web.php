@@ -37,7 +37,11 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth', 'verified'])->group(function () {
 
     //  Dashboard principal
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+  //  Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
+        ->name('dashboard');
 
     //  Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -56,6 +60,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
         Route::post('/settings/logo', [SettingsController::class, 'updateLogo'])->name('settings.updateLogo');
         Route::put('/settings/language', [SettingsController::class, 'updateLanguage'])->name('settings.updateLanguage');
+    });
+
+    Route::prefix('user')->name('user.')->group(function () {
+        Route::get('/settings', [ProfileController::class, 'settings'])->name('settings');
+        Route::put('/settings', [ProfileController::class, 'updateSettings'])->name('settings.update');
+        // Otras rutas relacionadas...
     });
 
     Route::middleware('auth')->group(function () {
@@ -159,5 +169,72 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/calendar/event/answers', [CalendarController::class, 'saveAnswers'])->name('calendar.event.answers');
     Route::get('/calendar/events', [CalendarController::class, 'events'])->name('calendar.events');
 
+    // Rutes del Campus
+    Route::prefix('campus')->name('campus.')->middleware(['auth'])->group(function () {
+        // Perfil personal
+        Route::get('/profile', function () {
+            return view('campus.profile');
+        })->name('profile')->middleware('can:campus.profile.view');
+        
+        // Cursos (estudiants)
+        Route::get('/my-courses', function () {
+            return view('campus.my-courses');
+        })->name('my-courses')->middleware('can:campus.my_courses.view');
+        
+        // Matriculacions (estudiants)
+        Route::get('/my-registrations', function () {
+            return view('campus.my-registrations');
+        })->name('my-registrations')->middleware('can:campus.my_courses.view');
+        
+        // Cursos (professors)
+        Route::get('/teacher-courses', function () {
+            return view('campus.teacher-courses');
+        })->name('teacher-courses')->middleware('can:campus.my_courses.manage');
+        
+        // Estudiants (professors)
+        Route::get('/teacher-students', function () {
+            return view('campus.teacher-students');
+        })->name('teacher-students')->middleware('can:campus.students.view');
+        
+        // Catàleg de cursos
+        Route::get('/catalog', function () {
+            return view('campus.catalog');
+        })->name('catalog')->middleware('can:campus.courses.view');
+        
+        // Matricular-se
+        Route::get('/enroll', function () {
+            return view('campus.enroll');
+        })->name('enroll')->middleware('can:campus.courses.enroll');
+        
+        // CRUD del campus (admin/gestor)
+        Route::resource('categories', \App\Http\Controllers\Campus\CategoryController::class)
+            ->middleware('can:campus.categories.view'); 
+        
+        // seasons
+        Route::resource('seasons', \App\Http\Controllers\Campus\SeasonController::class)
+            ->middleware('can:campus.seasons.view');
+
+        Route::post('seasons/{season}/set-as-current', [SeasonController::class, 'setAsCurrent'])
+        ->name('seasons.setAsCurrent')
+        ->middleware('can:campus.seasons.edit');
+
+        Route::post('seasons/{season}/toggle-active', [SeasonController::class, 'toggleActive'])
+            ->name('seasons.toggleActive')
+            ->middleware('can:campus.seasons.edit');
+        
+        Route::resource('courses', \App\Http\Controllers\Campus\CourseController::class)
+            ->middleware('can:campus.courses.view');
+        
+        Route::resource('students', \App\Http\Controllers\Campus\StudentController::class)
+            ->middleware('can:campus.students.view');
+        
+        Route::resource('teachers', \App\Http\Controllers\Campus\TeacherController::class)
+            ->middleware('can:campus.teachers.view');
+        
+        Route::resource('registrations', \App\Http\Controllers\Campus\RegistrationController::class)
+            ->middleware('can:campus.registrations.view'); 
+            
+    });
+    
 
 });
