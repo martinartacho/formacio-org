@@ -156,4 +156,87 @@ return [
     'No pots assignar la categoria com a pare d\'ella mateixa.' => 'No pots assignar la categoria com a pare d\'ella mateixa.',
     'No pots crear una referència cíclica.' => 'No pots crear una referència cíclica.',
 
+    // Courses
+    'course' => 'Curs',
+    'courses' => 'Cursos',
+    'new_course' => 'Nou curs',
+    'edit_course' => 'Editar curs',
+    'course_details' => 'Detalls del curs',
+    'no_courses' => 'No hi ha cursos',
+
+    'course_created' => 'Curs creat correctament',
+    'course_updated' => 'Curs actualitzat correctament',
+    'course_deleted' => 'Curs eliminat correctament',
+    'course_delete_confirmation' => 'Segur que vols eliminar aquest curs?',
+
+    // Course fields
+    'code' => 'Codi',
+    'title' => 'Títol',
+    'description' => 'Descripció',
+    'season' => 'Temporada',
+    'category' => 'Categoria',
+    'select_season' => 'Selecciona una temporada',
+    'select_category' => 'Selecciona una categoria',
+
+    'start_date' => 'Data d\'inici',
+    'end_date' => 'Data de fi',
+    'credits' => 'Crèdits',
+    'hours' => 'Hores',
+    'max_students' => 'Places màximes',
+    'price' => 'Preu',
+    'level' => 'Nivell',
+
+    // Status & actions
+    'status' => 'Estat',
+    'active' => 'Actiu',
+    'inactive' => 'Inactiu',
+    'public' => 'Públic',
+
+    'edit' => 'Editar',
+    'delete' => 'Eliminar',
+    'view' => 'Veure',
+    'save' => 'Desar',
+    'update' => 'Actualitzar',
+    'cancel' => 'Cancel·lar',
+
+    // Teachers
+    'teachers' => 'Professors',
+    'teacher' => 'Professor',
+    'add' => 'Afegir',
+    'add_teacher' => 'Afegir professor',
+    'assign_teacher' => 'Assignar professor',
+    'select_teacher' => 'Selecciona un professor',
+    'teacher_assigned' => 'Professor assignat correctament',
+    'teacher_removed' => 'Professor desassignat correctament',
+    'teacher_remove_confirmation' => 'Segur que vols treure aquest professor?',
+    'no_teachers_assigned' => 'No hi ha professors assignats',
+    'role' => 'Rol',
+    'assign' => 'Assignar',
+    // Teachers / Courses
+    'assigned_teachers' => 'Professors assignats',
+    'confirm_remove_teacher' => 'Vols eliminar aquest professor del curs?',
+    // Teacher roles
+    'teacher_role' => [
+        'main' => 'Professor principal',
+        'assistant' => 'Professor ajudant',
+        'support' => 'Professor de suport',
+    ],
+    // Hours / validation
+    'course_hours_exceeded' => 'Les hores assignades superen les hores del curs (total: :total, ja assignades: :assigned).',
+    'course_hours_summary' => 'Hores del curs: :total · Assignades: :assigned · Restants: :remaining',
+
+    // Registrations
+    'registrations' => 'Matrícules',
+    'enrolled_students' => 'Estudiants matriculats',
+    'no_students_enrolled' => 'Encara no hi ha estudiants matriculats',
+    'registered_at' => 'Data de matrícula',
+
+    // Registration status
+    'students' => 'Estudiants',
+    'registration_status_pending' => 'Pendent',
+    'registration_status_confirmed' => 'Confirmada',
+    'registration_status_cancelled' => 'Cancel·lada',
+
+
+
 ];

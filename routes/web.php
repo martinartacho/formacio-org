@@ -15,6 +15,9 @@ use App\Http\Controllers\Admin\EventAnswerController;
 use App\Http\Controllers\Admin\EventQuestionTemplateController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\Campus\CategoryController;
+use App\Http\Controllers\Campus\CourseController;
+use App\Http\Controllers\Campus\CourseTeacherController;
+use App\Http\Controllers\Campus\CourseRegistrationController;
 
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\LocaleController;
@@ -37,8 +40,6 @@ require __DIR__.'/auth.php';
 //  Rutas protegidas por login y verificación
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    //  Dashboard principal
-  //  Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
@@ -208,22 +209,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('enroll')->middleware('can:campus.courses.enroll');
         
         // CRUD del campus (admin/gestor)
+        // Rutas para Categories
         Route::resource('categories', CategoryController::class)
             ->middleware('can:campus.categories.view'); 
-        // Rutas para Categories
-        /* Route::resource('categories', CategoryController::class)
-            ->names([
-                'index' => 'campus.categories.index',
-                'create' => 'campus.categories.create',
-                'store' => 'campus.categories.store',
-                'show' => 'campus.categories.show',
-                'edit' => 'campus.categories.edit',
-                'update' => 'campus.categories.update',
-                'destroy' => 'campus.categories.destroy',
-            ])
-            ->middleware('can:campus.categories.view'); */
-
-        // Rutas adicionales para Categories
 
         Route::post('categories/{category}/toggle-active', [CategoryController::class, 'toggleActive'])
             ->name('categories.toggleActive')
@@ -244,10 +232,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('seasons/{season}/toggle-active', [\App\Http\Controllers\Campus\SeasonController::class, 'toggleActive'])
             ->name('seasons.toggleActive')
             ->middleware('can:campus.seasons.edit');
-        
-        Route::resource('courses', \App\Http\Controllers\Campus\CourseController::class)
+
+        // Courses
+        Route::resource('courses', CourseController::class)
             ->middleware('can:campus.courses.view');
-        
+                
+        // Teachers assignment
+        Route::middleware(['auth'])->group(function () {
+
+            Route::get(
+                'courses/{course}/teachers',
+                [CourseTeacherController::class, 'index']
+            )->name('courses.teachers');
+
+            Route::post(
+                'courses/{course}/teachers',
+                [CourseTeacherController::class, 'store']
+            )->name('courses.teachers.store');
+
+            Route::delete(
+                'courses/{course}/teachers/{teacher}',
+                [CourseTeacherController::class, 'destroy']
+            )->name('courses.teachers.destroy');
+
+            Route::get('courses/{course}/registrations', [CourseRegistrationController::class, 'index'])
+        ->name('courses.registrations')
+        ->middleware('can:campus.registrations.view');
+
+        });
+
+
+
         Route::resource('students', \App\Http\Controllers\Campus\StudentController::class)
             ->middleware('can:campus.students.view');
         

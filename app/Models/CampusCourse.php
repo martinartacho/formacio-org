@@ -50,6 +50,12 @@ class CampusCourse extends Model
         'metadata' => 'array'
     ];
 
+     public const TEACHER_ROLES = [
+        'main' => 'campus.teacher_role_main',
+        'assistant' => 'campus.teacher_role_assistant',
+        'support' => 'campus.teacher_role_support',
+    ];
+    
     /**
      * Get the season that owns the course.
      */
