@@ -80,9 +80,27 @@ resources/views
  ┃ ┗ 📜verify-email.blade.php
  ┣ 📂calendar
  ┃ ┗ 📜index.blade.php
+ ┣ 📂campus
+ ┃ ┣ 📂categories
+ ┃ ┃ ┣ 📜create.blade.php
+ ┃ ┃ ┣ 📜edit.blade.php
+ ┃ ┃ ┣ 📜index.blade.php
+ ┃ ┃ ┗ 📜show.blade.php
+ ┃ ┣ 📂courses
+ ┃ ┣ 📂registrations
+ ┃ ┣ 📂seasons
+ ┃ ┃ ┣ 📜create.blade.php
+ ┃ ┃ ┣ 📜edit.blade.php
+ ┃ ┃ ┣ 📜index.blade.php
+ ┃ ┃ ┗ 📜show.blade.php
+ ┃ ┣ 📂shared
+ ┃ ┃ ┗ 📜layout.blade.php
+ ┃ ┣ 📂students
+ ┃ ┗ 📂teachers
  ┣ 📂components
  ┃ ┣ 📂dashboard
  ┃ ┃ ┣ 📜admin.blade.php
+ ┃ ┃ ┣ 📜adva-----nced.blade.php
  ┃ ┃ ┣ 📜basic.blade.php
  ┃ ┃ ┣ 📜card.blade.php
  ┃ ┃ ┣ 📜manager.blade.php
@@ -91,6 +109,14 @@ resources/views
  ┃ ┣ 📜admin-dashboard-cards.blade.php
  ┃ ┣ 📜application-logo.blade.php
  ┃ ┣ 📜auth-session-status.blade.php
+ ┃ ┣ 📜campus-button.blade.php
+ ┃ ┣ 📜campus-color-select.blade.php
+ ┃ ┣ 📜campus-danger-button.blade.php
+ ┃ ┣ 📜campus-icon-select.blade.php
+ ┃ ┣ 📜campus-parent-category-select.blade.php
+ ┃ ┣ 📜campus-primary-button.blade.php
+ ┃ ┣ 📜campus-secondary-button.blade.php
+ ┃ ┣ 📜campus-yellow-button.blade.php
  ┃ ┣ 📜danger-button.blade.php
  ┃ ┣ 📜dropdown-link.blade.php
  ┃ ┣ 📜dropdown.blade.php

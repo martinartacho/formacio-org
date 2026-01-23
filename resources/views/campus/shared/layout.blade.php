@@ -11,7 +11,7 @@
             </div>
             
             @hasSection('actions')
-                <div class="flex space-x-2">
+                <div class="relative z-10 flex space-x-2">
                     @yield('actions')
                 </div>
             @endif

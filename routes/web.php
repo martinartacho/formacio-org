@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\EventQuestionController;
 use App\Http\Controllers\Admin\EventAnswerController;
 use App\Http\Controllers\Admin\EventQuestionTemplateController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\Campus\CategoryController;
 
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\LocaleController;
@@ -207,18 +208,40 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('enroll')->middleware('can:campus.courses.enroll');
         
         // CRUD del campus (admin/gestor)
-        Route::resource('categories', \App\Http\Controllers\Campus\CategoryController::class)
+        Route::resource('categories', CategoryController::class)
             ->middleware('can:campus.categories.view'); 
-        
+        // Rutas para Categories
+        /* Route::resource('categories', CategoryController::class)
+            ->names([
+                'index' => 'campus.categories.index',
+                'create' => 'campus.categories.create',
+                'store' => 'campus.categories.store',
+                'show' => 'campus.categories.show',
+                'edit' => 'campus.categories.edit',
+                'update' => 'campus.categories.update',
+                'destroy' => 'campus.categories.destroy',
+            ])
+            ->middleware('can:campus.categories.view'); */
+
+        // Rutas adicionales para Categories
+
+        Route::post('categories/{category}/toggle-active', [CategoryController::class, 'toggleActive'])
+            ->name('categories.toggleActive')
+            ->middleware('can:campus.categories.edit');
+
+        Route::post('categories/{category}/toggle-featured', [CategoryController::class, 'toggleFeatured'])
+            ->name('categories.toggleFeatured')
+            ->middleware('can:campus.categories.edit');
+
         // seasons
         Route::resource('seasons', \App\Http\Controllers\Campus\SeasonController::class)
             ->middleware('can:campus.seasons.view');
 
-        Route::post('seasons/{season}/set-as-current', [SeasonController::class, 'setAsCurrent'])
+        Route::post('seasons/{season}/set-as-current', [\App\Http\Controllers\Campus\SeasonController::class, 'setAsCurrent'])
         ->name('seasons.setAsCurrent')
         ->middleware('can:campus.seasons.edit');
 
-        Route::post('seasons/{season}/toggle-active', [SeasonController::class, 'toggleActive'])
+        Route::post('seasons/{season}/toggle-active', [\App\Http\Controllers\Campus\SeasonController::class, 'toggleActive'])
             ->name('seasons.toggleActive')
             ->middleware('can:campus.seasons.edit');
         

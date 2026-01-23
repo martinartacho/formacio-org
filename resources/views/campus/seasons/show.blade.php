@@ -2,41 +2,40 @@
 @extends('campus.shared.layout')
 
 @section('title', $season->name)
-@section('subtitle', 'Detalls de la temporada acadèmica')
+@section('subtitle', __('campus.season_details'))
 
 @section('breadcrumbs')
     <li>
         <div class="flex items-center">
             <i class="bi bi-chevron-right text-gray-400 mx-1"></i>
             <a href="{{ route('campus.seasons.index') }}" class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2">
-                {{ __('site.item') }}Temporades
+                {{ __('campus.seasons') }}
             </a>
         </div>
     </li>
     <li aria-current="page">
         <div class="flex items-center">
             <i class="bi bi-chevron-right text-gray-400 mx-1"></i>
-            <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">{{ __('site.item') }}Detalls</span>
+            <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">{{ __('campus.season_details') }}</span>
         </div>
     </li>
 @endsection
 
 @section('actions')
     <div class="flex space-x-2">
-        <a href="{{ route('campus.seasons.edit', $season) }}" 
-           class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+        <x-campus-primary-button href="{{ route('campus.seasons.edit', $season) }}">
             <i class="bi bi-pencil me-2"></i>
-            {{ __('site.item') }}Editar
-        </a>
+            {{ __('campus.edit') }}
+        </x-campus-primary-button>
+        
         <form action="{{ route('campus.seasons.destroy', $season) }}" method="POST" 
-              onsubmit="return confirm('Estàs segur que vols eliminar aquesta temporada?')">
+              onsubmit="return confirm('{{ __('campus.delete_confirmation') }}')">
             @csrf
             @method('DELETE')
-            <button type="submit" 
-                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <x-campus-danger-button type="submit">
                 <i class="bi bi-trash me-2"></i>
-                {{ __('site.item') }}Eliminar
-            </button>
+                {{ __('campus.delete') }}
+            </x-campus-danger-button>
         </form>
     </div>
 @endsection
@@ -58,20 +57,20 @@
                             <div class="flex items-center space-x-4">
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm {{ $season->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                     <i class="bi bi-{{ $season->is_active ? 'check-circle' : 'x-circle' }} me-1"></i>
-                                    {{ $season->is_active ? 'Activa' : 'Inactiva' }}
+                                    {{ $season->is_active ? __('campus.active') : __('campus.inactive') }}
                                 </span>
                                 
                                 @if($season->is_current)
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
                                         <i class="bi bi-star-fill me-1"></i>
-                                        {{ __('site.item') }}Temporada actual
+                                        {{ __('campus.current') }}
                                     </span>
                                 @endif
                             </div>
                         </div>
                         
                         <div class="text-right">
-                            <div class="text-sm text-gray-500">{{ __('site.item') }}ID</div>
+                            <div class="text-sm text-gray-500">{{ __('campus.id') }}</div>
                             <div class="text-lg font-semibold text-gray-900">#{{ $season->id }}</div>
                         </div>
                     </div>
@@ -83,7 +82,7 @@
                                     <i class="bi bi-calendar-date text-blue-600"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-blue-800">{{ __('site.item') }}Data d'inici</div>
+                                    <div class="text-sm text-blue-800">{{ __('campus.season_start_date') }}</div>
                                     <div class="font-semibold text-gray-900">{{ $season->season_start->format('d/m/Y') }}</div>
                                 </div>
                             </div>
@@ -95,7 +94,7 @@
                                     <i class="bi bi-calendar-date text-green-600"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-green-800">{{ __('site.item') }}Data de finalització</div>
+                                    <div class="text-sm text-green-800">{{ __('campus.season_end_date') }}</div>
                                     <div class="font-semibold text-gray-900">{{ $season->season_end->format('d/m/Y') }}</div>
                                 </div>
                             </div>
@@ -109,33 +108,33 @@
                 <div class="bg-white p-6 rounded-lg border border-gray-200">
                     <h4 class="text-lg font-medium text-gray-900 mb-4">
                         <i class="bi bi-graph-up me-2"></i>
-                        {{ __('site.item') }}Estadístiques
+                        {{ __('campus.statistics') }}
                     </h4>
                     
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <span class="text-gray-600">{{ __('site.item') }}Cursos totals</span>
+                            <span class="text-gray-600">{{ __('campus.total_courses') }}</span>
                             <span class="font-semibold">{{ $stats['total_courses'] }}</span>
                         </div>
                         
                         <div class="flex items-center justify-between">
-                            <span class="text-gray-600">{{ __('site.item') }}Cursos actius</span>
+                            <span class="text-gray-600">{{ __('campus.active_courses') }}</span>
                             <span class="font-semibold">{{ $stats['active_courses'] }}</span>
                         </div>
                         
                         <div class="flex items-center justify-between">
-                            <span class="text-gray-600">{{ __('site.item') }}Matriculacions</span>
+                            <span class="text-gray-600">{{ __('campus.registrations') }}</span>
                             <span class="font-semibold">{{ $stats['total_registrations'] }}</span>
                         </div>
                         
                         <div class="flex items-center justify-between">
-                            <span class="text-gray-600">{{ __('site.item') }}Estudiants únics</span>
+                            <span class="text-gray-600">{{ __('campus.unique_students') }}</span>
                             <span class="font-semibold">{{ $stats['unique_students'] }}</span>
                         </div>
                     </div>
                     
                     <div class="mt-6 pt-6 border-t border-gray-200">
-                        <div class="text-sm text-gray-500">Creat el</div>
+                        <div class="text-sm text-gray-500">{{ __('campus.created_at') }}</div>
                         <div class="font-medium">{{ $season->created_at->format('d/m/Y H:i') }}</div>
                     </div>
                 </div>
@@ -147,20 +146,19 @@
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-lg font-medium text-gray-900">
                     <i class="bi bi-book me-2"></i>
-                    {{ __('site.item') }}Cursos d'aquesta temporada
+                    {{ __('campus.courses') }}
                 </h3>
                 
-                <a href="{{ route('campus.courses.create') }}?season={{ $season->id }}" 
-                   class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
+                <x-campus-primary-button href="{{ route('campus.courses.create') }}?season={{ $season->id }}" size="sm">
                     <i class="bi bi-plus-lg me-1"></i>
-                    {{ __('site.item') }}Nou Curs
-                </a>
+                    {{ __('campus.new_course') }}
+                </x-campus-primary-button>
             </div>
             
             @if($season->courses->isEmpty())
                 <div class="text-center py-8 text-gray-500">
                     <i class="bi bi-book text-3xl mb-3"></i>
-                    <p>{{ __('site.item') }}No hi ha cursos en aquesta temporada.</p>
+                    <p>{{ __('campus.no_courses') }}</p>
                 </div>
             @else
                 <div class="overflow-x-auto">
@@ -168,19 +166,19 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ __('site.item') }}Curs
+                                    {{ __('campus.courses') }}
                                 </th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ __('site.item') }}Categoria
+                                    {{ __('campus.category') }}
                                 </th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ __('site.item') }}Professors
+                                    {{ __('campus.teachers') }}
                                 </th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ __('site.item') }}Matriculacions
+                                    {{ __('campus.registrations') }}
                                 </th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ __('site.item') }}Estat
+                                    {{ __('campus.status') }}
                                 </th>
                             </tr>
                         </thead>
@@ -199,7 +197,7 @@
                                             {{ $course->category->name }}
                                         </span>
                                     @else
-                                        <span class="text-gray-400">Sense categoria</span>
+                                        <span class="text-gray-400">{{ __('campus.no_category') }}</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-4">
@@ -212,7 +210,7 @@
                                             @endforeach
                                         </div>
                                     @else
-                                        <span class="text-gray-400">{{ __('site.item') }}Sense professors</span>
+                                        <span class="text-gray-400">{{ __('campus.no_teachers') }}</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-4">
@@ -221,11 +219,11 @@
                                 <td class="px-4 py-4">
                                     @if($course->is_active)
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            {{ __('site.item') }}Actiu
+                                            {{ __('campus.active') }}
                                         </span>
                                     @else
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            {{ __('site.item') }}Inactiu
+                                            {{ __('campus.inactive') }}
                                         </span>
                                     @endif
                                 </td>
@@ -242,28 +240,30 @@
             @if(!$season->is_current)
                 <form action="{{ route('campus.seasons.setAsCurrent', $season) }}" method="POST">
                     @csrf
-                    <button type="submit" 
-                            class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 focus:bg-yellow-700 active:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <yellow-button type="submit">
                         <i class="bi bi-star me-2"></i>
-                        {{ __('site.item') }}Marcar com a actual
-                    </button>
+                        {{ __('campus.mark_as_current') }}
+                    </yellow-button>
                 </form>
             @endif
             
+            <x-campus-secondary-button href="{{ route('campus.seasons.index') }}">
+                <i class="bi bi-x-lg me-2"></i>
+                {{ __('campus.cancel') }}
+            </x-campus-secondary-button>
+            
             <form action="{{ route('campus.seasons.toggleActive', $season) }}" method="POST">
                 @csrf
-
-                <a href="{{ route('campus.seasons.index') }}" 
-                   class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-300 focus:bg-gray-300 active:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    <i class="bi bi-x-lg me-2"></i>
-                     {{ __('Cancel') }}
-                </a>
-
-                <button type="submit" 
-                        class="inline-flex items-center px-4 py-2 {{ $season->is_active ? 'bg-red-600' : 'bg-green-600' }} border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:{{ $season->is_active ? 'bg-red-700' : 'bg-green-700' }} focus:{{ $season->is_active ? 'bg-red-700' : 'bg-green-700' }} active:{{ $season->is_active ? 'bg-red-800' : 'bg-green-800' }} focus:outline-none focus:ring-2 focus:ring-{{ $season->is_active ? 'red' : 'green' }}-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    <i class="bi bi-{{ $season->is_active ? 'x-circle' : 'check-circle' }} me-2"></i>
-                    {{ $season->is_active ? 'Desactivar' : 'Activar' }}
-                </button>
+                @php
+                    $color = $season->is_active ? 'red' : 'green';
+                    $text = $season->is_active ? __('campus.deactivate') : __('campus.activate');
+                    $icon = $season->is_active ? 'x-circle' : 'check-circle';
+                @endphp
+                
+                <x-campus-button type="submit" :color="$color">
+                    <i class="bi bi-{{ $icon }} me-2"></i>
+                    {{ $text }}
+                </x-campus-button>
             </form>
         </div>
     </div>

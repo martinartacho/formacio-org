@@ -10,7 +10,39 @@ Arquitectura Spatie integrada de roles y permisos
 - **Usuarios autenticados**: Acceso básico al dashboard y gestión de perfil.
 - **Administradores (`admin` )**: Gestión completa de usuarios.
 - **Gestores (`gestor`, `editor`)**: Acceso limitado a funciones específicas. 
+- **Gestores (`teacher`, `student`)**: Acceso limitado a funciones específicas. 
 - **Gestores (`user`, `invitado`)**: Acceso limitado a funciones específicas. 
+
+### Estilos de botones
+
+Puedes usar los componentes de botones 
+resources\views\components\campus-button.blade.php
+
+Ejemplo: variantes: header, primary, secondary, danger, 
+#### En formularios
+
+<x-campus-button type="submit" variant="primary">
+    Guardar
+</x-campus-button>
+
+#### En acciones neutras
+<x-campus-button
+    href="{{ route('campus.categories.create') }}"
+    variant="header">
+    <i class="bi bi-plus-lg me-2"></i>
+    {{ __('Categoria') }}
+</x-campus-button>
+
+#### Eliminar
+<x-campus-button
+    type="submit"
+    variant="danger"
+    onclick="return confirm('¿Segur?')"
+>
+    Eliminar
+</x-campus-button>
+
+
 
 
 ### Rutas Disponibles

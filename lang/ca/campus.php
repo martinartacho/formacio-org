@@ -1,6 +1,8 @@
 <?php
 // lang/ca/campus.php
 return [
+    'campus' => 'Campus',
+
     // Seasons
     'season' => 'Temporada',
     'seasons' => 'Temporades',
@@ -67,4 +69,91 @@ return [
     // Breadcrumbs
     'home' => 'Inici',
     'dashboard' => 'Panell de control',
+
+    'no_category' => 'Sense categoria',
+    'no_teachers' => 'Sense professors',
+    'mark_as_current' => 'Marcar com a actual',
+    'deactivate' => 'Desactivar',
+    'activate' => 'Activar',
+    'search' => 'Cercar',
+    'filter' => 'Filtrar',
+    'export' => 'Exportar',
+    'import' => 'Importar',
+    'select' => 'Seleccionar',
+    'select_all' => 'Seleccionar tot',
+    'deselect_all' => 'Desseleccionar tot',
+    'loading' => 'Carregant...',
+    'confirm' => 'Confirmar',
+    'back' => 'Tornar',
+    'next' => 'Següent',
+    'previous' => 'Anterior',
+    'first' => 'Primer',
+    'last' => 'Últim',
+    'of' => 'de',
+    'results' => 'resultats',
+    'no_results' => 'No hi ha resultats',
+    'please_select' => 'Si us plau, selecciona',
+    'all' => 'Tots',
+    'none' => 'Cap',
+
+    // Categories
+    'category' => 'Categoria',
+    'categories' => 'Categories',
+    'new_category' => 'Nova Categoria',
+    'edit_category' => 'Editar Categoria',
+    'category_details' => 'Detalls de la categoria',
+    'create_category' => 'Crear Categoria',
+    'update_category' => 'Actualitzar Categoria',
+    'delete_category' => 'Eliminar Categoria',
+    'category_name' => 'Nom de la categoria',
+    'category_description' => 'Descripció',
+    'category_color' => 'Color',
+    'category_icon' => 'Icona',
+    'category_parent' => 'Categoria pare',
+    'category_is_active' => 'Categoria activa',
+    'category_is_featured' => 'Categoria destacada',
+    'category_order' => 'Ordre',
+    'category_active_help' => 'La categoria estarà disponible per a nous cursos.',
+    'category_featured_help' => 'Aquesta categoria es mostrarà a les seccions destacades.',
+    'category_select_parent' => 'Selecciona una categoria pare',
+    'category_select_color' => 'Selecciona un color',
+    'category_select_icon' => 'Selecciona una icona',
+    'no_parent_category' => 'Sense categoria pare',
+
+    // Messages específicos para categories
+    'category_delete_confirmation' => 'Estàs segur que vols eliminar aquesta categoria? Aquesta acció podria afectar els cursos associats.',
+    'category_has_courses_warning' => 'Aquesta categoria té cursos associats. Si l\'elimines, els cursos podrien quedar sense categoria.',
+
+    // Colores
+    'color_blue' => 'Blau',
+    'color_green' => 'Verd',
+    'color_red' => 'Vermell',
+    'color_yellow' => 'Groc',
+    'color_purple' => 'Lila',
+    'color_pink' => 'Rosa',
+    'color_indigo' => 'Indi',
+    'color_gray' => 'Gris',
+    'color_orange' => 'Taronja',
+    'color_teal' => 'Verblau',
+
+    // Estadísticas
+    'total_categories' => 'Categories totals',
+    'subcategories' => 'Subcategories',
+    'courses_in_category' => 'Cursos en aquesta categoria',
+
+    'preview' => 'Vista prèvia',
+    'category_basic_info' => 'Informació bàsica',
+    'category_status' => 'Estat de la categoria',
+    'no_season' => 'Sense temporada',
+    'Categoria creada correctament.' => 'Categoria creada correctament.',
+    'Categoria actualitzada correctament.' => 'Categoria actualitzada correctament.',
+    'Categoria eliminada correctament.' => 'Categoria eliminada correctament.',
+    'Categoria activada correctament.' => 'Categoria activada correctament.',
+    'Categoria desactivada correctament.' => 'Categoria desactivada correctament.',
+    'Categoria marcada com a destacada.' => 'Categoria marcada com a destacada.',
+    'Categoria desmarcada com a destacada.' => 'Categoria desmarcada com a destacada.',
+    'No es pot eliminar una categoria amb cursos associats.' => 'No es pot eliminar una categoria amb cursos associats.',
+    'No pots assignar la categoria com a pare d\'ella mateixa.' => 'No pots assignar la categoria com a pare d\'ella mateixa.',
+    'No pots crear una referència cíclica.' => 'No pots crear una referència cíclica.',
+
 ];
