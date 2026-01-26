@@ -94,21 +94,20 @@ class CampusCourse extends Model
     public function registrations(): HasMany
     {
         return $this->hasMany(CampusRegistration::class, 'course_id');
-    }
+    } 
+
 
     /**
      * Get the students enrolled in the course.
      */
     public function students()
     {
-        return $this->hasManyThrough(
-            CampusStudent::class,
-            CampusRegistration::class,
-            'course_id',    // Foreign key on CampusRegistration table
-            'id',           // Foreign key on CampusStudent table
-            'id',           // Local key on CampusCourse table
-            'student_id'    // Local key on CampusRegistration table
-        );
+        return $this->belongsToMany(
+        CampusTeacher::class,
+        'campus_course_teacher',
+        'course_id',
+        'teacher_id'
+    );
     }
 
     /**

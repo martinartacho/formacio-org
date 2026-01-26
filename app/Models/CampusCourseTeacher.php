@@ -47,10 +47,14 @@ class CampusCourseTeacher extends Pivot
     /**
      * Get the teacher.
      */
-    public function teacher()
-    {
-        return $this->belongsTo(CampusTeacher::class);
-    }
+
+        public function teacher()
+        {
+            return view(
+                'dashboard.teacher',
+                TeacherDashboardData::from(auth()->user())
+            );
+        }
 
     /**
      * Check if assignment is active.

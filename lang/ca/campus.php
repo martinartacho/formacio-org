@@ -26,7 +26,7 @@ return [
     
     // General
     'cancel' => 'Cancel·lar',
-    'save' => 'Guardar',
+    'save' => 'Desar',
     'update' => 'Actualitzar',
     'edit' => 'Editar',
     'delete' => 'Eliminar',
@@ -212,15 +212,18 @@ return [
     'no_teachers_assigned' => 'No hi ha professors assignats',
     'role' => 'Rol',
     'assign' => 'Assignar',
+    
     // Teachers / Courses
     'assigned_teachers' => 'Professors assignats',
     'confirm_remove_teacher' => 'Vols eliminar aquest professor del curs?',
+    
     // Teacher roles
     'teacher_role' => [
         'main' => 'Professor principal',
         'assistant' => 'Professor ajudant',
         'support' => 'Professor de suport',
     ],
+    
     // Hours / validation
     'course_hours_exceeded' => 'Les hores assignades superen les hores del curs (total: :total, ja assignades: :assigned).',
     'course_hours_summary' => 'Hores del curs: :total · Assignades: :assigned · Restants: :remaining',
@@ -236,7 +239,41 @@ return [
     'registration_status_pending' => 'Pendent',
     'registration_status_confirmed' => 'Confirmada',
     'registration_status_cancelled' => 'Cancel·lada',
+    'registration_status_completed' => 'Completada',
 
+    // Dashboard específico
+    'my_courses' => 'Els meus cursos',
+    'course_code' => 'Codi del curs',
+    'course_schedule' => 'Horari',
+    'course_hours_total' => 'Hores totals',
+    'course_hours_assigned' => 'Hores assignades',
+    'course_hours_remaining' => 'Hores restants',
+    'course_students_count' => 'Alumnes',
+    'view_students' => 'Veure alumnes',
+    'view_materials' => 'Veure materials',
+    'materials_pending' => 'Materials (pendent de desenvolupar)',
+    'other_teachers' => 'Altres professors',
+    'no_other_teachers' => 'No hi ha altres professors assignats',
+    'class_today' => 'Classe avui',
+    'class_next' => 'Pròxima classe',
+    'course_status_active' => 'Actiu',
+    'course_status_upcoming' => 'Pròxim',
+    'course_status_completed' => 'Completat',
+    'student_count' => ':count alumne|:count alumnes',
+    'available_spots' => 'Places disponibles: :available de :total',
+    'course_is_public' => 'Públic',
+    'course_is_private' => 'Privat',
+    'course_level_beginner' => 'Principiant',
+    'course_level_intermediate' => 'Intermedi',
+    'course_level_advanced' => 'Avançat',
+    'course_level_expert' => 'Expert',
 
-
+    // Estadísticas del dashboard
+    'total_courses_teacher' => 'Cursos totals',
+    'active_courses_teacher' => 'Cursos actius',
+    'total_students_teacher' => 'Estudiants totals',
+    'today_classes_teacher' => 'Classes avui',
+    'upcoming_classes_teacher' => 'Classes properes',
+    'completed_courses_teacher' => 'Cursos completats',
+    'pending_registrations_teacher' => 'Matrícules pendents',
 ];

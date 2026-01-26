@@ -56,6 +56,7 @@ class CampusTeacher extends Model
             'id'                      // local key en la taula CampusCourse
         )->withPivot('role', 'hours_assigned', 'assigned_at', 'finished_at', 'metadata')
         ->withTimestamps();
+        
     }
 
 

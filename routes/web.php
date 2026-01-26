@@ -17,6 +17,7 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\Campus\CategoryController;
 use App\Http\Controllers\Campus\CourseController;
 use App\Http\Controllers\Campus\CourseTeacherController;
+use App\Http\Controllers\Campus\TeacherController;
 use App\Http\Controllers\Campus\CourseRegistrationController;
 
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
@@ -267,12 +268,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->middleware('can:campus.students.view');
         
         Route::resource('teachers', \App\Http\Controllers\Campus\TeacherController::class)
-            ->middleware('can:campus.teachers.view');
-        
+            ->middleware('can:campus.teachers.view'); 
+                
         Route::resource('registrations', \App\Http\Controllers\Campus\RegistrationController::class)
             ->middleware('can:campus.registrations.view'); 
             
     });
     
+
+    Route::middleware(['auth', 'role:teacher'])
+    ->prefix('campus/teacher')
+    ->name('campus.teacher.')
+    ->group(function () {
+
+        Route::get('/courses', [TeacherController::class, 'courses'])
+            ->name('courses.index');
+
+        Route::get('/courses/{course}', [TeacherController::class, 'showCourse'])
+            ->name('courses.show');
+
+        Route::get('/courses/{course}/students', [TeacherController::class, 'students'])
+            ->name('courses.students');
+    });
 
 });

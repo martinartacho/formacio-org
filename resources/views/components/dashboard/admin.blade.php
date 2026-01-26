@@ -3,7 +3,7 @@
 <div class="space-y-6">
     
     {{-- SECCIÓ 1: CARDS D'ACCÉS RÀPID --}}
-    @include('components.admin-dashboard-cards')
+    @include('components.dashboard-admin-cards')
     
     {{-- SECCIÓ 2: ESTADÍSTIQUES DEL SISTEMA (CON ENLACES) --}}
     @if(!empty($stats))

@@ -22,7 +22,15 @@
             {{-- 3. Dashboard para Profesores --}}
             @elseif(auth()->user()->hasRole('teacher') || 
                     auth()->user()->canany(['campus.my_courses.manage', 'campus.teacher-students.view']))
-                <x-dashboard.teacher />
+                    <x-dashboard.teacher
+                        :teacher="$teacher"
+                        :season="$season"
+                        :seasons="$seasons"
+                        :teacher-courses="$teacherCourses"
+                        :stats="$stats"
+                        :debug="$debug ?? null"
+                        :error="$error ?? null"
+                    />
             
             {{-- 4. Dashboard para Estudiantes --}}
             @elseif(auth()->user()->hasRole('student') || 
