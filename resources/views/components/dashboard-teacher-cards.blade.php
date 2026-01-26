@@ -22,7 +22,9 @@
                     {{ __('gestió del professor') }}
             </h2>
             
-
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <!-- Las cards estadísticas se muestran en la vista principal -->
+</div>
             
         </div>
         @endif
