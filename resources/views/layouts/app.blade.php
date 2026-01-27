@@ -66,6 +66,9 @@
             <main>
                 {{ $slot }}
             </main>
+            <div>
+                @include('debug.footer')
+            </div>
         </div>
 
         <!-- SweetAlert2 JS -->

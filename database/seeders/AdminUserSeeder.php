@@ -17,10 +17,10 @@ class AdminUserSeeder extends Seeder
     {
             // Crear usuario admin si no existe
         $admin = User::firstOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'admin@upg.test'],
             [
                 'name' => 'Administrador',
-                'password' => Hash::make(Str::random(12)),
+                'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD')),
                 'email_verified_at' => Carbon::now(),
             ]
         );

@@ -10,157 +10,216 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run()
     {
-        // Limpiar caché
+        // Netejar memòria cau
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Permisos para módulos básicos
-        $permissions = [
-
+        // PERMISOS DEL SISTEMA BÀSIC (EXISTENTS)
+        $basicPermissions = [
+            // Sistema
             'admin.access',
             'settings.edit',
-
+            
+            // Usuaris
             'users.index',
             'users.view',
             'users.create',
             'users.edit',
             'users.delete',
-
-
+            
+            // Rols i permisos
             'roles.index',
             'roles.create',
             'roles.edit',
             'roles.delete',
-
             'permissions.index',
             'permissions.create',
             'permissions.edit',
             'permissions.delete',
-
-             // Notifications
+            
+            // Notificacions
             'notifications.publish',
             'notifications.index',
             'notifications.create',
             'notifications.edit',
             'notifications.delete',
             'notifications.view',
-
-            // Event permissions
+            
+            // Esdeveniments
             'events.index',
             'events.view',
             'events.create',
             'events.edit',
             'events.delete',
-                
-            // Event Type permissions
             'event_types.index',
             'event_types.view',
             'event_types.create',
             'event_types.edit',
             'event_types.delete',
-
-            // Event Question permissions
             'event_questions.index',
             'event_questions.view',
             'event_questions.create',
             'event_questions.edit',
             'event_questions.delete',
-
-            // Event Answer permissions
             'event_answers.index',
             'event_answers.view',
             'event_answers.create',
             'event_answers.edit',
             'event_answers.delete',
-
-            // Question Templates permissions
             'event_question_templates.index',
             'event_question_templates.view',
             'event_question_templates.create',
             'event_question_templates.edit',
             'event_question_templates.delete',
-          
-
         ];
 
-        foreach ($permissions as $perm) {
+        // PERMISOS DEL CAMPUS EDUCATIU (NOUS)
+        $campusPermissions = [
+            // Categories
+            'campus.categories.index',
+            'campus.categories.view',
+            'campus.categories.create',
+            'campus.categories.edit',
+            'campus.categories.delete',
+            
+            // Temporades
+            'campus.seasons.index',
+            'campus.seasons.view',
+            'campus.seasons.create',
+            'campus.seasons.edit',
+            'campus.seasons.delete',
+            
+            // Cursos
+            'campus.courses.index',
+            'campus.courses.view',
+            'campus.courses.create',
+            'campus.courses.edit',
+            'campus.courses.delete',
+            'campus.courses.enroll',
+            'campus.courses.manage',
+            
+            // Estudiants
+            'campus.students.index',
+            'campus.students.view',
+            'campus.students.create',
+            'campus.students.edit',
+            'campus.students.delete',
+            'campus.students.manage',
+            
+            // Professors
+            'campus.teachers.index',
+            'campus.teachers.view',
+            'campus.teachers.create',
+            'campus.teachers.edit',
+            'campus.teachers.delete',
+            'campus.teachers.assign',
+            
+            // Matriculacions/Registres
+            'campus.registrations.index',
+            'campus.registrations.view',
+            'campus.registrations.create',
+            'campus.registrations.edit',
+            'campus.registrations.delete',
+            'campus.registrations.approve',
+            'campus.registrations.manage',
+            
+            // Pagaments
+            'campus.payments.view',
+            'campus.payments.manage',
+            'campus.payments.approve',
+            
+            // Vista de perfil propi
+            'campus.profile.view',
+            'campus.profile.edit',
+            
+            // Vista de cursos propis (per a professors i estudiants)
+            'campus.my_courses.view',
+            'campus.my_courses.manage',
+        ];
+
+        // COMBINAR TOTS ELS PERMISOS
+        $allPermissions = array_merge($basicPermissions, $campusPermissions);
+        
+        foreach ($allPermissions as $perm) {
             Permission::firstOrCreate(['name' => $perm]);
         }
 
-
-        // Roles
+        // ROL: ADMINISTRADOR (TOT)
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $admin->givePermissionTo(Permission::all());
 
-        //gestor
+        // ROL: GESTOR (amb permisos del campus)
         $gestor = Role::firstOrCreate(['name' => 'gestor']);
+        $gestorPermissions = [
+            // Permisos bàsics existents
+            'users.index', 'users.create', 'users.edit', 'users.delete',
+            'notifications.index', 'notifications.create', 'notifications.edit', 
+            'notifications.delete', 'notifications.view',
+            'events.index', 'events.view', 'events.create', 'events.edit', 'events.delete',
+            'event_questions.index', 'event_questions.view', 'event_questions.create', 
+            'event_questions.edit', 'event_questions.delete',
+            'event_question_templates.index', 'event_question_templates.view', 
+            'event_question_templates.create', 'event_question_templates.edit', 
+            'event_question_templates.delete',
+            
+            // Nous permisos del campus
+            'campus.categories.index', 'campus.categories.view',
+            'campus.seasons.index', 'campus.seasons.view',
+            'campus.courses.index', 'campus.courses.view', 'campus.courses.create',
+            'campus.courses.edit', 'campus.courses.delete', 'campus.courses.manage',
+            'campus.students.index', 'campus.students.view', 'campus.students.create',
+            'campus.students.edit', 'campus.students.delete', 'campus.students.manage',
+            'campus.teachers.index', 'campus.teachers.view', 'campus.teachers.create',
+            'campus.teachers.edit', 'campus.teachers.delete', 'campus.teachers.assign',
+            'campus.registrations.index', 'campus.registrations.view', 'campus.registrations.create',
+            'campus.registrations.edit', 'campus.registrations.delete', 'campus.registrations.manage',
+            'campus.payments.view', 'campus.payments.manage',
+        ];
+        $gestor->syncPermissions($gestorPermissions);
 
-        $gestor->givePermissionTo(['users.index']);
-        $gestor->givePermissionTo(['users.create']);
-        $gestor->givePermissionTo(['users.edit']);
-        $gestor->givePermissionTo(['users.delete']);
-
-        $gestor->givePermissionTo(['notifications.index']);
-        $gestor->givePermissionTo(['notifications.create']);
-        $gestor->givePermissionTo(['notifications.edit']);
-        $gestor->givePermissionTo(['notifications.delete']);
-        $gestor->givePermissionTo(['notifications.view']);
-
-
-        $gestor->givePermissionTo(['events.index']);
-        $gestor->givePermissionTo(['events.create']);
-        $gestor->givePermissionTo(['events.edit']);
-        $gestor->givePermissionTo(['events.delete']);
-        $gestor->givePermissionTo(['events.view']);
-
-        $gestor->givePermissionTo(['event_questions.index']);
-        $gestor->givePermissionTo(['event_questions.create']);
-        $gestor->givePermissionTo(['event_questions.edit']);
-        $gestor->givePermissionTo(['event_questions.delete']);
-        $gestor->givePermissionTo(['event_questions.view']);
-
-        $gestor->givePermissionTo(['events.index']);
-        $gestor->givePermissionTo(['events.create']);
-        $gestor->givePermissionTo(['events.edit']);
-        $gestor->givePermissionTo(['events.delete']);
-        $gestor->givePermissionTo(['events.view']);
-
-        $gestor->givePermissionTo(['event_question_templates.index']);
-        $gestor->givePermissionTo(['event_question_templates.create']);
-        $gestor->givePermissionTo(['event_question_templates.edit']);
-        $gestor->givePermissionTo(['event_question_templates.delete']);
-        $gestor->givePermissionTo(['event_question_templates.view']);
-
-
-        // editor
+        // ROL: EDITOR (només contingut)
         $editor = Role::firstOrCreate(['name' => 'editor']);
-        $editor->givePermissionTo(['notifications.index']);
-        $editor->givePermissionTo(['notifications.create']);
-        $editor->givePermissionTo(['notifications.edit']);
-        $editor->givePermissionTo(['notifications.delete']);
-        $editor->givePermissionTo(['notifications.view']);
+        $editorPermissions = [
+            'notifications.index', 'notifications.create', 'notifications.edit',
+            'notifications.delete', 'notifications.view',
+            'events.index', 'events.view', 'events.create', 'events.edit', 'events.delete',
+        ];
+        $editor->syncPermissions($editorPermissions);
 
-        $editor->givePermissionTo(['events.index']);
-        $editor->givePermissionTo(['events.create']);
-        $editor->givePermissionTo(['events.edit']);
-        $editor->givePermissionTo(['events.delete']);
-        $editor->givePermissionTo(['events.view']);
+        // ROL: PROFESSOR (NOU - Professor)
+        $teacher = Role::firstOrCreate(['name' => 'teacher']);
+        $teacherPermissions = [
+            'campus.profile.view', 'campus.profile.edit',
+            'campus.my_courses.view', 'campus.my_courses.manage',
+            'campus.students.view',  // Veure estudiants dels seus cursos
+            'campus.registrations.view',  // Veure matriculacions dels seus cursos
+            'notifications.view', 'notifications.create',
+        ];
+        $teacher->syncPermissions($teacherPermissions);
 
+        // ROL: ESTUDIANT (NOU - Estudiant)
+        $student = Role::firstOrCreate(['name' => 'student']);
+        $studentPermissions = [
+            'campus.profile.view', 'campus.profile.edit',
+            'campus.my_courses.view',
+            'notifications.view', 'notifications.create',
+        ];
+        $student->syncPermissions($studentPermissions);
+
+        // ROL: USER (usuari bàsic registrat)
         $user = Role::firstOrCreate(['name' => 'user']);
-        $user->givePermissionTo(['notifications.view']);
-        $user->givePermissionTo(['notifications.create']);
+        $userPermissions = [
+            'notifications.view', 'notifications.create',
+            'campus.profile.view', 'campus.profile.edit',
+        ];
+        $user->syncPermissions($userPermissions);
 
+        // ROL: CONVIDAT (convidat - sense permisos específics)
+        Role::firstOrCreate(['name' => 'invited']);
 
-        $invited = Role::firstOrCreate(['name' => 'invited']);
-        $user->givePermissionTo(['notifications.index']);
-        $user->givePermissionTo(['notifications.view']);
-
-        // sin permisos
-
-        // Asignar admin al usuario con ID = 1
+        // Assignar administrador a l'usuari amb ID = 1
         $user1 = \App\Models\User::find(1);
         if ($user1 && !$user1->hasRole('admin')) {
-            $user1->assignRole($admin);
+            $user1->assignRole('admin');
         }
     }
 }
-
