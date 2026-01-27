@@ -85,7 +85,7 @@
             <div class="flex items-center space-x-4">
                
                 {{-- Menú de Campus (DESKTOP) --}}
-                @include('components.menu-campus', ['desktop' => true])
+                {{-- @include('components.menu-campus', ['desktop' => true]) --}}
                 
                 {{-- Menú d'Admin (DESKTOP) --}}
             {{--     @include('components.menu-admin', ['desktop' => true]) --}}
@@ -126,7 +126,7 @@
             </div>
          
             {{-- Menú de Campus (MÒBIL) --}}
-            @include('components.menu-campus', ['desktop' => false])
+           {{--  @include('components.menu-campus', ['desktop' => false]) --}}
             
             {{-- Menú d'Admin (MÒBIL) --}}
           {{--   @include('components.menu-admin', ['desktop' => false]) --}}

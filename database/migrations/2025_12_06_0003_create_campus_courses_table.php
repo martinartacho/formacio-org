@@ -24,6 +24,8 @@ return new class extends Migration
             $table->json('schedule')->nullable(); // Horarios en formato JSON
             $table->date('start_date');
             $table->date('end_date');
+            $table->string('location')->nullable();
+            $table->string('format')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_public')->default(true);
             $table->json('requirements')->nullable();

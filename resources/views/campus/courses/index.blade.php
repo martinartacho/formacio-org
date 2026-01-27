@@ -34,6 +34,7 @@
             {{ __('campus.new_course') }}
         </a>
     @endcan
+    
 </div>
 
 <div class="bg-white shadow rounded-lg overflow-hidden">
@@ -133,4 +134,39 @@
 <div class="mt-6">
     {{ $courses->links() }}
 </div>
+<div class="p-6 bg-white border-b border-gray-200">
+    <h2 class="text-lg font-medium text-gray-900">
+        {{ __('campus.import_information') }}
+    </h2>
+    <p class="text-xs text-gray-500 mt-1">
+        {{ __('campus.import_information_alert') }}
+    <a href="#" onclick="return downloadTemplate();" class="text-indigo-600 hover:underline">
+        📥 {{ __('campus.download_template') }}
+    </a>
+</p>
+</div>
+
+
 @endsection
+
+<script>
+    // Descargar plantilla
+    window.downloadTemplate = function() {
+        const template = 
+`category,code,title,slug,description,credits,hours,max_students,price,level,schedule_days,schedule_times,start_date,end_date,requirements,objectives,professor,location,calendar_dates,registration_price,format
+Salut i Infermeria,SAN101,PEDIATRIA,pediatria,"Curs de pediatria per a professionals de la salut",4,30,25,20.00,intermediate,Dilluns,10:00-11:30,2026-02-16,2026-03-16,"Titol d'infermeria o medicina","Actualització de coneixements en pediatria","Anna Estapé","CTUG. ROCA UMBERT","16/2, 23/2, 2/3, 9/3, 16/3",20.00,Presencial
+Educació i Pedagogia,EDU201,TDAH,tdah,"Estratègies educatives per al TDAH",3,25,30,25.00,beginner,Dimecres,16:00-18:00,2026-02-19,2026-04-02,"Interès en educació especial","Estratègies pràctiques per a l'aula","Marta Soler","UPC VALLÈS","19/2, 26/2, 5/3, 12/3, 19/3, 26/3",25.00,Semipresencial
+Ciències Socials i Humanitats,SOC301,INTEL·LIGÈNCIA EMOCIONAL,intelligencia-emocional,"Desenvolupament d'habilitats emocionals",2,20,35,15.00,beginner,Dijous,18:00-20:00,2026-02-20,2026-03-20,"Cap requeriment previ","Millora de competències emocionals","Laura Martínez","ONLINE","20/2, 27/2, 6/3, 13/3, 20/3",15.00,Online`;
+        
+        const blob = new Blob([template], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'plantilla_cursos.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        return false;
+    }
+</script>
