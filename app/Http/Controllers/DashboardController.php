@@ -27,7 +27,6 @@ public function index() {
 
     if ($user->hasRole('student')) 
     { 
-        dd ('student en construccio');
         $data = app(\App\Services\Dashboard\StudentDashboardData::class)->build($user); 
     }
 

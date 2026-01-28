@@ -10,9 +10,12 @@
             <h1 class="text-xl font-bold">Dashboard Manger</h1>
             <p>
                 <code>
-                    class="font-semibold text-xl text-gray-800 leading-tight"
-                    <br>
-                    app-layoutDashboard Manger 
+                        
+                            class="font-semibold text-xl text-gray-800 leading-tight"
+                            <br>
+                            app-layoutDashboard Manger 
+                            
+                         
                 </code>
             </p>
         </div>

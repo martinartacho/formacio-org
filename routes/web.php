@@ -42,13 +42,41 @@ require __DIR__.'/auth.php';
 
 
 
-Route::middleware(['auth', 'role:admin|super-admin|coordinator|accounting'])
+/* Route::middleware(['auth', 'role:admin|super-admin|coordinator|accounting'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
             ->name('dashboard');
+    }); */
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
+            ->name('dashboard');
     });
+
+    Route::prefix('manager')->name('manager.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Manager\DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
+    Route::prefix('teacher')->name('teacher.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Teacher\DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
+    Route::prefix('student')->name('student.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Student\DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
+        
+});
 
 
 //  Rutas protegidas por login y verificación
@@ -56,8 +84,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     
     
-    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
-        ->name('dashboard');
+    /* Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
+        ->name('dashboard'); */
 
     //  Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

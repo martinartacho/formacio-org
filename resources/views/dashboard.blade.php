@@ -15,42 +15,26 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             {{-- 1. Dashboard Admin --}}
-@if(auth()->user()->hasAnyRole(['admin', 'super-admin']))
-    <x-dashboard.admin :stats="$stats ?? []" />
+            @if(auth()->user()->hasAnyRole(['admin', 'super-admin']))
+                <x-dashboard.admin :stats="$stats ?? []" />
 
-{{-- 2. Dashboard Manager --}}
-@elseif(auth()->user()->hasAnyRole(['gestor', 'editor', 'manager']))
-    <x-dashboard.manager />
+            {{-- 2. Dashboard Manager --}}
+            @elseif(auth()->user()->hasAnyRole(['gestor', 'editor', 'manager']))
+                <x-dashboard.manager />
 
-{{-- 3. Teacher --}}
-@elseif(auth()->user()->hasRole('teacher'))
-    <x-dashboard.teacher />
+            {{-- 3. Teacher --}}
+            @elseif(auth()->user()->hasRole('teacher'))
+                <x-dashboard.teacher  :stats="$stats ?? []" />
 
-{{-- 4. Student --}}
-@elseif(auth()->user()->hasRole('student'))
-    <x-dashboard.student />
+            {{-- 4. Student --}}
+            @elseif(auth()->user()->hasRole('student'))
+                <x-dashboard.student />
 
-{{-- 5. Fallback --}}
-@else
-    <x-dashboard.basic />
-@endif
-
-            
-            {{-- 3. Dashboard para Profesores --}}
-            {{-- @elseif(auth()->user()->hasRole('teacher') || 
-                    auth()->user()->canany(['campus.my_courses.manage', 'campus.teacher-students.view']))
-                    <x-dashboard.teacher
-                        :teacher="$teacher"
-                        :season="$season"
-                        :seasons="$seasons"
-                        :teacher-courses="$teacherCourses"
-                        :stats="$stats"
-                        :debug="$debug ?? null"
-                        :error="$error ?? null"
-                    /> --}}
-            
-        
-            
+            {{-- 5. Fallback --}}
+            @else
+                <x-dashboard.basic />
+            @endif
+               
         </div>
     </div>
 </x-app-layout>

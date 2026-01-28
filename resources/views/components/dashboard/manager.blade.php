@@ -11,5 +11,6 @@
 <div class="bg-white p-6 rounded-lg shadow-md mb-6">
     <h2 class="text-xl font-bold">{{ __('Gestión del Campus') }}</h2>
     {{-- Contenido específico --}}
+    resources\views\components\dashboard\manager.blade.php
 </div>
 @endcan

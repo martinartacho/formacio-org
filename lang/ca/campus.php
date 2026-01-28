@@ -166,6 +166,7 @@ return [
     'edit_course' => 'Editar curs',
     'course_details' => 'Detalls del curs',
     'no_courses' => 'No hi ha cursos',
+    'completed' => 'Completat',
 
     'course_created' => 'Curs creat correctament',
     'course_updated' => 'Curs actualitzat correctament',

@@ -17,8 +17,7 @@
 
     {{-- DEBUG --}}
     @if(config('app.debug'))
-        <pre class="bg-gray-100 p-3 text-xs rounded border">
-        {{ var_export([
+        <pre class="bg-gray-100 p-3 text-xs rounded border">{{ var_export([
             'teacher' => optional($teacher)->teacher_code,
             'courses' => $teacherCourses->count(),
             'stats' => $stats,
@@ -106,10 +105,6 @@
 
         @if($teacherCourses->isEmpty())
             <div class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" opacity="0.5" />
-                </svg>
                 <p class="mt-4 text-gray-500">
                     @lang('campus.no_courses')
                 </p>
