@@ -8,7 +8,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>HArtacho</title>
+        <title>Campus UPG</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -77,13 +77,25 @@
         <div class="flex items-center justify-center w-full transition-opacity opacity-100 duration-750 lg:grow starting:opacity-0">
             <main class="flex max-w-[335px] w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
                 <div class="text-[13px] leading-[20px] flex-1 p-6 pb-12 lg:p-20 bg-white dark:bg-[#161615] dark:text-[#EDEDEC] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] rounded-bl-lg rounded-br-lg lg:rounded-tl-lg lg:rounded-br-none">
-                    <h1 class="mb-1 font-medium">{{ __('site.welcome') }}</h1>
-                    <h1 class="mb-1 font-medium">{{ __('site.title_1') }}</h1>
+                    {{-- Texto de bienvenida --}}
+                    <h1 class="mb-1 font-medium">{{ $welcome_welcome_text ?? 'Benvingut/da a' }}</h1>
+                    
+                    {{-- Título principal --}}
+                    <h1 class="mb-1 font-medium">{{ $welcome_title_1 ?? 'Campus UPG' }}</h1>
+                    
+                    {{-- Descripción principal --}}
                     <p class="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
-                         {{ __('site.item_1') }} <br>{{ __('site.item_2') }}
+                         {{ $welcome_item_1_1 ?? 'Una aplicació construïda amb Laravel 12' }} <br>
+                         {{ $welcome_item_1_2 ?? 'Inclou autenticació, equips i gestió de permisos' }}
                     </p>
-                    <h2 class="mb-1 font-medium"> {{ __('site.title_2') }} </h2>
+                    
+                    {{-- Título de características --}}
+                    <h2 class="mb-1 font-medium">{{ $welcome_title_2 ?? 'El campus de la UPG' }}</h2>
+                    
+                    {{-- Lista de características --}}
                     <ul class="flex flex-col mb-4 lg:mb-6">
+                        {{-- Característica 1 --}}
+                        @if($welcome_item_2_1 ?? false)
                         <li class="flex items-center gap-4 py-2 relative before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A] before:top-1/2 before:bottom-0 before:left-[0.4rem] before:absolute">
                             <span class="relative py-1 bg-white dark:bg-[#161615]">
                                 <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
@@ -91,9 +103,13 @@
                                 </span>
                             </span>
                             <span>
-                                {{ __('site.item_3') }} 
+                                {{ $welcome_item_2_1 }}
                             </span>
                         </li>
+                        @endif
+                        
+                        {{-- Característica 2 --}}
+                        @if($welcome_item_2_2 ?? false)
                         <li class="flex items-center gap-4 py-2 relative before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A] before:top-1/2 before:bottom-0 before:left-[0.4rem] before:absolute">
                             <span class="relative py-1 bg-white dark:bg-[#161615]">
                                 <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
@@ -101,10 +117,13 @@
                                 </span>
                             </span>
                             <span>
-                                {{ __('site.item_4') }} 
+                                {{ $welcome_item_2_2 }}
                             </span>
                         </li>
-                                   
+                        @endif
+                        
+                        {{-- Característica 3 --}}
+                        @if($welcome_item_2_3 ?? false)
                         <li class="flex items-center gap-4 py-2 relative before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A] before:bottom-1/2 before:top-0 before:left-[0.4rem] before:absolute">
                             <span class="relative py-1 bg-white dark:bg-[#161615]">
                                 <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
@@ -112,33 +131,106 @@
                                 </span>
                             </span>
                             <span>
-
-                                {{ __('site.item_5') }} <a href="https://github.com/martinartacho/laravel-multirole-app" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ml-1">
-                                    <span>{{ __('site.item_6') }}</span>
-                                </a>. 
-                                {{ __('site.item_7') }}
+                                @if($welcome_link_1_description ?? false)
+                                    {{ $welcome_link_1_description }}
+                                @else
+                                    {{ $welcome_item_2_3 }}
+                                @endif
+                                
+                                {{-- Enlace 1 --}}
+                                @if(($welcome_link_1_url ?? false) && ($welcome_link_1_text ?? false))
+                                <a href="{{ $welcome_link_1_url }}" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ml-1">
+                                    <span>{{ $welcome_link_1_text }}</span>
+                                </a>
+                                @endif
+                                
+                                {{-- Enlace 2 (opcional) --}}
+                                @if(($welcome_link_2_url ?? false) && ($welcome_link_2_text ?? false))
+                                . 
+                                <a href="{{ $welcome_link_2_url }}" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ml-1">
+                                    <span>{{ $welcome_link_2_text }}</span>
+                                </a>
+                                @endif
                             </span>
                         </li>
+                        @endif
+                        
+                        {{-- Característica 4 (opcional) --}}
+                        @if($welcome_item_2_4 ?? false)
+                        <li class="flex items-center gap-4 py-2 relative before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A] before:bottom-1/2 before:top-0 before:left-[0.4rem] before:absolute">
+                            <span class="relative py-1 bg-white dark:bg-[#161615]">
+                                <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
+                                    <span class="rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A] w-1.5 h-1.5"></span>
+                                </span>
+                            </span>
+                            <span>
+                                {{ $welcome_item_2_4 }}
+                            </span>
+                        </li>
+                        @endif
+                        
+                        {{-- Característica 5 (opcional) --}}
+                        @if($welcome_item_2_5 ?? false)
+                        <li class="flex items-center gap-4 py-2 relative">
+                            <span class="relative py-1 bg-white dark:bg-[#161615]">
+                                <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
+                                    <span class="rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A] w-1.5 h-1.5"></span>
+                                </span>
+                            </span>
+                            <span>
+                                {{ $welcome_item_2_5 }}
+                            </span>
+                        </li>
+                        @endif
                     </ul>
+                    
+                    {{-- Botón de acción --}}
                     <ul class="flex gap-3 text-sm leading-normal">
                         <li>
                             <a href="{{ url('/dashboard') }}" class="inline-block dark:bg-[#eeeeec] dark:border-[#eeeeec] dark:text-[#1C1C1A] dark:hover:bg-white dark:hover:border-white hover:bg-black hover:border-black px-5 py-1.5 bg-[#1b1b18] rounded-sm border border-black text-white text-sm leading-normal">
-                                {{ __('site.title_1') }}
+                                {{ $welcome_button_text ?? 'Comença ara' }}
                             </a>
                         </li>
                     </ul>
                 </div>
-               <div class="bg-[#fff2f2] dark:bg-[#1D0002] relative lg:-ml-px -mb-px lg:mb-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg aspect-[335/376] lg:aspect-auto w-full lg:w-[438px] shrink-0 overflow-hidden flex flex-col items-center justify-center p-4">
-                    {{-- H Logo --}}
-                    <img src="{{ asset('img/h.svg') }}" alt="H" class="h-[200px] w-auto mb-4" />
+                
+                {{-- Panel derecho con logo --}}
+                <div class="bg-[#fff2f2] dark:bg-[#1D0002] relative lg:-ml-px -mb-px lg:mb-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg aspect-[335/376] lg:aspect-auto w-full lg:w-[438px] shrink-0 overflow-hidden flex flex-col items-center justify-center p-4">
+                    {{-- Logo dinámico (prioridad) --}}
+                    @if($site_logo ?? false)
+                        <img 
+                            src="{{ $site_logo }}" 
+                            alt="{{ $site_name ?? 'Campus UPG' }}"
+                            class="h-32 w-auto mb-4 max-w-full object-contain"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                        >
+                    @endif
                     
-                    {{-- Artacho Logo --}}
-                    <img src="{{ asset('img/artacho.svg') }}" alt="Artacho" class="h-auto w-[180px]" />
+                    {{-- Logo por defecto (solo se muestra si no hay $site_logo) --}}
+                    @unless($site_logo ?? false)
+                        <img 
+                            src="{{ asset('img/logo.svg') }}" 
+                            alt="{{ $site_name ?? 'Campus UPG' }}"
+                            class="h-32 w-auto mb-4 max-w-full object-contain"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                        >
+                    @endunless
+                    
+                    {{-- SVG de respaldo (solo se muestra si fallan las imágenes anteriores) --}}
+                    <svg xmlns="http://www.w3.org/2000/svg" 
+                         class="h-32 w-32 text-gray-800 mb-4 hidden" 
+                         fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                         id="fallback-svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    
+                    {{-- Nombre del sitio --}}
+                    <h2 class="text-2xl font-bold text-[#1b1b18] dark:text-white text-center">
+                        {{ $site_name ?? 'Campus UPG' }}
+                    </h2>
                 </div>
-
             </main>
         </div>
-
         @if (Route::has('login'))
             <div class="h-14.5 hidden lg:block"></div>
         @endif
