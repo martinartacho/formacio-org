@@ -1,7 +1,7 @@
 {{-- Gestió de events --}}
 @can('events.view')
 <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-    <h2 class="text-xl font-bold">{{ __('Gestió de eventss') }} </h2>
+    <h2 class="text-xl font-bold">{{ __('Gestió de events') }} </h2>
     {{-- Contenido específico para gestores --}}
 </div>
 @endcan

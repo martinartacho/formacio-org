@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PushLogController;
@@ -37,6 +38,18 @@ Route::get('/', fn () => view('welcome'));
 
 // Auth
 require __DIR__.'/auth.php';
+
+
+
+
+Route::middleware(['auth', 'role:admin|super-admin|coordinator|accounting'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
 
 //  Rutas protegidas por login y verificación
 Route::middleware(['auth', 'verified'])->group(function () {
