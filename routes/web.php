@@ -20,7 +20,8 @@ use App\Http\Controllers\Campus\CourseController;
 use App\Http\Controllers\Campus\CourseTeacherController;
 use App\Http\Controllers\Campus\TeacherController;
 use App\Http\Controllers\Campus\CourseRegistrationController;
-
+// use App\Http\Controllers\Manager\DashboardController; // Per ara inhabilitat
+use App\Http\Controllers\Manager\RegistrationController;
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Route;
@@ -60,10 +61,10 @@ Route::middleware(['auth'])->group(function () {
             ->name('dashboard');
     });
 
-    Route::prefix('manager')->name('manager.')->group(function () {
+/*     Route::prefix('manager')->name('manager.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Manager\DashboardController::class, 'index'])
             ->name('dashboard');
-    });
+    }); */
 
     Route::prefix('teacher')->name('teacher.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Teacher\DashboardController::class, 'index'])
@@ -77,6 +78,17 @@ Route::middleware(['auth'])->group(function () {
 
         
 });
+
+    Route::middleware(['auth', 'permission:campus.courses.view'])
+    ->prefix('manager')
+    ->name('manager.')
+    ->group(function () {
+
+        Route::get('/courses', [CourseController::class, 'index'])
+            ->name('courses.index');
+        Route::get('/registrations', [RegistrationController::class, 'index'])
+            ->name('registrations.index');
+    });
 
 
 //  Rutas protegidas por login y verificación

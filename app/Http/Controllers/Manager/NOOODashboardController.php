@@ -18,7 +18,7 @@ class DashboardController extends Controller
             $stats = app(\App\Services\Dashboard\ManagerDashboardData::class)
                 ->build($user);
         }
-dd('Error: 220260129: Fins ara no s\'havia fet servir comunicar a responsabe de programació');
+        dd('Error: 220260129: Fins ara no s\'havia fet servir comunicar a responsabe de programació');
         return view('dashboard', compact('stats'));
     }
 

@@ -315,4 +315,7 @@ return [
     'year' => 'Any',
     'all_time' => 'Tot el temps',
 
+    'campus_management' => 'Gestió del curs',
+
+
 ];
