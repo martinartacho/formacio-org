@@ -6,7 +6,7 @@
 
 <div class="bg-white p-6 rounded shadow">
     <h3 class="text-lg font-semibold mb-4">
-        Gestió del Campus
+        Gestió del Campus (resources\views\components\dashboard\manager.blade.php)
     </h3>
 
     <ul class="list-disc ml-6 text-sm text-gray-700">
