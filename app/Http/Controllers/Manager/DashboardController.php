@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
+use App\Services\Dashboard\ManagerDashboardData;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        return view('manager.dashboard');
+        $data = app(ManagerDashboardData::class)
+            ->build(auth()->user());
+
+        return view('manager.dashboard', $data);
     }
 }
