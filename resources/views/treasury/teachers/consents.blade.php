@@ -37,7 +37,7 @@
     </tbody>
 </table>
 
-<a href="{{ route('accounting.teachers.show', $teacher) }}"
+<a href="{{ route('treasury.teachers.show', $teacher) }}"
    class="inline-block mt-4 text-sm underline">
     ← Tornar
 </a>

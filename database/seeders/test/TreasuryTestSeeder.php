@@ -1,39 +1,28 @@
 <?php
 
-namespace Database\Seeders\Roles;
+namespace Database\Seeders\Test;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-class AccountingRoleSeeder extends Seeder
+class TreasuryTestSeeder extends Seeder
 {
     public function run(): void
     {
         $permissions = [
-            // Pagaments
-            'payments.view',
-            'payments.create',
-            'payments.export',
-
-            // Professorat (només dades econòmiques)
             'teachers.view',
             'teachers.financial_data.view',
-            'teachers.financial_data.update',
-
-            // Consentiments
             'consents.request',
             'consents.view',
-
-            // Informes
-            'reports.financial',
+            'payments.export',
         ];
 
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        $role = Role::firstOrCreate(['name' => 'accounting']);
+        $role = Role::firstOrCreate(['name' => 'treasury']);
         $role->syncPermissions($permissions);
     }
 }

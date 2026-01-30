@@ -22,7 +22,7 @@ use App\Http\Controllers\Campus\TeacherController;
 use App\Http\Controllers\Campus\CourseRegistrationController;
 // use App\Http\Controllers\Manager\DashboardController; // Per ara inhabilitat
 use App\Http\Controllers\Manager\RegistrationController;
-use App\Http\Controllers\Accounting\TeacherAccountingController;
+use App\Http\Controllers\Treasury\TeacherTreasuryController;
 
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\LocaleController;
@@ -82,29 +82,29 @@ Route::middleware(['auth', 'permission:campus.courses.view'])
         ->name('registrations.index');
 });
 
-Route::middleware(['auth', 'role:accounting'])
-    ->prefix('accounting')
-    ->name('accounting.')
+Route::middleware(['auth', 'role:treasury'])
+    ->prefix('treasury')
+    ->name('treasury.')
     ->group(function () {
-        Route::get('teachers', [TeacherAccountingController::class, 'index'])
+        Route::get('teachers', [TeacherTreasuryController::class, 'index'])
             ->name('teachers.index');
         
-            Route::get('teachers/{teacher}', [TeacherAccountingController::class, 'show'])
+            Route::get('teachers/{teacher}', [TeacherTreasuryController::class, 'show'])
             ->name('teachers.show');
 
-        Route::post('teachers/{teacher}/consent', [TeacherAccountingController::class, 'storeConsent'])
+        Route::post('teachers/{teacher}/consent', [TeacherTreasuryController::class, 'storeConsent'])
             ->name('teachers.consent.store');   
-        Route::get('teachers/export/csv', [TeacherAccountingController::class, 'exportCsv'])
+        Route::get('teachers/export/csv', [TeacherTreasuryController::class, 'exportCsv'])
             ->name('teachers.export.csv');
 
         Route::post(
             'teachers/{teacher}/consent/pdf',
-            [TeacherAccountingController::class, 'generateConsentPdf']
+            [TeacherTreasuryController::class, 'generateConsentPdf']
         )->name('teachers.consent.pdf');            
 
         Route::get(
             'teachers/{teacher}/consents',
-            [TeacherAccountingController::class, 'consentHistory']
+            [TeacherTreasuryController::class, 'consentHistory']
         )->name('teachers.consents');
 
 
@@ -112,7 +112,7 @@ Route::middleware(['auth', 'role:accounting'])
 
     Route::get(
             'consents/{consent}/download',
-            [TeacherAccountingController::class, 'downloadConsent']
+            [TeacherTreasuryController::class, 'downloadConsent']
         )->name('consents.download');
         
         

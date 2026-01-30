@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Accounting;
+namespace App\Http\Controllers\Treasury;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\AccountingData;
+use App\Models\TreasuryData;
 use App\Models\ConsentHistory;
 
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -13,33 +13,33 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class TeacherAccountingController extends Controller
+class TeacherTreasuryController extends Controller
 {
     public function index()
     {
         $this->authorize('teachers.view');
 
         $teachers = User::role('teacher')
-            ->with('accountingData')
+            ->with('treasuryData')
             ->get();
 
-        return view('accounting.teachers.index', compact('teachers'));
+        return view('treasury.teachers.index', compact('teachers'));
     }
 
     public function show(User $teacher)
     {
         $this->authorize('teachers.financial_data.view');
 
-        $teacher->load('accountingData');
+        $teacher->load('treasuryData');
 
-        return view('accounting.teachers.show', compact('teacher'));
+        return view('treasury.teachers.show', compact('teacher'));
     }
 
     public function storeConsent(Request $request, User $teacher)
     {
         $this->authorize('consents.request');
 
-        AccountingData::updateOrCreate(
+        TreasuryData::updateOrCreate(
             [
                 'teacher_id' => $teacher->id,
                 'key' => 'consent_signed_at',
@@ -50,7 +50,7 @@ class TeacherAccountingController extends Controller
         );
 
         return redirect()
-            ->route('accounting.teachers.show', $teacher)
+            ->route('treasury.teachers.show', $teacher)
             ->with('success', 'Consentiment RGPD registrat correctament.');
     }
 
@@ -59,7 +59,7 @@ class TeacherAccountingController extends Controller
         $this->authorize('payments.export');
 
         $teachers = User::role('teacher')
-            ->with(['accountingData'])
+            ->with(['treasuryData'])
             ->get();
 
         $headers = [
@@ -80,7 +80,7 @@ class TeacherAccountingController extends Controller
 
             foreach ($teachers as $teacher) {
                 $get = fn ($key) =>
-                    optional($teacher->accountingData->where('key', $key)->first())->value;
+                    optional($teacher->treasuryData->where('key', $key)->first())->value;
 
                 fputcsv($handle, [
                     $teacher->name,
@@ -109,18 +109,18 @@ class TeacherAccountingController extends Controller
 
         if ($existing) {
             return redirect()
-                ->route('accounting.teachers.show', $teacher)
+                ->route('treasury.teachers.show', $teacher)
                 ->with('success', 'El consentiment d’aquesta temporada ja existeix.');
         }
 
 
-        $data = $teacher->accountingData
+        $data = $teacher->treasuryData
             ->pluck('value', 'key')
             ->toArray();
 
         $acceptedAt = now();
 
-        $pdf = Pdf::loadView('accounting.consents.pdf', [
+        $pdf = Pdf::loadView('treasury.consents.pdf', [
             'teacher' => $teacher,
             'season' => $season,
             'data' => $data,
@@ -146,7 +146,7 @@ class TeacherAccountingController extends Controller
         );
 
         return redirect()
-            ->route('accounting.teachers.show', $teacher)
+            ->route('treasury.teachers.show', $teacher)
             ->with('success', 'Consentiment PDF generat i registrat.');
     }
 
@@ -159,7 +159,7 @@ class TeacherAccountingController extends Controller
             ->orderByDesc('season')
             ->get();
 
-        return view('accounting.teachers.consents', compact('teacher', 'consents'));
+        return view('treasury.teachers.consents', compact('teacher', 'consents'));
     }
 
     public function downloadConsent(ConsentHistory $consent)

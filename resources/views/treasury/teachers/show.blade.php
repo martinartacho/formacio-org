@@ -24,7 +24,7 @@
     <h2 class="font-medium text-lg mb-2">Estat RGPD</h2>
 
     @php
-        $consent = $teacher->accountingData
+        $consent = $teacher->treasuryData
             ->where('key', 'consent_signed_at')
             ->first();
     @endphp
@@ -38,7 +38,7 @@
             ❌ Consentiment pendent
         </p>
 
-        <form method="POST" action="{{ route('accounting.teachers.consent.store', $teacher) }}">
+        <form method="POST" action="{{ route('treasury.teachers.consent.store', $teacher) }}">
             @csrf
             <button
                 type="submit"
@@ -50,7 +50,7 @@
     @endif
 </div>
 
-<a href="{{ route('accounting.teachers.index') }}"
+<a href="{{ route('treasury.teachers.index') }}"
    class="text-sm text-gray-600 underline">
     ← Tornar al llistat
 </a>

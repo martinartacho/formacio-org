@@ -20,14 +20,14 @@
                 <td class="p-2">{{ $teacher->name }}</td>
                 <td class="p-2">{{ $teacher->email }}</td>
                 <td class="p-2 text-center">
-                    @if ($teacher->accountingData->where('key', 'consent_signed_at')->first())
+                    @if ($teacher->treasuryData->where('key', 'consent_signed_at')->first())
                         ✅ Acceptat
                     @else
                         ❌ Pendent
                     @endif
                 </td>
                 <td class="p-2 text-center">
-                    <a href="{{ route('accounting.teachers.show', $teacher) }}"
+                    <a href="{{ route('treasury.teachers.show', $teacher) }}"
                        class="text-blue-600 underline">
                         Veure
                     </a>
