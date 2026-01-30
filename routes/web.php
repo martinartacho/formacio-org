@@ -22,6 +22,8 @@ use App\Http\Controllers\Campus\TeacherController;
 use App\Http\Controllers\Campus\CourseRegistrationController;
 // use App\Http\Controllers\Manager\DashboardController; // Per ara inhabilitat
 use App\Http\Controllers\Manager\RegistrationController;
+use App\Http\Controllers\Accounting\TeacherAccountingController;
+
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Route;
@@ -40,16 +42,6 @@ Route::get('/', fn () => view('welcome'));
 // Auth
 require __DIR__.'/auth.php';
 
-
-
-
-/* Route::middleware(['auth', 'role:admin|super-admin|coordinator|accounting'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-            ->name('dashboard');
-    }); */
 
 Route::middleware(['auth'])->group(function () {
 
@@ -79,18 +71,51 @@ Route::middleware(['auth'])->group(function () {
         
 });
 
-    Route::middleware(['auth', 'permission:campus.courses.view'])
-    ->prefix('manager')
-    ->name('manager.')
+Route::middleware(['auth', 'permission:campus.courses.view'])
+->prefix('manager')
+->name('manager.')
+->group(function () {
+
+    Route::get('/courses', [CourseController::class, 'index'])
+        ->name('courses.index');
+    Route::get('/registrations', [RegistrationController::class, 'index'])
+        ->name('registrations.index');
+});
+
+Route::middleware(['auth', 'role:accounting'])
+    ->prefix('accounting')
+    ->name('accounting.')
     ->group(function () {
+        Route::get('teachers', [TeacherAccountingController::class, 'index'])
+            ->name('teachers.index');
+        
+            Route::get('teachers/{teacher}', [TeacherAccountingController::class, 'show'])
+            ->name('teachers.show');
 
-        Route::get('/courses', [CourseController::class, 'index'])
-            ->name('courses.index');
-        Route::get('/registrations', [RegistrationController::class, 'index'])
-            ->name('registrations.index');
-    });
+        Route::post('teachers/{teacher}/consent', [TeacherAccountingController::class, 'storeConsent'])
+            ->name('teachers.consent.store');   
+        Route::get('teachers/export/csv', [TeacherAccountingController::class, 'exportCsv'])
+            ->name('teachers.export.csv');
+
+        Route::post(
+            'teachers/{teacher}/consent/pdf',
+            [TeacherAccountingController::class, 'generateConsentPdf']
+        )->name('teachers.consent.pdf');            
+
+        Route::get(
+            'teachers/{teacher}/consents',
+            [TeacherAccountingController::class, 'consentHistory']
+        )->name('teachers.consents');
 
 
+});    
+
+    Route::get(
+            'consents/{consent}/download',
+            [TeacherAccountingController::class, 'downloadConsent']
+        )->name('consents.download');
+        
+        
 //  Rutas protegidas por login y verificación
 Route::middleware(['auth', 'verified'])->group(function () {
 
