@@ -15,7 +15,7 @@ class NotificationPolicy
 
 public function update(User $user, Notification $notification): bool
 {
-    return $user->hasRole(['admin', 'gestor', 'editor']);
+    return $user->hasRole(['admin', 'gestor', 'treasury', 'editor']);
 }
 
 public function delete(User $user, Notification $notification): bool

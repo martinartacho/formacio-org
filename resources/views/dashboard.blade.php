@@ -19,7 +19,7 @@
                 <x-dashboard.admin :stats="$stats ?? []" />
 
             {{-- 2. Dashboard Manager --}}
-            @elseif(auth()->user()->hasAnyRole(['gestor', 'editor', 'manager']))
+            @elseif(auth()->user()->hasAnyRole(['gestor', 'treasury', 'editor', 'manager']))
                 <x-dashboard.manager :stats="$stats ?? []" />
 
             {{-- 3. Teacher --}}

@@ -74,9 +74,9 @@ public function consent_pdf_is_generated_only_once_per_season()
         ConsentHistory::create([
             'teacher_id' => $teacher->id,
             'season' => '2025-2026',
+            'checksum' => Str::random(64),
             'document_path' => 'consents/test.pdf',
             'accepted_at' => now(),
-            'checksum' => 'fakehash',
         ]);
 
         $this->actingAs($treasury)

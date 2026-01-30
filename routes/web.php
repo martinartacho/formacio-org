@@ -89,7 +89,7 @@ Route::middleware(['auth', 'role:treasury'])
         Route::get('teachers', [TeacherTreasuryController::class, 'index'])
             ->name('teachers.index');
         
-            Route::get('teachers/{teacher}', [TeacherTreasuryController::class, 'show'])
+        Route::get('teachers/{teacher}', [TeacherTreasuryController::class, 'show'])
             ->name('teachers.show');
 
         Route::post('teachers/{teacher}/consent', [TeacherTreasuryController::class, 'storeConsent'])

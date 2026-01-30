@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('campus.shared.layout')
 
 @section('content')
 <h1 class="text-xl font-semibold mb-4">

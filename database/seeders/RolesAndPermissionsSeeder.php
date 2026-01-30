@@ -112,6 +112,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'campus.teachers.edit',
             'campus.teachers.delete',
             'campus.teachers.assign',
+            // Añadir permisos específicos de tesorería
+            'campus.teachers.financial_data.view',
+            'campus.teachers.financial_data.update',
             
             // Matriculacions/Registres
             'campus.registrations.index',
@@ -126,6 +129,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'campus.payments.view',
             'campus.payments.manage',
             'campus.payments.approve',
+            'campus.payments.export',
             
             // Vista de perfil propi
             'campus.profile.view',
@@ -134,6 +138,11 @@ class RolesAndPermissionsSeeder extends Seeder
             // Vista de cursos propis (per a professors i estudiants)
             'campus.my_courses.view',
             'campus.my_courses.manage',
+            
+            // Permisos de tesorería adicionales
+            'campus.consents.request',
+            'campus.consents.view',
+            'campus.reports.financial',
         ];
 
         // COMBINAR TOTS ELS PERMISOS
@@ -175,6 +184,31 @@ class RolesAndPermissionsSeeder extends Seeder
             'campus.payments.view', 'campus.payments.manage',
         ];
         $gestor->syncPermissions($gestorPermissions);
+
+        // ROL: TREASURY (Tresoreria / Administració Econòmica)
+        $treasury = Role::firstOrCreate(['name' => 'treasury']);
+        $treasuryPermissions = [
+            // Pagaments
+            'campus.payments.view',
+            'campus.payments.manage',
+            'campus.payments.approve',
+            'campus.payments.export',
+            
+            // Professorat (dades econòmiques)
+            'campus.teachers.view',
+            'campus.teachers.financial_data.view',
+            'campus.teachers.financial_data.update',
+            
+            // Consentiments RGPD
+            'campus.consents.request',
+            'campus.consents.view',
+            
+            // Informes
+            'campus.reports.financial',
+        ];
+        $treasury->syncPermissions($treasuryPermissions);
+
+    
 
         // ROL: EDITOR (només contingut)
         $editor = Role::firstOrCreate(['name' => 'editor']);

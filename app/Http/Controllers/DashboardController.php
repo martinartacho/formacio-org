@@ -21,7 +21,7 @@ public function index()
         if ($user->hasAnyRole(['admin', 'super-admin'])) {
             $data = app(\App\Services\Dashboard\AdminDashboardData::class)->build();
 
-        } elseif ($user->hasAnyRole(['gestor', 'editor', 'manager'])) {
+        } elseif ($user->hasAnyRole(['gestor', 'treasury', 'editor', 'manager'])) {
             $data = app(\App\Services\Dashboard\ManagerDashboardData::class)
                 ->build($user);
 

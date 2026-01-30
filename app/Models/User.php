@@ -124,6 +124,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasMany(TreasuryData::class, 'teacher_id');
     }
 
+    public function consents()
+    {
+        return $this->hasMany(\App\Models\ConsentHistory::class);
+    }
+
 
 }
 

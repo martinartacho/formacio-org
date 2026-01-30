@@ -54,44 +54,48 @@ class TeacherTreasuryController extends Controller
             ->with('success', 'Consentiment RGPD registrat correctament.');
     }
 
-    public function exportCsv(): StreamedResponse
+
+    public function exportCsv(): Response
     {
-        $this->authorize('payments.export');
+        $season = current_season(); // helper existent
 
         $teachers = User::role('teacher')
-            ->with(['treasuryData'])
+            ->with(['consents' => function ($q) use ($season) {
+                $q->where('season', $season);
+            }])
             ->get();
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename=professors_rgpd.csv',
+            'Content-Disposition' => 'attachment; filename="teachers_rgpd_'.$season.'.csv"',
         ];
 
-        $callback = function () use ($teachers) {
-            $handle = fopen('php://output', 'w');
+        $callback = function () use ($teachers, $season) {
+            $out = fopen('php://output', 'w');
 
-            fputcsv($handle, [
-                'Nom',
-                'Email',
-                'Tax ID',
-                'Compte bancari',
-                'Consentiment RGPD',
+            fputcsv($out, [
+                'teacher_id',
+                'name',
+                'email',
+                'season',
+                'rgpd_accepted',
+                'accepted_at',
             ]);
 
-            foreach ($teachers as $teacher) {
-                $get = fn ($key) =>
-                    optional($teacher->treasuryData->where('key', $key)->first())->value;
+            foreach ($teachers as $t) {
+                $consent = $t->consents->first();
 
-                fputcsv($handle, [
-                    $teacher->name,
-                    $teacher->email,
-                    $get('tax_id'),
-                    $get('bank_account') ? '***' : null,
-                    $get('consent_signed_at'),
+                fputcsv($out, [
+                    $t->id,
+                    $t->name,
+                    $t->email,
+                    $season,
+                    $consent ? 'yes' : 'no',
+                    $consent?->accepted_at,
                 ]);
             }
 
-            fclose($handle);
+            fclose($out);
         };
 
         return response()->stream($callback, 200, $headers);

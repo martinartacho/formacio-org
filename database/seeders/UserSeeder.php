@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         // Usuari ADMINISTRADOR
-        $admin = User::create([
+        $admin = User::firstorcreate([
             'name' => 'Administrador Centre',
             'email' => 'admin@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
         $admin->assignRole('admin');
 
         // Usuari GESTOR
-        $gestor = User::create([
+        $gestor = User::firstorcreate([
             'name' => 'Gemma Gestió',
             'email' => 'gestio@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -33,8 +33,19 @@ class UserSeeder extends Seeder
         ]);
         $gestor->assignRole('gestor');
 
+        // Usuari TRESORERIA
+        $tresoreria = User::firstorcreate([
+            'name' => 'Angels AA',
+            'email' => 'tresoreria@upg.test',
+            'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
+            'email_verified_at' => Carbon::now(),
+            'locale' => 'ca',
+        ]);
+        $tresoreria->assignRole('treasury');
+ 
+
         // Usuari EDITOR 1
-        $editor1 = User::create([
+        $editor1 = User::firstorcreate([
             'name' => 'Eduard Editor',
             'email' => 'editor@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -44,7 +55,7 @@ class UserSeeder extends Seeder
         $editor1->assignRole('editor');
 
         // Usuari EDITOR 2
-        $editor2 = User::create([
+        $editor2 = User::firstorcreate([
             'name' => 'Elisabet Edició',
             'email' => 'editora@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -53,7 +64,7 @@ class UserSeeder extends Seeder
         $editor2->assignRole('editor');
 
         // PROFESSOR 1
-        $teacher1 = User::create([
+        $teacher1 = User::firstorcreate([
             'name' => 'Joan Prat i Soler',
             'email' => 'teacher@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -63,7 +74,7 @@ class UserSeeder extends Seeder
         $teacher1->assignRole('teacher');
         
         // Crear perfil de professor
-        $teacherProfile1 = CampusTeacher::create([
+        $teacherProfile1 = CampusTeacher::firstorcreate([
             'user_id' => $teacher1->id,
             'teacher_code' => 'PROF001',
             'first_name' => 'Joan',
@@ -79,7 +90,7 @@ class UserSeeder extends Seeder
         ]);
 
         // PROFESSORA 2
-        $teacher2 = User::create([
+        $teacher2 = User::firstorcreate([
             'name' => 'Maria García i López',
             'email' => 'profe@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -87,7 +98,7 @@ class UserSeeder extends Seeder
         ]);
         $teacher2->assignRole('teacher');
         
-        $teacherProfile2 = CampusTeacher::create([
+        $teacherProfile2 = CampusTeacher::firstorcreate([
             'user_id' => $teacher2->id,
             'teacher_code' => 'PROF002',
             'first_name' => 'Maria',
@@ -103,7 +114,7 @@ class UserSeeder extends Seeder
         ]);
 
         // ESTUDIANT 1
-        $student1 = User::create([
+        $student1 = User::firstorcreate([
             'name' => 'Anna Martínez i Roca',
             'email' => 'alumne@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -112,7 +123,7 @@ class UserSeeder extends Seeder
         ]);
         $student1->assignRole('student');
         
-        $studentProfile1 = CampusStudent::create([
+        $studentProfile1 = CampusStudent::firstorcreate([
             'user_id' => $student1->id,
             'student_code' => 'EST001',
             'first_name' => 'Anna',
@@ -129,7 +140,7 @@ class UserSeeder extends Seeder
         ]);
 
         // ESTUDIANT 2
-        $student2 = User::create([
+        $student2 = User::firstorcreate([
             'name' => 'Carles Ruiz i Navarro',
             'email' => 'student@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -137,7 +148,7 @@ class UserSeeder extends Seeder
         ]);
         $student2->assignRole('student');
         
-        $studentProfile2 = CampusStudent::create([
+        $studentProfile2 = CampusStudent::firstorcreate([
             'user_id' => $student2->id,
             'student_code' => 'EST002',
             'first_name' => 'Carles',
@@ -154,7 +165,7 @@ class UserSeeder extends Seeder
         ]);
 
         // USUARI BÀSIC 1
-        $user1 = User::create([
+        $user1 = User::firstorcreate([
             'name' => 'Usuari Bàsic',
             'email' => 'usuari@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -164,7 +175,7 @@ class UserSeeder extends Seeder
         $user1->assignRole('user');
 
         // USUARI BÀSIC 2
-        $user2 = User::create([
+        $user2 = User::firstorcreate([
             'name' => 'Usuari Secundari',
             'email' => 'usuari2@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -173,7 +184,7 @@ class UserSeeder extends Seeder
         $user2->assignRole('user');
 
         // CONVIDAT 1
-        $invited1 = User::create([
+        $invited1 = User::firstorcreate([
             'name' => 'Convidat Extern',
             'email' => 'convidat@empresa.cat',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
@@ -183,7 +194,7 @@ class UserSeeder extends Seeder
         $invited1->assignRole('invited');
 
         // CONVIDAT 2
-        $invited2 = User::create([
+        $invited2 = User::firstorcreate([
             'name' => 'Col·laborador Temporal',
             'email' => 'col·laborador@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
