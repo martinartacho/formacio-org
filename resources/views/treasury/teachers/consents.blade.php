@@ -24,6 +24,7 @@
                 <td class="p-2">{{ $consent->season }}</td>
                 <td class="p-2">{{ $consent->accepted_at->format('d/m/Y H:i') }}</td>
                 <td class="p-2 text-xs">{{ $consent->checksum }}</td>
+                <td class="p-2">Pepep limpiar en linea 27</td>
                 <td class="p-2">
                     <a
                         href="{{ route('consents.download', ['consent' => $consent->id]) }}"
@@ -37,7 +38,7 @@
     </tbody>
 </table>
 
-<a href="{{ route('treasury.teachers.show', $teacher) }}"
+<a href="{{ route('campus.treasury.teachers.show', $teacher) }}"
    class="inline-block mt-4 text-sm underline">
     ← Tornar
 </a>

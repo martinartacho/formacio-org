@@ -13,20 +13,37 @@ return new class extends Migration {
             $table->foreignId('teacher_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
+            
+                
+            // excepcionly for teacher 
+            $table->foreignId('delegated_by_user_id')
+                ->nullable()
+                ->nullOnDelete();
+
+            $table->text('delegated_reason')->nullable();
+            
 
             $table->string('season'); // ex: 2025-2026
             $table->string('document_path'); // PDF
             $table->timestamp('accepted_at');
             $table->string('checksum'); // hash del PDF
-
+            
             $table->timestamps();
 
             $table->unique(['teacher_id', 'season']);
         });
     }
 
-    public function down(): void
+/*     public function down(): void
     {
         Schema::dropIfExists('consent_histories');
+    } */
+
+    public function down(): void
+    {
+        Schema::table('consent_histories', function (Blueprint $table) {
+            $table->dropForeign(['delegated_by_user_id']);
+            $table->dropColumn(['delegated_by_user_id', 'delegated_reason']);
+        });
     }
 };

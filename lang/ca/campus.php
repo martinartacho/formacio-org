@@ -316,6 +316,15 @@ return [
     'all_time' => 'Tot el temps',
 
     'campus_management' => 'Gestió del curs',
+    // Tresor    
+    'treasury' => 'Tresoreria',
+    'treasury_management' => 'Gestió de la tresoreria',
+    'treasury_RGPD' => 'RGPD',
+    'treasury_RGPD_info' => 'Regisre General de Protecció de Dades (RGPD)',
 
+    
+    'treasury_transactions' => 'Transaccions de la tresoreria',
+
+    
 
 ];

@@ -82,9 +82,12 @@ Route::middleware(['auth', 'permission:campus.courses.view'])
         ->name('registrations.index');
 });
 
-Route::middleware(['auth', 'role:treasury'])
-    ->prefix('treasury')
-    ->name('treasury.')
+
+
+
+Route::middleware(['auth', 'permission:campus.teachers.view'])
+    ->prefix('campus/treasury')
+    ->name('campus.treasury.')
     ->group(function () {
         Route::get('teachers', [TeacherTreasuryController::class, 'index'])
             ->name('teachers.index');
@@ -94,8 +97,11 @@ Route::middleware(['auth', 'role:treasury'])
 
         Route::post('teachers/{teacher}/consent', [TeacherTreasuryController::class, 'storeConsent'])
             ->name('teachers.consent.store');   
-        Route::get('teachers/export/csv', [TeacherTreasuryController::class, 'exportCsv'])
-            ->name('teachers.export.csv');
+        
+        Route::get(
+            'teachers/export/csv',
+            [TeacherTreasuryController::class, 'exportCsv']
+        )->name('teachers.export.csv');
 
         Route::post(
             'teachers/{teacher}/consent/pdf',
@@ -106,6 +112,17 @@ Route::middleware(['auth', 'role:treasury'])
             'teachers/{teacher}/consents',
             [TeacherTreasuryController::class, 'consentHistory']
         )->name('teachers.consents');
+
+        Route::get(
+            'teachers/export/{format}',
+            [TeacherTreasuryController::class, 'export']
+            )->whereIn('format', ['csv', 'xlsx'])
+        ->name('teachers.export');
+
+        /* Route::get(
+            'consents/{consent}/download',
+            [TeacherTreasuryController::class, 'downloadConsent']
+        )->name('consents.download'); */
 
 
 });    
@@ -118,8 +135,7 @@ Route::middleware(['auth', 'role:treasury'])
         
 //  Rutas protegidas por login y verificación
 Route::middleware(['auth', 'verified'])->group(function () {
-
-    
+   
     
     /* Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
         ->name('dashboard'); */

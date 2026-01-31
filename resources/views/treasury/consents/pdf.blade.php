@@ -12,7 +12,9 @@
 </head>
 <body>
 
-<h1>Consentiment RGPD – Temporada {{ $season }}</h1>
+<h1>Consentiment RGPD - Professorat – Temporada {{ $season }}</h1>
+<h2>versió treasury</h2>
+
 
 <p>
 Jo, <strong>{{ $teacher->name }}</strong>, amb correu electrònic

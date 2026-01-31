@@ -16,7 +16,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
         <!-- SweetAlert2 CSS -->
-        {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"> --}}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -46,8 +46,8 @@
                         document.querySelector('.animate-fade-in-out').style.opacity = '0';
                         setTimeout(() => {
                             document.querySelector('.animate-fade-in-out').remove();
-                        }, 1000);
-                    }, 3000);
+                        }, 10000);
+                    }, 30000);
                 </script>
             @endif
 

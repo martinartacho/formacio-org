@@ -16,14 +16,24 @@ class ConsentHistory extends Model
         'document_path',
         'accepted_at',
         'checksum',
+        'delegated_by_user_id',
+        'delegated_reason',
     ];
 
     protected $casts = [
         'accepted_at' => 'datetime',
     ];
 
-    public function teacher(): BelongsTo
+
+
+    public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
     }
+
+    public function delegatedBy()
+    {
+        return $this->belongsTo(User::class, 'delegated_by_user_id');
+    }
+
 }

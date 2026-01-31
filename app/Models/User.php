@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+
+use App\Models\ConsentHistory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -126,9 +128,18 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function consents()
     {
-        return $this->hasMany(\App\Models\ConsentHistory::class);
+        return $this->hasMany(ConsentHistory::class, 'teacher_id');
     }
 
+    public function consentHistories()
+    {
+        return $this->hasMany(ConsentHistory::class, 'teacher_id');
+    }
+
+    public function latestConsent()
+    {
+        return $this->hasOne(ConsentHistory::class, 'teacher_id')->latest('accepted_at');
+    }
 
 }
 
