@@ -119,19 +119,46 @@ Route::middleware(['auth', 'permission:campus.teachers.view'])
             )->whereIn('format', ['csv', 'xlsx'])
         ->name('teachers.export');
 
-        /* Route::get(
-            'consents/{consent}/download',
-            [TeacherTreasuryController::class, 'downloadConsent']
-        )->name('consents.download'); */
+        //  Per autocompletar dades perfil treasury teacher
+        Route::get(
+            'teacher/complete-profile/{token}',
+            [\App\Http\Controllers\Public\TeacherPublicProfileController::class, 'edit']
+        )->name('teacher.public.profile');
 
+        Route::post(
+            'teacher/complete-profile/{token}',
+            [\App\Http\Controllers\Public\TeacherPublicProfileController::class, 'update']
+        );
 
 });    
 
-    Route::get(
-            'consents/{consent}/download',
-            [TeacherTreasuryController::class, 'downloadConsent']
-        )->name('consents.download');
-        
+Route::get(
+        'consents/{consent}/download',
+        [TeacherTreasuryController::class, 'downloadConsent']
+    )->name('consents.download');
+
+// ENVIAR MAIL (Treasury)    
+Route::middleware(['auth', 'permission:campus.consents.request'])
+    ->prefix('campus/treasury')
+    ->name('campus.treasury.')
+    ->group(function () {
+
+        Route::post(
+            'teachers/{teacher}/send-access',
+            [\App\Http\Controllers\TeacherAccess\SendTeacherAccessController::class, 'send']
+        )->name('teachers.send-access');
+    });
+// OBRIR ENLLAÇ (sense login)
+Route::get(
+    'teacher-access/{token}',
+    [\App\Http\Controllers\TeacherAccess\TeacherAccessController::class, 'show']
+)->name('teacher.access.form');
+
+Route::post(
+    'teacher-access/{token}',
+    [\App\Http\Controllers\TeacherAccess\TeacherAccessController::class, 'store']
+)->name('teacher.access.store');
+
         
 //  Rutas protegidas por login y verificación
 Route::middleware(['auth', 'verified'])->group(function () {

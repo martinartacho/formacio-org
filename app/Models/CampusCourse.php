@@ -187,4 +187,82 @@ class CampusCourse extends Model
     {
         return now()->between($this->start_date, $this->end_date);
     }
+
+       /**
+     * Get main teacher for the course.
+     */
+    public function mainTeacher()
+    {
+        return $this->teachers()
+            ->wherePivot('role', 'teacher')
+            ->wherePivotNull('finished_at')
+            ->first();
+    }
+
+    /**
+     * Get active teachers for the course.
+     */
+    public function activeTeachers()
+    {
+        return $this->teachers()
+            ->wherePivotNull('finished_at')
+            ->get();
+    }
+
+    public function assistantTeachers()
+    {
+        return $this->teachers()
+            ->wherePivot('role', 'assistant')
+            ->get();
+    }
+
+
+    /**
+     * Get total hours assigned to all teachers.
+     */
+    public function getTotalAssignedHoursAttribute(): float
+    {
+        return $this->teachers()
+            ->wherePivotNull('finished_at')
+            ->sum('hours_assigned');
+    }
+
+    /**
+     * Check if a specific teacher is assigned to this course.
+     */
+    public function hasTeacher(int $teacherId, bool $activeOnly = true): bool
+    {
+        $query = $this->teachers()->where('teacher_id', $teacherId);
+        
+        if ($activeOnly) {
+            $query->wherePivotNull('finished_at');
+        }
+        
+        return $query->exists();
+    }
+
+    /**
+     * Get teacher assignment with pivot data.
+     */
+    public function getTeacherAssignment(int $teacherId)
+    {
+        return $this->teachers()
+            ->where('teacher_id', $teacherId)
+            ->withPivot(['role', 'hours_assigned', 'assigned_at', 'finished_at'])
+            ->first();
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(CampusTeacherPayment::class, 'teacher_id');
+    }
+
+    public function teacherPayments()
+    {
+        return $this->hasMany(CampusTeacherPayment::class, 'course_id');
+    }
+
+
+ 
+
 }

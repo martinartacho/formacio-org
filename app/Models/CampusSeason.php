@@ -83,4 +83,9 @@ class CampusSeason extends Model
     {
         return now()->between($this->season_start, $this->season_end);
     }
+
+    public function teacherPayments()
+    {
+        return $this->hasMany(CampusTeacherPayment::class, 'season_id');
+    }
 }

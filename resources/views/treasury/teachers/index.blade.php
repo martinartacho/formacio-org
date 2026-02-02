@@ -2,7 +2,7 @@
 
 
 @section('title', __('campus.treasury'))
-@section('subtitle', __('campus.Gestió professors (consentiments RGPD)'))
+@section('subtitle', __('campus.treasury_management'))
 
 @section('breadcrumbs')
     <li>
@@ -19,7 +19,7 @@
 @section('actions')
     <div class="flex space-x-2">
                 
-        @if($teachers->count() > 5)
+        {{-- @if($teachers->count() > 1) --}}
         <a href="{{ route('campus.treasury.teachers.export', 'xlsx') }}"
             class="px-4 py-2 bg-blue-600 text-white rounded">
             ⬇️ Excel
@@ -28,7 +28,7 @@
             class="px-4 py-2 bg-green-600 text-white rounded">
             ⬇️ CSV
         </a>
-        @endif
+       {{--  @endif --}}
     </div>
 @endsection
 
@@ -54,6 +54,14 @@
                         ✅ Acceptat
                     @else
                         ❌ Pendent
+                        <form method="POST"
+                        action="{{ route('campus.treasury.teachers.send-access', $teacher) }}">
+                        @csrf
+                        <button type="submit"
+                                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            Enviar recordatori
+                        </button>
+                        </form>
                     @endif
                 </td>
                 <td class="p-2 text-center">
@@ -61,6 +69,8 @@
                        class="text-blue-600 underline">
                         Veure
                     </a>
+
+                   
                 </td>
             </tr>
         @endforeach

@@ -32,7 +32,7 @@ class TeacherTreasuryController extends Controller
     public function show(User $teacher)
     {
         $this->authorize('campus.teachers.financial_data.view');
-
+        
         /*
         $season = CampusSeason::where('is_current', true)->first();
         $currentSeason = CampusSeason::current()->first();
