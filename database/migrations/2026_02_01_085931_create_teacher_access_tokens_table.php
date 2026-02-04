@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('token', 64)->unique();
             $table->timestamp('expires_at');
             $table->timestamp('used_at')->nullable();
+            $table->json('metadata')->nullable();
             $table->timestamps();
         });
 
@@ -28,5 +29,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('teacher_access_tokens');
+        $table->dropColumn('metadata');
     }
 };

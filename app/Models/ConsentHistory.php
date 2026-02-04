@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ConsentHistory extends Model
 {
-     use HasFactory;
-     
-     protected $fillable = [
+    use HasFactory;
+    
+    protected $fillable = [
         'teacher_id',
         'season',
         'document_path',
@@ -24,16 +24,18 @@ class ConsentHistory extends Model
         'accepted_at' => 'datetime',
     ];
 
-
+    // Añadir valor por defecto para document_path
+    protected $attributes = [
+        'document_path' => 'pending',
+    ];
 
     public function teacher()
     {
-        return $this->belongsTo(User::class, 'teacher_id');
+        return $this->belongsTo(CampusTeacher::class, 'teacher_id');
     }
 
     public function delegatedBy()
     {
         return $this->belongsTo(User::class, 'delegated_by_user_id');
     }
-
 }

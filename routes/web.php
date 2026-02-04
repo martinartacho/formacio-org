@@ -20,6 +20,7 @@ use App\Http\Controllers\Campus\CourseController;
 use App\Http\Controllers\Campus\CourseTeacherController;
 use App\Http\Controllers\Campus\TeacherController;
 use App\Http\Controllers\Campus\CourseRegistrationController;
+use App\Http\Controllers\TeacherAccess\TeacherAccessController;
 // use App\Http\Controllers\Manager\DashboardController; // Per ara inhabilitat
 use App\Http\Controllers\Manager\RegistrationController;
 use App\Http\Controllers\Treasury\TeacherTreasuryController;
@@ -130,12 +131,19 @@ Route::middleware(['auth', 'permission:campus.teachers.view'])
             [\App\Http\Controllers\Public\TeacherPublicProfileController::class, 'update']
         );
 
-});    
+
+        });    
+
+        
 
 Route::get(
         'consents/{consent}/download',
         [TeacherTreasuryController::class, 'downloadConsent']
     )->name('consents.download');
+
+//  ruta per veure el resultat del formulari de success
+Route::get('teacher-access/success/{token}', [TeacherAccessController::class, 'success'])
+    ->name('teacher.access.success');
 
 // ENVIAR MAIL (Treasury)    
 Route::middleware(['auth', 'permission:campus.consents.request'])

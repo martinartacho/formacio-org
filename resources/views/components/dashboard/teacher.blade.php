@@ -48,6 +48,7 @@
                 <h1 class="text-2xl font-bold text-gray-800">
                     {{ auth()->user()->name }}
                 </h1>
+                @if($teacher)
                 <div class="flex items-center gap-4 mt-2 text-sm text-gray-600">
                     <span class="font-medium">@lang('campus.code'): {{ $teacher->teacher_code }}</span>
                     @if($teacher->specialization)
@@ -56,6 +57,7 @@
                         </span>
                     @endif
                 </div>
+                @endif
             </div>
             
             @if($season)
