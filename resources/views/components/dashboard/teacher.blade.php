@@ -5,6 +5,7 @@
     'season' => null,
     'seasons' => collect(),
     'teacherCourses' => collect(),
+    'allCourses' => collect(),
     'stats' => [],
     'debug' => null,
     'error' => null,
@@ -12,18 +13,20 @@
 
 <div class="space-y-6">
 
+
+
     {{-- CARDS SUPERIORES --}}
     @include('components.dashboard-teacher-cards')
 
     {{-- DEBUG --}}
-    @if(config('app.debug'))
+   {{--  @if(config('app.debug'))
         <pre class="bg-gray-100 p-3 text-xs rounded border">{{ var_export([
             'teacher' => optional($teacher)->teacher_code,
             'courses' => $teacherCourses->count(),
             'stats' => $stats,
         ], true) }}
         </pre>
-    @endif
+    @endif --}}
 
     {{-- ERROR GLOBAL --}}
     @if($error)
@@ -53,7 +56,7 @@
                     <span class="font-medium">@lang('campus.code'): {{ $teacher->teacher_code }}</span>
                     @if($teacher->specialization)
                         <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                            {{ $teacher->specialization }}
+                            {{ $teacher->specialization }} pepe
                         </span>
                     @endif
                 </div>
@@ -150,7 +153,7 @@
                                         </div>
                                     </div>
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $statusColor['bg'] }} {{ $statusColor['text'] }}">
-                                        @lang('campus.course_status_' . $course->status)
+                                        @lang('campus.course_status_'.$course->status)
                                     </span>
                                 </div>
                                 
