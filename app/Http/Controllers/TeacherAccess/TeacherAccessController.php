@@ -10,8 +10,11 @@ use App\Models\ConsentHistory;
 use App\Models\CampusSeason;
 use App\Models\CampusCourse;
 use App\Models\CampusCourseTeacher;
+use App\Models\TreasuryData;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -140,6 +143,7 @@ class TeacherAccessController extends Controller
         }
     }
     
+    /*      Versió anterios funcional sense pdf
     private function handleBasicDataForm(Request $request, User $user, TeacherAccessToken $accessToken)
     {
         // Validar datos básicos
@@ -155,7 +159,7 @@ class TeacherAccessController extends Controller
         // Actualizar usuario
         $user->update([
             'email' => $validated['email'],
-            'phone' => $validated['phone'] ?? null,
+            'name' => $validated['first_name'] . ' ' . $validated['last_name'],
         ]);
         
         // Buscar o crear profesor
@@ -219,6 +223,122 @@ class TeacherAccessController extends Controller
                 'season' => $seasonSlug
             ]);
         }
+        
+        // Marcar token como usado parcialmente
+        $accessToken->update([
+            'metadata' => ['basic_data_completed' => true, 'completed_at' => now()],
+        ]);
+        
+        Log::info('Datos básicos guardados para profesor:', [
+            'user_id' => $user->id,
+            'teacher_id' => $teacher->id,
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? 'null'
+        ]);
+        
+        DB::commit();
+        
+        // Redirigir a success
+        return redirect()->route('teacher.access.form', [
+            'token' => $accessToken->token,
+            'message' => 'basic_data_saved'
+        ]);
+    } */
+
+    private function handleBasicDataForm(Request $request, User $user, TeacherAccessToken $accessToken)
+    {
+        // Validar datos básicos
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:200',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'consent_rgpd' => 'required|accepted',
+        ]);
+        
+        // Actualizar usuario
+        $user->update([
+            'email' => $validated['email'],
+            'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+        ]);
+        
+        // Buscar o crear profesor
+        $teacher = CampusTeacher::where('user_id', $user->id)->first();
+        
+        if ($teacher) {
+            // Actualizar profesor existente
+            $teacher->update([
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'] ?? null,
+            ]);
+        } else {
+            // Crear nuevo profesor
+            $teacher = CampusTeacher::create([
+                'user_id' => $user->id,
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'] ?? null,
+                'teacher_code' => 'TCH' . str_pad($user->id, 5, '0', STR_PAD_LEFT),
+                'status' => 'active',
+            ]);
+        }
+        
+        // ========== NUEVO: GENERAR PDF DE CONSENTIMIENTO ==========
+        $season = CampusSeason::where('is_current', true)->first();
+        $seasonSlug = $season->slug ?? date('Y');
+        $acceptedAt = now();
+
+        // Calcular checksum similar a Treasury
+        $checksum = hash('sha256', implode('|', [
+            $user->id,
+            $seasonSlug,
+            $acceptedAt->timestamp,
+            $user->id, // En este caso, el profesor se auto-registra
+        ]));
+
+        // Generar PDF
+        $pdf = Pdf::loadView('pdfs.teacher-consent', [
+            'user' => $user,
+            'teacher' => $teacher,
+            'season' => $season,
+            'acceptedAt' => $acceptedAt,
+            'delegatedBy' => null, // No hay delegación en este flujo
+            'delegatedReason' => null,
+            'checksum' => $checksum,
+        ]);
+        
+        // Ruta para guardar el PDF
+        $path = "consents/teachers/{$user->id}/{$seasonSlug}.pdf";
+        
+        // Guardar el PDF
+        Storage::disk('local')->put($path, $pdf->output());
+        
+        // Registrar en ConsentHistory
+        ConsentHistory::updateOrCreate([
+            'teacher_id' => $user->id,
+            'season' => $seasonSlug,
+        ], [
+            'accepted_at' => $acceptedAt,
+            'checksum' => $checksum,
+            'document_path' => $path,
+            'delegated_by_user_id' => null,
+            'delegated_reason' => null,
+        ]);
+        
+        // Opcional: Guardar también en TreasuryData como en Treasury
+        TreasuryData::updateOrCreate(
+            [
+                'teacher_id' => $user->id,
+                'key' => 'consent_signed_at',
+            ],
+            [
+                'value' => $acceptedAt->toDateTimeString(),
+            ]
+        );
+        // ========== FIN GENERACIÓN PDF ==========
         
         // Marcar token como usado parcialmente
         $accessToken->update([

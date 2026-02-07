@@ -123,7 +123,12 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function treasuryData(): HasMany
     {
-        return $this->hasMany(TreasuryData::class, 'teacher_id');
+        return $this->hasMany(
+            TreasuryData::class,
+            'teacher_id', // FK
+            'id'          // users.id
+        );
+        // return $this->hasMany(TreasuryData::class, 'teacher_id');
     }
 
     public function consents()

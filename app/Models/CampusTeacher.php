@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder;
 
+
 class CampusTeacher extends Model
 {
     use HasFactory;
@@ -178,4 +179,5 @@ class CampusTeacher extends Model
             ->wherePivotNull('finished_at')
             ->exists();
     }
+
 }

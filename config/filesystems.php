@@ -28,6 +28,7 @@ return [
     |
     */
 
+/*     
     'disks' => [
 
         'local' => [
@@ -37,6 +38,7 @@ return [
             'throw' => false,
             'report' => false,
         ],
+        
 
         'public' => [
             'driver' => 'local',
@@ -61,6 +63,32 @@ return [
         ],
 
     ],
+
+*/
+
+'disks' => [
+
+    'local' => [
+        'driver' => 'local',
+        'root' => storage_path('app'),
+        'throw' => false,
+    ],
+
+    'private' => [
+        'driver' => 'local',
+        'root' => storage_path('app/private'),
+        'visibility' => 'private',
+        'throw' => true,
+    ],
+
+    'public' => [
+        'driver' => 'local',
+        'root' => storage_path('app/public'),
+        'url' => env('APP_URL').'/storage',
+        'visibility' => 'public',
+        'throw' => false,
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------

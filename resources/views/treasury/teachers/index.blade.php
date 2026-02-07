@@ -46,6 +46,7 @@
     </thead>
     <tbody>
         @foreach ($teachers as $teacher)
+
             <tr class="border-t">
                 <td class="p-2">{{ $teacher->name }}</td>
                 <td class="p-2">{{ $teacher->email }}</td>
@@ -57,9 +58,10 @@
                         <form method="POST"
                         action="{{ route('campus.treasury.teachers.send-access', $teacher) }}">
                         @csrf
+
                         <button type="submit"
                                 class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                            Enviar recordatori
+                            Enviar recordatori (Pepe canviar si s'ha enviat)
                         </button>
                         </form>
                     @endif

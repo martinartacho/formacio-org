@@ -23,16 +23,12 @@
                 <x-dashboard.manager :stats="$stats ?? []" />
 
             {{-- 3. Teacher --}}
-            {{-- @elseif(auth()->user()->hasRole('teacher'))
-                <x-dashboard.teacher  :stats="$stats ?? []" /> --}}
-
             @elseif(auth()->user()->hasRole('teacher'))
                 <x-dashboard.teacher
                     :teacher="$teacher"
                     :teacher-courses="$teacherCourses"
                     :stats="$stats ?? []"
                 />
-            
 
             {{-- 4. Student --}}
             @elseif(auth()->user()->hasRole('student'))

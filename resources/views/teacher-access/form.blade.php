@@ -87,6 +87,28 @@
                 @enderror
             </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-medium">DNI:</label>
+                    <input type="text" name="dni" 
+                        value="{{ old('dni', $teacher->dni ?? '') }}"
+                        class="border p-2 w-full mt-1" 
+                        placeholder="12345678A">
+                    @error('dni')
+                        <span class="text-red-600 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-medium"> </label>
+                      <div class="space-y-3">
+                       {{--  <input type="text" name="teacher" value="{{ $teacher }}" /> --}}
+                    </div> 
+                </div>
+            </div>
+
             <div class="mb-4">
                 <label class="flex items-center">
                     <input type="checkbox" name="consent_rgpd" value="1" required 
@@ -187,9 +209,9 @@
 
             <div class="mb-6">
                 <h3 class="text-lg font-medium mb-3">Opció de pagament:</h3>
-                {{-- <div class="space-y-3">
+               <div class="space-y-3">
                     {{ $teacher }}
-                </div> --}}
+                </div> 
                 <div class="space-y-3">
                     <label class="flex items-start p-3 border rounded hover:bg-blue-50 cursor-pointer">
                         <input type="radio" name="payment_option" value="own_fee" 
@@ -276,7 +298,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block font-medium">DNI:</label>
-                                <input type="text" name="dni" 
+                                <input type="hidden" name="dni" 
                                     value="{{ old('dni', $teacher->dni ?? '') }}"
                                     class="border p-2 w-full mt-1" 
                                     placeholder="12345678A">
@@ -286,7 +308,7 @@
                             </div>
                             
                             <div>
-                                <label class="block font-medium">Identificació fiscal:</label>
+                                <label class="block font-medium">Identificació fiscal del perceptor:</label>
                                 <span class="block text-sm text-gray-600 mb-1">(Si es diferent del DNI)</span>
                                 <input type="text" name="fiscal_id" 
                                     value="{{ old('fiscal_id', $teacher->metadata['fiscal_id'] ??  $teacher->dni ?? '') }}"

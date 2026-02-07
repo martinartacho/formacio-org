@@ -29,8 +29,40 @@
 
 <div class="box">
     <p>
-        Mitjançant aquest document es deixa constància del consentiment
-        per al tractament de dades personals segons la normativa RGPD vigent.
+        <ul>
+            <li>
+                <strong>Professor/a:</strong> {{ $teacher->name }} ({{ $teacher->email }})
+            </li>
+            <li>
+                <strong>Temporada:</strong> {{ $season->name }} ({{ $season->slug }})
+            </li>
+            <li>
+                <strong>DNI:</strong> {{ $teacher->dni ?? '—' }}
+            </li>
+            @if($teacher->dni)
+            <li>
+                <strong>DNI:</strong> {{ $teacher->dni ?? '—' }}
+            </li>
+            @endif
+
+            @if($teacher->phone)<li>
+            <li>
+                <strong>Telefon:</strong> {{ $teacher->phone }}
+            </li>
+            @endif
+
+            <li>
+                <strong>Data acceptació:</strong> {{ $acceptedAt->format('d/m/Y H:i') }}
+            </li>
+        </ul>   
+    </p>
+</div>
+
+<div class="box">
+    <p>
+        Aquest document deixa constància del consentiment del professor/a
+        {{ $teacher->name }} ({{ $teacher->email }}) per al tractament de dades personals
+        segons la normativa RGPD vigent.
     </p>
 </div>
 

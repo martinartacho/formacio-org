@@ -25,7 +25,7 @@ class TeacherTreasuryController extends Controller
         $teachers = User::role('teacher')
             ->with('treasuryData')
             ->get();
-
+            // dd('nota viernes en index '.$teachers);
         return view('treasury.teachers.index', compact('teachers'));
     }
 
@@ -75,7 +75,7 @@ class TeacherTreasuryController extends Controller
                 : null,
             'checksum' => $checksum,
         ]);
-
+        
         $path = "consents/teachers/{$teacher->id}/{$seasonCode}.pdf";  // ubicacio de la plantilla
         
         Storage::disk('local')->put(  // guarda el pdf a la ubicacio de $path
@@ -190,7 +190,7 @@ class TeacherTreasuryController extends Controller
     public function generateConsentPdf(User $teacher)
     {
         $this->authorize('consents.request');
-        dd('Pepe en linea 169 de generateConsentPdf');
+       //  dd('nota viernes Pepe en linea 169 de generateConsentPdf');
        
         $season = CampusSeason::where('is_current', true)->first();
         $currentSeason = CampusSeason::current()->first();
