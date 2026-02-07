@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             
             $table->string('iban')->nullable();
+            $table->string('bank_titular')->nullable(); //$bankHolder
             $table->string('fiscal_id')->nullable();
             $table->string('fiscal_situation')->nullable();
             $table->enum('needs_payment', ['own_fee', 'ceded_fee', 'waived_fee'])->default('own_fee');

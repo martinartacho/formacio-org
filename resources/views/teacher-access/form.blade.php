@@ -371,11 +371,11 @@
                             
                             <div>
                                 <label class="block font-medium">Titular del compte:</label>
-                                <input type="text" name="bank_swift" 
-                                    value="{{ old('bank_swift', $teacher->bank_holder  ?? '') }}"
+                                <input type="text" name="bank_titular" 
+                                    value="{{ old('bank_titular', $teacher->bank_titular  ?? '') }}"
                                     class="border p-2 w-full"
                                     placeholder="Nom i cognoms del titular">
-                                @error('bank_swift')
+                                @error('bank_titular')
                                     <span class="text-red-600 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -598,18 +598,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mostrar campos según opción seleccionada
         if (optionValue === 'own_fee') {
             if (bankDataFields) bankDataFields.style.display = 'block';
-            setFieldsRequired(['fiscal_id', 'address', 'postal_code', 'city', 'iban', 'bank_swift', 'declaracio_fiscal', 'autoritzacio_dades'], true);
+            setFieldsRequired(['fiscal_id', 'address', 'postal_code', 'city', 'iban', 'bank_titular', 'declaracio_fiscal', 'autoritzacio_dades'], true);
            //  setFieldsRequired(['titol'], false);
         } 
        /*  else if (optionValue === 'ceded_fee') {
             if (bankDataFields) bankDataFields.style.display = 'block';
             if (cededFeeFields) cededFeeFields.style.display = 'block';
-            setFieldsRequired(['fiscal_id', 'address', 'postal_code', 'city', 'iban', 'bank_swift', 'titol', 'declaracio_fiscal', 'autoritzacio_dades'], true);
+            setFieldsRequired(['fiscal_id', 'address', 'postal_code', 'city', 'iban', 'bank_titular', 'titol', 'declaracio_fiscal', 'autoritzacio_dades'], true);
         } */
         else if (optionValue === 'waived_fee') {
             if (waivedFeeFields) waivedFeeFields.style.display = 'block';
             setFieldsRequired([ 'declaracio_fiscal', 'autoritzacio_dades'], true);
-            setFieldsRequired(['fiscal_id', 'address', 'postal_code', 'city', 'iban', 'bank_swift'], false);
+            setFieldsRequired(['fiscal_id', 'address', 'postal_code', 'city', 'iban', 'bank_titular'], false);
         }
     }
 
@@ -626,7 +626,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Función para resetear todos los campos
     function resetAllFields() {
-        const allFields = ['dni', 'fiscal_id', 'address', 'postal_code', 'city', 'iban', 'bank_swift', 'titol', 'declaracio_fiscal', 'autoritzacio_dades'];
+        const allFields = ['dni', 'fiscal_id', 'address', 'postal_code', 'city', 'iban', 'bank_titular', 'titol', 'declaracio_fiscal', 'autoritzacio_dades'];
         allFields.forEach(fieldName => {
             const field = document.querySelector(`[name="${fieldName}"]`);
             if (field) {

@@ -24,7 +24,10 @@ return new class extends Migration {
             
 
             $table->string('season'); // ex: 2025-2026
-            $table->string('document_path'); // PDF
+            $table->string('document_path')->nullable(); // PDF de consentiment
+            $table->string('payment_document_path')->nullable(); // PDF de pagamente
+            
+            
             $table->timestamp('accepted_at');
             $table->string('checksum'); // hash del PDF
             
@@ -34,10 +37,6 @@ return new class extends Migration {
         });
     }
 
-/*     public function down(): void
-    {
-        Schema::dropIfExists('consent_histories');
-    } */
 
     public function down(): void
     {

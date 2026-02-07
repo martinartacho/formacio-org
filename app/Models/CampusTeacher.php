@@ -127,7 +127,7 @@ class CampusTeacher extends Model
                     ->sum('campus_course_teacher.hours_assigned');
     }
 
-        /**
+    /**
      * Get the latest active course assignment.
      */
     public function currentCourse()

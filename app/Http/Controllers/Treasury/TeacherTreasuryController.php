@@ -18,17 +18,125 @@ use Illuminate\Support\Str;
 
 class TeacherTreasuryController extends Controller
 {
-    public function index()
+/*     public function index()
     {
         $this->authorize('campus.teachers.view');
 
         $teachers = User::role('teacher')
             ->with('treasuryData')
             ->get();
-            // dd('nota viernes en index '.$teachers);
+           
         return view('treasury.teachers.index', compact('teachers'));
+    } */
+
+/*     public function index()
+    {
+        $this->authorize('campus.teachers.view');
+
+        // Obtenir la temporada actual
+        $season = CampusSeason::where('is_current', true)->first();
+
+        if (!$season) {
+            $teachers = collect();
+        } else {
+            $teachers = User::role('teacher')
+                ->join('campus_teachers', 'users.id', '=', 'campus_teachers.user_id')
+                ->join('campus_course_teacher', 'campus_teachers.id', '=', 'campus_course_teacher.teacher_id')
+                ->join('campus_courses', 'campus_course_teacher.course_id', '=', 'campus_courses.id')
+                ->where('campus_courses.season_id', $season->id)
+                ->select('users.*')
+                ->distinct()
+                ->with('treasuryData')
+                ->get();
+        }
+        return view('treasury.teachers.index', compact('teachers', 'season'));
+        // return view('treasury.teachers.index', compact('teachers'));
+    } */
+public function index(Request $request)
+{
+    $this->authorize('campus.teachers.view');
+
+    // Obtenir totes les temporades per al selector
+    $seasons = CampusSeason::orderBy('season_start', 'desc')->get();
+    
+    // Obtenir la temporada seleccionada o l'actual
+    $selectedSeasonSlug = $request->input('season');
+    
+    if ($selectedSeasonSlug) {
+        $selectedSeason = CampusSeason::where('slug', $selectedSeasonSlug)->first();
+    } else {
+        $selectedSeason = CampusSeason::where('is_current', true)->first();
+        $selectedSeasonSlug = $selectedSeason->slug ?? null;
     }
 
+    // Inicialitzar variables
+    $teachersWithCourses = collect();
+    $courseAssignments = collect();
+
+    if ($selectedSeason) {
+        // Obtenir assignacions de cursos per a la temporada seleccionada
+        $courseAssignments = \App\Models\CampusCourseTeacher::whereHas('course', function($query) use ($selectedSeason) {
+            $query->where('season_id', $selectedSeason->id);
+        })
+        ->with(['teacher.user', 'course', 'teacher.consents' => function($query) use ($selectedSeason) {
+            $query->where('season', $selectedSeason->slug);
+        }])
+        ->get();
+
+        // Agrupar per professor
+        $groupedAssignments = $courseAssignments->groupBy('teacher_id');
+
+        // Processar les dades per a cada professor
+        $teachersWithCourses = $groupedAssignments->map(function($assignments, $teacherId) use ($selectedSeason) {
+            $teacher = $assignments->first()->teacher;
+            $user = $teacher->user;
+            
+            // Obtenir consentiment RGPD per a aquesta temporada
+            $rgpdConsent = $teacher->consents->first();
+            
+            // Obtenir dades de pagament per a cada curs
+            $coursesWithPayment = $assignments->map(function($assignment) use ($selectedSeason) {
+                $payment = \App\Models\CampusTeacherPayment::where('teacher_id', $assignment->teacher_id)
+                    ->where('course_id', $assignment->course_id)
+                    ->where('season_id', $selectedSeason->id)
+                    ->first();
+                
+                return [
+                    'assignment' => $assignment,
+                    'course' => $assignment->course,
+                    'payment' => $payment,
+                    'has_payment_data' => $payment !== null,
+                ];
+            });
+
+            // Calcular estats globals
+            $hasRgpdConsent = $rgpdConsent !== null;
+            $allCoursesHavePayment = $coursesWithPayment->every(fn($item) => $item['has_payment_data']);
+            $someCoursesHavePayment = $coursesWithPayment->contains(fn($item) => $item['has_payment_data']);
+
+            return [
+                'teacher' => $teacher,
+                'user' => $user,
+                'courses' => $coursesWithPayment,
+                'rgpd_consent' => $rgpdConsent,
+                'has_rgpd_consent' => $hasRgpdConsent,
+                'all_courses_have_payment' => $allCoursesHavePayment,
+                'some_courses_have_payment' => $someCoursesHavePayment,
+                'total_courses' => $coursesWithPayment->count(),
+                'courses_with_payment' => $coursesWithPayment->filter(fn($item) => $item['has_payment_data'])->count(),
+            ];
+        });
+    }
+
+    return view('treasury.teachers.index', compact(
+        'teachersWithCourses', 
+        'seasons', 
+        'selectedSeason', 
+        'selectedSeasonSlug',
+        'courseAssignments'
+    ));
+}
+    
     public function show(User $teacher)
     {
         $this->authorize('campus.teachers.financial_data.view');
@@ -88,7 +196,7 @@ class TeacherTreasuryController extends Controller
             'season' => $seasonCode,
             'accepted_at' => $acceptedAt,
             'checksum' => $checksum,
-            'document_path' => $path,
+            'document_path' => $path ?? null, 
 
             // Delegació
             'delegated_by_user_id' => auth()->id() !== $teacher->id
@@ -232,7 +340,7 @@ class TeacherTreasuryController extends Controller
                 'season' => $season,
             ],
             [
-                'document_path' => $path,
+                'document_path' => $path ?? null,
                 'accepted_at' => $acceptedAt,
                 'checksum' => $checksum,
             ]

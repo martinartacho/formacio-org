@@ -14,7 +14,7 @@
 <h1>Consentiment RGPD – Professorat</h1>
 
 <h2>versió pdfs</h2>
-<p><strong>Professor/a:</strong> {{ $teacher->name }}</p>
+<p><strong>Professor/a:</strong> {{ $teacher->first_name }} {{ $teacher->last_name }}</p>
 <p><strong>Email:</strong> {{ $teacher->email }}</p>
 <p><strong>Temporada:</strong> {{ $season->name }} ({{ $season->slug }})</p>
 <p><strong>Data acceptació:</strong> {{ $acceptedAt->format('d/m/Y H:i') }}</p>
@@ -31,19 +31,18 @@
     <p>
         <ul>
             <li>
-                <strong>Professor/a:</strong> {{ $teacher->name }} ({{ $teacher->email }})
+                <strong>Professor/a:</strong> {{ $teacher->first_name }} {{ $teacher->last_name }} 
+            </li>
+            <li>
+                <strong>correu-e/:</strong>  {{ $teacher->email }}
             </li>
             <li>
                 <strong>Temporada:</strong> {{ $season->name }} ({{ $season->slug }})
             </li>
             <li>
-                <strong>DNI:</strong> {{ $teacher->dni ?? '—' }}
+                <strong>DNI:</strong> {{ $teacher->dni ?? 'NO' }}
             </li>
-            @if($teacher->dni)
-            <li>
-                <strong>DNI:</strong> {{ $teacher->dni ?? '—' }}
-            </li>
-            @endif
+
 
             @if($teacher->phone)<li>
             <li>

@@ -28,7 +28,8 @@ return new class extends Migration
         $table->string('address')->nullable();
 
         $table->string('iban')->nullable();
-         $table->json('metadata')->nullable();
+        $table->string('bank_titular')->nullable(); // bankHolder es el titular del compte
+        $table->json('metadata')->nullable();
         $table->enum('needs_payment', ['own_fee', 'ceded_fee', 'waived_fee'])->default('own_fee');
 
         $table->timestamps();
