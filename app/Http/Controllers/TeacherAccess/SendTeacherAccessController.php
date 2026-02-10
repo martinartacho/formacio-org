@@ -31,7 +31,7 @@ class SendTeacherAccessController extends Controller
                 $teacher,
                 $token,
                 $purpose,
-                $courseCode
+                $courseCode ?? 'general'  // Valor por defecto si es null
             ));
 
 

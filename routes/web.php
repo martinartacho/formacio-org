@@ -160,7 +160,7 @@ Route::middleware(['auth', 'permission:campus.consents.request'])
 
 // Consentiments RGPD
 Route::get(
-    '/teacher/access/{token}/{purpose}/{courseCode}',
+    '/teacher/access/{token}/{purpose}/{courseCode?}',
     [TeacherAccessController::class, 'show']
 )->name('teacher.access.form');
 

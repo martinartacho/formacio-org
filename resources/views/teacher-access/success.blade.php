@@ -15,7 +15,6 @@
 
     <div class="mb-8 p-6 bg-green-50 border border-green-200 rounded-lg">
         <div class="flex items-center mb-4">
-            <p class="text-green-700 mt-1">{{ $message ?? 'jjj.' }}</p>
             <svg class="w-8 h-8 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
@@ -32,6 +31,16 @@
                 <p class="text-sm text-gray-600 mb-3">
                     Consentiment actualitzat el {{ \Carbon\Carbon::parse($latestConsent->updated_at)->format('d/m/Y H:i') }}
                 </p>
+                
+                @if($latestConsent->document_path)
+                    <a href="{{ route('consents.download', $latestConsent) }}" 
+                       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Descarregar PDF del consentiment
+                    </a>
+                @endif
             </div>
         @endif
         
@@ -60,18 +69,17 @@
     
     <!-- Enlaces de acción -->
     <div class="mt-8 flex flex-col sm:flex-row gap-4">
-
-        {{--  Si encara no has omplert el formulari, torna el professor o sencillament tonar al formulari --}}
-        {{-- @if($teacher)  
-            <a href="{{ url('/') }}/teacher-access/28a35613-2aee-495d-bf3c-d38711d3a374" 
-               class="inline-flex items-center justify-center px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700">
+        <!-- Botón para descargar PDF del consentimiento -->
+        @if($latestConsent && $latestConsent->document_path)
+            <a href="{{ route('consents.download', $latestConsent) }}" 
+               class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
-               Tornar al formulari
+                Descarregar PDF
             </a>
-        @endif --}}
-       
+        @endif
+
         {{--  Si Ja ha omplert el formulariPot fer login --}}
         <a href="{{ url('/') }}" 
            class="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700">
@@ -80,6 +88,15 @@
             </svg>
             Entrar al campus
         </a>
+
+        <!-- Botón para cerrar ventana -->
+        <button onclick="window.close()" 
+                class="inline-flex items-center justify-center px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            Tancar finestra
+        </button>
 
          @if($teacher)
             <div class="mt-4">

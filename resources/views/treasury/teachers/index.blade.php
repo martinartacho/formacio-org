@@ -117,6 +117,7 @@
                                                 @if($courseData['has_payment_data'])
                                                     <span class="text-green-600 text-xs">✅</span>
                                                 @else
+                                                  <!-- Botó per enviar condicions de pagament -->
                                                     @if($teacherData['courses_with_payment'] < $teacherData['total_courses'])
                                                         <form method="POST"
                                                             action="{{ route('campus.treasury.teachers.send-access', [
@@ -171,6 +172,7 @@
                                     action="{{ route('campus.treasury.teachers.send-access', [
                                             'teacher' => $teacherData['user']->id,
                                             'purpose' => 'consent',
+                                             'courseCode' => $courseData['course_code']
                                     ]) }}"
                                     class="inline">
                                     @csrf

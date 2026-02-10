@@ -294,6 +294,7 @@ class TeacherAccessController extends Controller
             'payment_option' => 'required|in:own_fee,ceded_fee,waived_fee',
             'season_id' => 'required|string',
             'course_title' => 'required|string',
+            'course_id' => 'required|integer|exists:campus_courses,id',
             'courseasignat-hours' => 'required|string',
             
             // Solo requeridos si no es waived_fee
@@ -349,14 +350,13 @@ class TeacherAccessController extends Controller
 
         // Buscar curso y asignación
         $courseasignat = CampusCourseTeacher::where('teacher_id', $teacher->id)
-            ->whereHas('course', function($query) use ($validated) {
-                $query->where('code', $validated['course_code']);
-            })
+            ->where('course_id', $validated['course_id'])
             ->with('course')
             ->first();
         $course = $courseasignat ? $courseasignat->course : null;
         $season = CampusSeason::where('slug', $validated['season_id'])->first();
-        dd($course_title, $courseasignat);
+         \Log::info('linea 359  :', ['course' => $course]); 
+         \Log::info('linea 360  :', ['courseasignat' => $courseasignat]); 
         // Determinar situación fiscal
         $fiscalSituation = '';
         $fiscalSituations = $request->input('fiscal_situation', []);

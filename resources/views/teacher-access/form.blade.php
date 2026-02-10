@@ -192,11 +192,11 @@
                         </p>
                         <form method="POST" action="{{ route('teacher.access.store', $token->token) }}" class="inline">
                             @csrf
-                            <input type="text" name="course_id" value="{{ $course->id }}">
+                            <input type="hidden" name="course_id" value="{{ $course->id }}">
                             <input type="hidden" name="payment_option" value="waived_fee">
                             <input type="hidden" name="season_id" value="{{ $season->slug ?? '' }}">
                             <input type="hidden" name="course_title" value="{{ $course->title ?? '----' }}">
-                            <input type="text" name="course_code" value="{{ $course->code ?? '----' }}">
+                            <input type="hidden" name="course_code" value="{{ $course->code ?? '----' }}">
                             <input type="hidden" name="courseasignat-hours" value="{{ $courseasignat->hours_assigned ?? '----' }}">
                             <input type="hidden" name="declaracio_fiscal" value="1">
                             
@@ -222,7 +222,7 @@
             <!-- Opciones de pago detalladas -->
             <form method="POST" action="{{ route('teacher.access.store', $token->token) }}" id="payment-form">
                 @csrf
-                <input type="text" name="course_id" value="{{ $course->id }}">
+                <input type="hidden" name="course_id" value="{{ $course->id }}">
                 <div class="mb-6">
                     <h3 class="text-lg font-medium mb-3">Opció de pagament:</h3>
                 <div class="space-y-3">
@@ -290,7 +290,7 @@
                         
                         <div class="bg-white p-2 rounded">
                             <div class="font-medium text-gray-500">Activitat</div>
-                            <div class="text-gray-800">{{ $course->title ?? '----' }}</div>
+                            <div class="text-gray-800">[{{ $course->code ?? '--' }}] {{ $course->title ?? '----' }}</div>
                         </div>
                         
                         <div class="bg-white p-2 rounded">
@@ -312,17 +312,7 @@
                     {{--   {{ $teacher }} --}}
                         <div class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block font-medium">DNI:</label>
-                                    <input type="hidden" name="dni" 
-                                        value="{{ old('dni', $teacher->dni ?? '') }}"
-                                        class="border p-2 w-full mt-1" 
-                                        placeholder="12345678A">
-                                    @error('dni')
-                                        <span class="text-red-600 text-sm">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                
+                               
                                 <div>
                                     <label class="block font-medium">Identificació fiscal del perceptor:</label>
                                     <span class="block text-sm text-gray-600 mb-1">(Si es diferent del DNI)</span>
