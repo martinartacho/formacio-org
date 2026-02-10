@@ -321,7 +321,9 @@ return [
     'treasury_management' => 'Gestió de la tresoreria',
     'treasury_RGPD' => 'RGPD',
     'treasury_RGPD_info' => 'Registre General de Protecció de Dades (RGPD)',
-    'treasury_mail_title' => 'Completar dades economiques i consentiments RGPD',
+    'treasury_mail_title_consent' => 'Confirmació de les teves dades',
+    'treasury_mail_title_consent' => 'Consentiment de tractament de les teves dades  - RGPD',
+    'treasury_mail_title_payment' => 'Confirmació de dades economiques.',
     'treasury_mail_welcome' => 'Hola, :name',
     
     'treasury_mail_body' => 'Jo, :name, amb correu electrònic :email, declaro que he llegit i accepto el tractament de les meves dades personals amb finalitats administratives i econòmiques.',

@@ -15,6 +15,7 @@
 </p>
 
 @if ($purpose === 'payments')
+    <h2>{{ __('campus.treasury_mail_title_payment') }}</h2>
     <p>
         Pots accedir al formulari per completar les dades econòmiques mitjançant aquest enllaç:
     </p>
@@ -34,6 +35,7 @@
     
     
 @else
+    <h2>{{ __('campus.treasury_mail_title_consent') }}</h2>
     <p>
         Pots accedir al formulari per completar els consentiments mitjançant aquest enllaç:
     </p>

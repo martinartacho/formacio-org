@@ -12,17 +12,18 @@
         </div>
     @endif
 
-    <h1 class="text-2xl font-bold mb-6">Completar dades del professor o professora</h1>
- <p class="text-red-600 text-sm"> {{ $token->token ?? 'token null' }}</p>
+    <h1 class="text-2xl font-bold mb-6">Dades personals</h1>
+{{--  <p class="text-red-600 text-sm"> {{ $token->token ?? 'token null' }}</p>
  <p class="text-red-600 text-sm"> {{ $purpose  ?? 'purpuse null'}}</p>
  <p class="text-green-600 text-sm"> Teacher:  {{ $teacher  ?? 'Teacher null'}}</p>
- <p class="text-blue-600 text-sm"> Course:  {{ $course->id }} {{ $course  ?? 'Course null'}}</p>
+ <p class="text-blue-600 text-sm"> Course:  {{ $course->id }} {{ $course  ?? 'Course null'}}</p> --}}
 
   
 
     <!-- Verificar si ya se completaron datos básicos -->
  
     @if(isset($purpose) && $purpose === 'consent')
+     <h2 class="text-xl font-semibold mb-4">{{ __('campus.treasury_mail_title_consent') }}</h2>
         @if($token->metadata && isset($token->metadata['basic_data_completed']))
             <div class="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div class="flex items-center">
@@ -50,13 +51,13 @@
         <div class="mb-8 p-4 border rounded-lg bg-gray-50" 
             id="basic-data-form" 
             style="{{ $token->metadata && isset($token->metadata['basic_data_completed']) ? 'display: none;' : '' }}">
-            <h2 class="text-xl font-semibold mb-4">1. Dades personals i consentiment RGPD</h2>
+           
             
             <form method="POST" action="{{ route('teacher.access.store', $token->token) }}">
                 @csrf
 
                 <div class="mb-4">
-                    <input type="text" name="course_id" value="{{ $course->id }}">
+                    <input type="hidden" name="course_id" value="{{ $course->id }}">
                     <label class="block font-medium">Nom:</label>
                     <input type="text" name="first_name" 
                         value="{{ old('first_name', $teacher->first_name ?? '') }}"
@@ -143,7 +144,7 @@
     <!-- Verificar si ya se completaron datos de pago -->
    
     @if($token->metadata && isset($token->metadata['payment_data_completed']))
-        <h1 class="text-2xl font-semibold mb-4">Control de pepe</h1>
+         <h2 class="text-xl font-semibold mb-4">{{ __('campus.treasury_mail_title_payment') }}</h2>
             <div class="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div class="flex items-center">
                     <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -177,19 +178,46 @@
         <div class="mb-8 p-4 border rounded-lg bg-gray-50" 
             id="payment-data-form" 
             style="{{ $token->metadata && isset($token->metadata['payment_data_completed']) ? 'display: none;' : '' }}">
+            <h2 class="text-xl font-semibold mb-4">{{ __('campus.treasury_mail_title_payment') }}</h2>
             <h2 class="text-xl font-semibold mb-4">Dades de pagament</h2>
             
+            <div class="mb-6 p-4 border rounded bg-gray-100">
+                <div class="font-medium mb-2">📚 Detalls de l'activitat formativa:</div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                        <div class="bg-white p-2 rounded">
+                            <div class="font-medium text-gray-500">Curs acadèmic</div>
+                            <div class="text-gray-800">[{{ $season->slug ?? '' }}] {{ $season->name ?? '----' }}</div>
+                        </div>
+                        
+                        <div class="bg-white p-2 rounded">
+                            <div class="font-medium text-gray-500">Activitat</div>
+                            <div class="text-gray-800">[{{ $course->code ?? '--' }}] {{ $course->title ?? '----' }}</div>
+                        </div>
+                        
+                        <div class="bg-white p-2 rounded">
+                            <div class="font-medium text-gray-500">Hores assignades</div>
+                            <div class="text-gray-800">{{ $courseasignat->hours_assigned ?? '----' }}</div>
+                        </div>
+                    </div>
+
+                </div>
+                <h3 class="text-lg font-medium mb-3">Opció de pagament:</h3>
+                <label class="flex items-start p-3 border rounded hover:bg-blue-50 cursor-pointer">
+                            
+                            <div>
+                                <span class="font-medium">Renuncio voluntàriament al cobrament</span>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    Renuncio voluntàriament al cobrament i a les obligacions fiscals derivades.
+                                    
+                                </p>
+                            </div>
+                        </label>
             <!-- Sección de renuncia rápida (siempre visible) -->
-            <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
                 <div class="flex items-start">
-                    <svg class="w-6 h-6 text-yellow-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
+                    
                     <div class="flex-1">
-                        <h3 class="font-medium text-yellow-800 mb-2">Renúncia voluntària al cobrament</h3>
-                        <p class="text-sm text-yellow-700 mb-3">
-                            Si renuncies voluntàriament al cobrament, pots finalitzar sense completar les dades bancàries.
-                        </p>
                         <form method="POST" action="{{ route('teacher.access.store', $token->token) }}" class="inline">
                             @csrf
                             <input type="hidden" name="course_id" value="{{ $course->id }}">
@@ -202,8 +230,11 @@
                             
                             <button type="submit" 
                                     class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 font-medium">
-                                Finalitzar amb renúncia al cobrament
+                                    Finalitzar amb renúncia al cobrament
                             </button>
+                            <p class="text-sm text-yellow-700 mb-3">
+                                No cal cumplimentar les dades bancàries.
+                            </p>
                         </form>
                     </div>
                 </div>
@@ -270,49 +301,30 @@
                     @enderror
                 </div>
 
-                <!-- NOTA importante -->
-                <div class="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded">
-                    <p class="text-sm font-medium text-yellow-800">
-                        📝 NOTA: La inclusió de les seves dades en l'arxiu de referència és condició indispensable per
-                        abonar els seus serveis.
-                    </p>
-                </div>
 
                 <!-- Detalles de la actividad (siempre visible) -->
                 <div class="mb-6 p-4 border rounded bg-gray-100">
-                    <div class="font-medium mb-2">📚 Detalls de l'activitat formativa:</div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                        <div class="bg-white p-2 rounded">
-                            <div class="font-medium text-gray-500">Curs acadèmic</div>
-                            <div class="text-gray-800">[{{ $season->slug ?? '' }}] {{ $season->name ?? '----' }}</div>
-                        </div>
-                        
-                        <div class="bg-white p-2 rounded">
-                            <div class="font-medium text-gray-500">Activitat</div>
-                            <div class="text-gray-800">[{{ $course->code ?? '--' }}] {{ $course->title ?? '----' }}</div>
-                        </div>
-                        
-                        <div class="bg-white p-2 rounded">
-                            <div class="font-medium text-gray-500">Hores assignades</div>
-                            <div class="text-gray-800">{{ $courseasignat->hours_assigned ?? '----' }}</div>
-                        </div>
-                    </div>
-
                     <input type="hidden" name="season_id" value="{{ $season->slug ?? '' }}">
+                    <input type="hidden" name="code" value="{{ $course->code ?? '----' }}">
                     <input type="hidden" name="course_title" value="{{ $course->title ?? '----' }}">
                     <input type="hidden" name="courseasignat-hours" value="{{ $courseasignat->hours_assigned ?? '----' }}">
                 </div>
-
+                
                 <!-- Campos de datos fiscales (se muestran dinámicamente) -->
                 <div id="payment-fields" class="mt-6">
                     <!-- Solo se muestra si NO es waived_fee -->
                     <div id="bank-data-fields" style="display: none;">
                         <h4 class="text-lg font-medium mb-4 border-b pb-2">💳 Dades bancàries i fiscals</h4>
                     {{--   {{ $teacher }} --}}
+                    <div class="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                    <p class="text-sm font-medium text-yellow-800">
+                        📝 NOTA: La inclusió de les seves dades en l'arxiu de referència és condició indispensable per
+                        abonar els seus serveis.
+                    </p>
+                </div>
                         <div class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                               
+
                                 <div>
                                     <label class="block font-medium">Identificació fiscal del perceptor:</label>
                                     <span class="block text-sm text-gray-600 mb-1">(Si es diferent del DNI)</span>
@@ -323,10 +335,9 @@
                                         <span class="text-red-600 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
-                            </div>
-
-                            <div class="mb-4">
+                            <div>
                                 <label class="block font-medium">Adreça fiscal:</label>
+                                <span class="block text-sm text-gray-600 mb-1">(És recomenable)</span>
                                 <input type="text" name="address" 
                                     value="{{ old('address', $teacher->address ?? '') }}"
                                     class="border p-2 w-full"
@@ -335,7 +346,7 @@
                                     <span class="text-red-600 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
-
+                            
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block font-medium">Codi postal:</label>
@@ -627,13 +638,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mostrar campos según opción seleccionada
         if (optionValue === 'own_fee') {
             if (bankDataFields) bankDataFields.style.display = 'block';
-            setFieldsRequired(['fiscal_id', 'address', 'postal_code', 'city', 'iban', 'bank_titular', 'declaracio_fiscal', 'autoritzacio_dades'], true);
-           //  setFieldsRequired(['titol'], false);
+            setFieldsRequired(['fiscal_id', 'postal_code', 'city', 'iban', 'bank_titular', 'declaracio_fiscal', 'autoritzacio_dades'], true);
+             setFieldsRequired(['address'], false);
         } 
          else if (optionValue === 'ceded_fee') {
             if (bankDataFields) bankDataFields.style.display = 'block';
             if (cededFeeFields) cededFeeFields.style.display = 'block';
-            setFieldsRequired(['fiscal_id', 'address', 'postal_code', 'city', 'iban', 'bank_titular', 'titol', 'declaracio_fiscal', 'autoritzacio_dades', 'observacions_ceded_fee'], true);
+            setFieldsRequired(['fiscal_id', 'postal_code', 'city', 'iban', 'bank_titular', 'titol', 'declaracio_fiscal', 'autoritzacio_dades', 'observacions_ceded_fee'], true);
         } 
         else if (optionValue === 'waived_fee') {
             if (waivedFeeFields) waivedFeeFields.style.display = 'block';

@@ -216,7 +216,7 @@ class TeacherAccessController extends Controller
         ]);
         
         // Ruta para guardar el PDF
-        $path = "consents/users/{$user->id}/{$seasonSlug}.pdf";
+        $path = "consents/users/{$user->id}/consent_{$seasonSlug}.pdf";
         
         // Guardar el PDF
         Storage::disk('local')->put($path, $pdf->output());

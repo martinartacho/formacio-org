@@ -115,7 +115,12 @@
                                             </div>
                                             <div class="ml-2">
                                                 @if($courseData['has_payment_data'])
-                                                    <span class="text-green-600 text-xs">✅</span>
+                                                    <div class="flex flex-col items-end">
+                                                        <span class="text-green-600 text-xs">✅</span>
+                                                        @if($courseData['payment_formatted_date'])
+                                                            <span class="text-xs text-gray-500">{{ $courseData['payment_formatted_date'] }}</span>
+                                                        @endif
+                                                    </div>
                                                 @else
                                                   <!-- Botó per enviar condicions de pagament -->
                                                     @if($teacherData['courses_with_payment'] < $teacherData['total_courses'])
