@@ -82,6 +82,11 @@ class UserSeeder extends Seeder
             'dni' => '12345678A',
             'email' => 'teacher@upg.test',
             'phone' => '+34 600 111 222',
+            'address' => 'Carrer Major 1, Sant Cugat',
+            'postal_code' => '08001',
+            'city'=> 'Barcelona',
+            'iban' => 'ES1234567890123456789012',
+            'bank_titular' => 'Joan Prat i Soler',
             'specialization' => 'Informàtica',
             'title' => 'Dr.',
             'areas' => ['Programació', 'Bases de Dades'],
@@ -106,6 +111,11 @@ class UserSeeder extends Seeder
             'dni' => '87654321B',
             'email' => 'profe@upg.test',
             'phone' => '+34 600 333 444',
+            'address' => 'Carrer del Poble 2, 2-3',
+            'postal_code' => '08401',
+            'city'=> 'Granollers, Barcelona',
+            'iban' => 'ES1234567890123456789999',
+            'bank_titular' => 'Maria Garcia i Lopez',
             'specialization' => 'Matemàtiques',
             'title' => 'Dra.',
             'areas' => ['Àlgebra', 'Càlcul'],
@@ -196,7 +206,7 @@ class UserSeeder extends Seeder
         // CONVIDAT 2
         $invited2 = User::firstorcreate([
             'name' => 'Col·laborador Temporal',
-            'email' => 'col·laborador@upg.test',
+            'email' => 'collaborador@upg.test',
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
             'locale' => 'ca',
         ]);

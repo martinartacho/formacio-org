@@ -8,10 +8,11 @@ use App\Models\User;
 use App\Models\TeacherAccessToken;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 
 class SendTeacherAccessController extends Controller
 {
-    public function send(User $teacher)
+    public function send(User $teacher, Request $request)
     {
         $this->authorize('campus.consents.request');
 
@@ -21,9 +22,18 @@ class SendTeacherAccessController extends Controller
             'expires_at' => now()->addDays(7),
         ]);
 
-        Mail::to($teacher->email)->send(
-            new TeacherAccessMail($teacher, $token)
-        );
+        $purpose = $request->get('purpose'); // 'consent' | 'payments'
+
+        $courseCode = $request->get('courseCode');
+
+        Mail::to($teacher->email)
+            ->send(new TeacherAccessMail(
+                $teacher,
+                $token,
+                $purpose,
+                $courseCode
+            ));
+
 
         return back()->with('success', 'Recordatori enviat correctament.');
     }

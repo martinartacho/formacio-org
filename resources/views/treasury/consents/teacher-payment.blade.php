@@ -236,12 +236,6 @@
             </div>
             @endif
             
-           {{--  @if($bankTitular)
-            <div class="info-item">
-                <div class="label">Titular del compte:</div>
-                <div class="value">{{ $bankTitular }}</div>
-            </div>
-            @endif --}}
             
             @if($fiscalSituation)
             <div class="info-item">

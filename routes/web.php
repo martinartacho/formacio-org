@@ -157,15 +157,19 @@ Route::middleware(['auth', 'permission:campus.consents.request'])
         )->name('teachers.send-access');
     });
 // OBRIR ENLLAÇ (sense login)
+
+// Consentiments RGPD
 Route::get(
-    'teacher-access/{token}',
-    [\App\Http\Controllers\TeacherAccess\TeacherAccessController::class, 'show']
+    '/teacher/access/{token}/{purpose}/{courseCode}',
+    [TeacherAccessController::class, 'show']
 )->name('teacher.access.form');
+
 
 Route::post(
     'teacher-access/{token}',
-    [\App\Http\Controllers\TeacherAccess\TeacherAccessController::class, 'store']
+    [TeacherAccessController::class, 'store']
 )->name('teacher.access.store');
+
 
         
 //  Rutas protegidas por login y verificación

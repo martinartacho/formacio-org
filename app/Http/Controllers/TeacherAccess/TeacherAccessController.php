@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Validator;
 
 class TeacherAccessController extends Controller
 {
-    public function show(string $token)
+    public function show(string $token, string $purpuse, string $courseCode = null)
     {
         \Log::info('=== TEACHER ACCESS START ===');
         \Log::info('Token recibido:', ['token' => $token]);
@@ -79,17 +79,24 @@ class TeacherAccessController extends Controller
         }
 
         // 5. Buscar asignación de curso
-        $courseasignat = CampusCourseTeacher::where('teacher_id', $teacher->id ?? null)->first();
+        $course = CampusCourse::where('code', $courseCode)->firstOrFail();
+        $courseasignat = CampusCourseTeacher::where('teacher_id', $teacher->id)
+            ->whereHas('course', function($query) use ($courseCode) {
+                $query->where('code', $courseCode);
+            })
+            ->with('course')
+            ->first();
         
-        $course = null;
-        if ($courseasignat && $courseasignat->course_id) {
+        
+        /* if ($courseasignat && $courseasignat->course_id) {
             $course = CampusCourse::find($courseasignat->course_id);
-        }
+        } */
 
         \Log::info('=== TEACHER ACCESS END ===');
 
         return view('teacher-access.form', [
             'token' => $accessToken,
+            'purpose' => $purpuse,
             'user' => $user,
             'season' => $season,
             'teacher' => $teacher,
@@ -103,7 +110,8 @@ class TeacherAccessController extends Controller
         \Log::info('=== TEACHER ACCESS STORE ===');
         DB::beginTransaction();
         \Log::info('Token recibido:', ['token' => $token]);
-        
+       //   dd($request->all());    
+       
         try {
             // Validar token
             $accessToken = TeacherAccessToken::where('token', $token)
@@ -117,13 +125,13 @@ class TeacherAccessController extends Controller
                 'name' => $user->name,
                 'email' => $user->email
             ]);
-           //  dd( "recibimos : $request{'consent_rgpd'}", $request);
+           
 
 
             // Determinar qué formulario se está enviando
             if ($request->has('consent_rgpd')) {
                 // Formulario 1: Datos básicos + RGPD
-                return $this->handleBasicDataForm($request, $user, $accessToken);
+                return $this->handleBasicDataForm($request, $user, $accessToken,);
             } elseif ($request->has('payment_option')) {
                 // Formulario 2: Datos de pago
                 return $this->handlePaymentDataForm($request, $user, $accessToken);
@@ -269,7 +277,7 @@ class TeacherAccessController extends Controller
         DB::commit();
         
         // Redirigir a success
-        return redirect()->route('teacher.access.form', [
+        return redirect()->route('teacher.access.success', [
             'token' => $accessToken->token,
             'message' => 'basic_data_saved'
         ]);
@@ -279,7 +287,9 @@ class TeacherAccessController extends Controller
     {
           
         // Validar datos de pago con reglas condicionales
-        // pròpia,  cedida,  exempta
+
+        \Log::info('=== TEACHER ACCESS handlePaymentDataForm ===');        
+        \Log::info('accessToken recibido:', ['accessToken' => $accessToken]);        // pròpia,  cedida,  exempta
         $validator = Validator::make($request->all(), [
             'payment_option' => 'required|in:own_fee,ceded_fee,waived_fee',
             'season_id' => 'required|string',
@@ -324,7 +334,7 @@ class TeacherAccessController extends Controller
         });
         
         if ($validator->fails()) {
-
+            \Log::info('Validación fallida:', ['errors' => $validator->errors()]);
             return back()
                 ->withErrors($validator)
                 ->withInput();
@@ -335,11 +345,18 @@ class TeacherAccessController extends Controller
         // Buscar profesor
         $teacher = CampusTeacher::where('user_id', $user->id)->firstOrFail();
         
+        \Log::info('Teacher :', ['teacher' => $teacher]);        // pròpia,  cedida,  exempta
+
         // Buscar curso y asignación
-        $courseasignat = CampusCourseTeacher::where('teacher_id', $teacher->id)->first();
-        $course = $courseasignat ? CampusCourse::find($courseasignat->course_id) : null;
+        $courseasignat = CampusCourseTeacher::where('teacher_id', $teacher->id)
+            ->whereHas('course', function($query) use ($validated) {
+                $query->where('code', $validated['course_code']);
+            })
+            ->with('course')
+            ->first();
+        $course = $courseasignat ? $courseasignat->course : null;
         $season = CampusSeason::where('slug', $validated['season_id'])->first();
-        
+        dd($course_title, $courseasignat);
         // Determinar situación fiscal
         $fiscalSituation = '';
         $fiscalSituations = $request->input('fiscal_situation', []);
@@ -388,7 +405,7 @@ class TeacherAccessController extends Controller
             'fiscal_situation' => $fiscalSituation,
             'metadata' => $metadata,
         ];
-
+        \Log::info('Payment data:', ['payment_data' => $paymentData]);
        
         // Añadir campos adicionales
         if (isset($validated['address'])) {
@@ -402,11 +419,11 @@ class TeacherAccessController extends Controller
         if ($existingPayment) {
             // Actualizar registro existente
             $existingPayment->update($paymentData);
-            Log::info('Pago actualizado:', ['payment_id' => $existingPayment->id]);
+            \Log::info('Pago actualizado:', ['payment_id' => $existingPayment->id]);
         } else {
             // Crear nuevo registro
             CampusTeacherPayment::create($paymentData);
-            Log::info('Nuevo pago creado');
+            \Log::info('Nuevo pago creado');
         }
 
         // ========== NUEVO: GENERAR PDF DE PAGAMENT ==========
@@ -414,7 +431,7 @@ class TeacherAccessController extends Controller
         $seasonSlug = $validated['season_id'];
         
         // Obtener el ID del curso de la asignación
-        $courseId = $course->id ?? 'unknown';
+        $courseId = $course->code ?? 'unknown';
         
         // Definir ruta al mateix directori que els consentiments
         $paymentPath = "consents/teachers/{$teacher->id}/payment_{$seasonSlug}_{$courseId}.pdf";
@@ -451,13 +468,32 @@ class TeacherAccessController extends Controller
             'autoritzacioDades' => $validated['autoritzacio_dades'] ?? false,
             'seasonSlug' => $seasonSlug, // Afegir per a la vista
         ];
-        
+        \Log::info('Payment data for PDF:', ['payment_data_for_pdf' => $paymentDataForPdf]);
+
         // Generar PDF (CORREGIT: ruta correcta)
         $pdf = Pdf::loadView('treasury.consents.teacher-payment', $paymentDataForPdf);
         
         // Guardar PDF a storage (al mateix disc que els consentiments)
         Storage::disk('local')->put($paymentPath, $pdf->output());
-        
+       
+        \Log::info('GENERACIÓN PDF DStorage:', ['path' => $paymentPath]);   
+
+        // Actualitzar consent_histories amb la ruta del PDF de pagament
+        ConsentHistory::updateOrCreate(
+            [
+                'teacher_id' => $user->id,
+                'season' => $seasonSlug,
+            ],
+            [
+                'payment_document_path' => $paymentPath,
+                'accepted_at' => $acceptedAt,
+                'checksum' => $paymentChecksum,
+
+                
+                // Si vols una data separada per al pagament, pots afegir un camp nou
+            ]
+        );
+        \Log::info('FIN GENERACIÓN PDF DE PAGAMENT ConsentHistory actualitzat:', ['teacher_id' => $user->id, 'season' => $seasonSlug, 'path' => $paymentPath]);     
         // Actualitzar el registre de pagament amb la ruta del PDF dins de metadata
         $paymentRecord = $existingPayment ?? CampusTeacherPayment::where('teacher_id', $teacher->id)
             ->where('season_id', $season->id ?? null)
@@ -478,7 +514,7 @@ class TeacherAccessController extends Controller
                 ]),
             ]);
             
-            Log::info('PDF de pagament generat:', [
+            Log::info('paymentRecord  pagament generat:', [
                 'teacher_id' => $teacher->id,
                 'season' => $seasonSlug,
                 'path' => $paymentPath,
@@ -487,79 +523,83 @@ class TeacherAccessController extends Controller
         }
         // ========== FIN GENERACIÓN PDF DE PAGAMENT ==========
     
-    // Actualizar profesor con datos fiscales si son propios
-    if (in_array($validated['payment_option'], ['own_fee', 'ceded_fee'])) {
-        $teacherMetadata = $teacher->metadata ?? [];
-        // Actualizar metadata del profesor
-        $teacher->update([
-            'dni' => $validated['fiscal_id'] ?? null,
-            'metadata' => array_merge($teacherMetadata, [
-                'fiscal_id' => $validated['fiscal_id'] ?? null,
-                'address' => $validated['address'] ?? null,
-                'postal_code' => $validated['postal_code'] ?? null,
-                'city' => $validated['city'] ?? null,
-                'iban' => $validated['iban'] ?? null,
-                'bank_titular' => $validated['bank_titular'] ?? null,
-                'payment_document_path' => $paymentPath ?? null, // Afegir ruta del PDF
-            ]),
+        // Actualizar profesor con datos fiscales si son propios
+        if (in_array($validated['payment_option'], ['own_fee', 'ceded_fee'])) {
+            $teacherMetadata = $teacher->metadata ?? [];
+            // Actualizar metadata del profesor
+            $teacher->update([
+                'dni' => $validated['fiscal_id'] ?? null,
+                'metadata' => array_merge($teacherMetadata, [
+                    'fiscal_id' => $validated['fiscal_id'] ?? null,
+                    'address' => $validated['address'] ?? null,
+                    'postal_code' => $validated['postal_code'] ?? null,
+                    'city' => $validated['city'] ?? null,
+                    'iban' => $validated['iban'] ?? null,
+                    'bank_titular' => $validated['bank_titular'] ?? null,
+                    'payment_document_path' => $paymentPath ?? null, // Afegir ruta del PDF
+                ]),
+            ]);
+            \Log::info('FIN GENERACIÓN PDF DE PAGAMENT Profesor actualitzat:', ['teacher_id' => $teacher->id]);
+        }
+    
+        // Marcar token como completamente usado
+        $accessToken->update([
+            'used_at' => now(),
+            'metadata' => array_merge(
+                $accessToken->metadata ?? [],
+                [
+                    'payment_data_completed' => true, 
+                    'payment_completed_at' => now()->toDateTimeString(),
+                    'payment_option' => $validated['payment_option'],
+                    'payment_document_path' => $paymentPath ?? null, // Afegir ruta del PDF
+                    'payment_checksum' => $paymentChecksum,
+                ]
+            ),
         ]);
-    }
-    
-    // Marcar token como completamente usado
-    $accessToken->update([
-        'used_at' => now(),
-        'metadata' => array_merge(
-            $accessToken->metadata ?? [],
-            [
-                'payment_data_completed' => true, 
-                'payment_completed_at' => now()->toDateTimeString(),
-                'payment_option' => $validated['payment_option'],
-                'payment_document_path' => $paymentPath ?? null, // Afegir ruta del PDF
-                'payment_checksum' => $paymentChecksum,
-            ]
-        ),
-    ]);
-    
-    // Opcional: Actualizar ConsentHistory amb referència al document de pagament
-    // SOLAMENTE si realment necesites relacionar-los, pero mejor mantener separados
-    // ConsentHistory es para RGPD, Payment es para datos bancarios
+        \Log::info('Token actualitzat:', ['teacher_id' => $teacher->id]);
+        
+        // Opcional: Actualizar ConsentHistory amb referència al document de pagament
+        // SOLAMENTE si realment necesites relacionar-los, pero mejor mantener separados
+        // ConsentHistory es para RGPD, Payment es para datos bancarios
 
-    // Registrar en ConsentHistory
-        ConsentHistory::updateOrCreate([
-            'teacher_id' => $user->id,
+        // Registrar en ConsentHistory
+        /*     ConsentHistory::updateOrCreate([
+                'teacher_id' => $user->id,
+                'season' => $seasonSlug,
+            ], [
+                'accepted_at' => $acceptedAt,
+                'checksum' => $paymentChecksum, // $checksum,
+            // 'document_path' => $path,
+                'payment_document_path' => $paymentPath, // Afegir ruta del PDF
+                'delegated_by_user_id' => null,
+                'delegated_reason' => null,
+            ]);
+            
+
+
+        Log::info('Datos de pago guardados:', [
+            'teacher_id' => $teacher->id,
             'season' => $seasonSlug,
-        ], [
-            'accepted_at' => $acceptedAt,
-            'checksum' => $paymentChecksum, // $checksum,
-           // 'document_path' => $path,
-            'payment_document_path' => $paymentPath, // Afegir ruta del PDF
-            'delegated_by_user_id' => null,
-            'delegated_reason' => null,
+            'checksum' => $paymentChecksum,
+            'payment_option' => $validated['payment_option'],
+            'delegated_by_user_id' => $validated['delegated_by_user_id'] ?? 'null',
+            'delegated_reason' => $validated['delegated_reason'] ?? 'null',
+            // 'fiscal_id' => $validated['fiscal_id'] ?? 'null',
+            //'payment_pdf' => $paymentPath,
         ]);
-    
-    Log::info('Datos de pago guardados:', [
-        'teacher_id' => $teacher->id,
-        'season' => $seasonSlug,
-        'checksum' => $paymentChecksum,
-        'payment_option' => $validated['payment_option'],
-        'delegated_by_user_id' => $validated['delegated_by_user_id'] ?? 'null',
-        'delegated_reason' => $validated['delegated_reason'] ?? 'null',
-        // 'fiscal_id' => $validated['fiscal_id'] ?? 'null',
-        //'payment_pdf' => $paymentPath,
-    ]);
-    
-    DB::commit();
-    
-    // Redirigir a success
-    $messageType = $validated['payment_option'] === 'waived_fee' 
-        ? 'waived_payment_saved' 
-        : 'payment_saved';
-    
-    return redirect()->route('teacher.access.success', [
-        'token' => $accessToken->token,
-        'message' => $messageType
-    ]);
-}    
+        */    
+        DB::commit();
+        
+        // Redirigir a success
+        $messageType = $validated['payment_option'] === 'waived_fee' 
+            ? 'waived_payment_saved' 
+            : 'payment_saved';
+        
+        return redirect()->route('teacher.access.success', [
+            'token' => $accessToken->token,
+            'message' => $messageType
+        ]);
+    }    
     /**
      * Validar formato IBAN
      */

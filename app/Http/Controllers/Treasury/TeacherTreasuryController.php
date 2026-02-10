@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\TreasuryData;
 use App\Models\ConsentHistory;
 use App\Models\CampusSeason;
+use App\Models\CampusTeacherPayment;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TeachersRgpdExport;
 
@@ -18,16 +19,6 @@ use Illuminate\Support\Str;
 
 class TeacherTreasuryController extends Controller
 {
-/*     public function index()
-    {
-        $this->authorize('campus.teachers.view');
-
-        $teachers = User::role('teacher')
-            ->with('treasuryData')
-            ->get();
-           
-        return view('treasury.teachers.index', compact('teachers'));
-    } */
 
 /*     public function index()
     {
@@ -52,8 +43,9 @@ class TeacherTreasuryController extends Controller
         return view('treasury.teachers.index', compact('teachers', 'season'));
         // return view('treasury.teachers.index', compact('teachers'));
     } */
-public function index(Request $request)
-{
+
+/*public function index(Request $request)
+ {
     $this->authorize('campus.teachers.view');
 
     // Obtenir totes les temporades per al selector
@@ -69,74 +61,173 @@ public function index(Request $request)
         $selectedSeasonSlug = $selectedSeason->slug ?? null;
     }
 
-    // Inicialitzar variables
     $teachersWithCourses = collect();
-    $courseAssignments = collect();
 
     if ($selectedSeason) {
-        // Obtenir assignacions de cursos per a la temporada seleccionada
-        $courseAssignments = \App\Models\CampusCourseTeacher::whereHas('course', function($query) use ($selectedSeason) {
-            $query->where('season_id', $selectedSeason->id);
-        })
-        ->with(['teacher.user', 'course', 'teacher.consents' => function($query) use ($selectedSeason) {
-            $query->where('season', $selectedSeason->slug);
-        }])
-        ->get();
-
-        // Agrupar per professor
-        $groupedAssignments = $courseAssignments->groupBy('teacher_id');
-
-        // Processar les dades per a cada professor
-        $teachersWithCourses = $groupedAssignments->map(function($assignments, $teacherId) use ($selectedSeason) {
-            $teacher = $assignments->first()->teacher;
-            $user = $teacher->user;
-            
-            // Obtenir consentiment RGPD per a aquesta temporada
-            $rgpdConsent = $teacher->consents->first();
-            
-            // Obtenir dades de pagament per a cada curs
-            $coursesWithPayment = $assignments->map(function($assignment) use ($selectedSeason) {
-                $payment = \App\Models\CampusTeacherPayment::where('teacher_id', $assignment->teacher_id)
-                    ->where('course_id', $assignment->course_id)
-                    ->where('season_id', $selectedSeason->id)
-                    ->first();
+        // Obtenir usuaris amb rol teacher que tinguin cursos a la temporada actual
+        $teachersWithCourses = User::role('teacher')
+            ->whereHas('teacherProfile.courses', function($query) use ($selectedSeason) {
+                $query->where('season_id', $selectedSeason->id);
+            })
+            ->with([
+                'teacherProfile.courses' => function($query) use ($selectedSeason) {
+                    $query->where('season_id', $selectedSeason->id)
+                          ->withPivot('role', 'hours_assigned');
+                },
+                'consents' => function($query) use ($selectedSeasonSlug) {
+                    $query->where('season', $selectedSeasonSlug);
+                },
+                'teacherProfile.courses.season'
+            ])
+            ->get()
+            ->map(function($user) use ($selectedSeason, $selectedSeasonSlug) {
+                $teacherProfile = $user->teacherProfile;
+                $courses = $teacherProfile->courses ?? collect();
                 
+                // Obtenir consentiment RGPD per a aquesta temporada
+                $rgpdConsent = $user->consents->first();
+                
+                // Obtenir dades de pagament per a cada curs
+                $coursesWithData = $courses->map(function($course) use ($teacherProfile, $selectedSeason) {
+                    $payment = \App\Models\CampusTeacherPayment::where('teacher_id', $teacherProfile->id)
+                        ->where('course_id', $course->id)
+                        ->where('season_id', $selectedSeason->id)
+                        ->first();
+                    
+                    // Verificar si hi ha consentiment de pagament (PDF de pagament)
+                    $paymentConsent = null;
+                    if ($user = $teacherProfile->user) {
+                        $paymentConsent = \App\Models\ConsentHistory::where('teacher_id', $user->id)
+                            ->where('season', $selectedSeason->slug)
+                            ->whereNotNull('payment_document_path')
+                            ->first();
+                    }
+                    
+                    return [
+                        'course' => $course,
+                        'assignment' => $course->pivot,
+                        'payment_data' => $payment,
+                        'payment_consent' => $paymentConsent,
+                        'has_payment_data' => $payment !== null,
+                        'has_payment_pdf' => $paymentConsent !== null,
+                    ];
+                });
+
                 return [
-                    'assignment' => $assignment,
-                    'course' => $assignment->course,
-                    'payment' => $payment,
-                    'has_payment_data' => $payment !== null,
+                    'user' => $user,
+                    'teacher_profile' => $teacherProfile,
+                    'courses' => $coursesWithData,
+                    'rgpd_consent' => $rgpdConsent,
+                    'has_rgpd_consent' => $rgpdConsent !== null,
+                    'total_courses' => $coursesWithData->count(),
+                    'courses_with_payment_data' => $coursesWithData->where('has_payment_data', true)->count(),
+                    'courses_with_payment_pdf' => $coursesWithData->where('has_payment_pdf', true)->count(),
                 ];
             });
-
-            // Calcular estats globals
-            $hasRgpdConsent = $rgpdConsent !== null;
-            $allCoursesHavePayment = $coursesWithPayment->every(fn($item) => $item['has_payment_data']);
-            $someCoursesHavePayment = $coursesWithPayment->contains(fn($item) => $item['has_payment_data']);
-
-            return [
-                'teacher' => $teacher,
-                'user' => $user,
-                'courses' => $coursesWithPayment,
-                'rgpd_consent' => $rgpdConsent,
-                'has_rgpd_consent' => $hasRgpdConsent,
-                'all_courses_have_payment' => $allCoursesHavePayment,
-                'some_courses_have_payment' => $someCoursesHavePayment,
-                'total_courses' => $coursesWithPayment->count(),
-                'courses_with_payment' => $coursesWithPayment->filter(fn($item) => $item['has_payment_data'])->count(),
-            ];
-        });
     }
 
     return view('treasury.teachers.index', compact(
         'teachersWithCourses', 
         'seasons', 
         'selectedSeason', 
-        'selectedSeasonSlug',
-        'courseAssignments'
+        'selectedSeasonSlug'
     ));
-}
-    
+ } 
+*/
+
+    public function index(Request $request)
+    {
+        $this->authorize('campus.teachers.view');
+
+        // Obtenir totes les temporades per al selector
+        $seasons = CampusSeason::orderBy('season_start', 'desc')->get();
+        
+        // Obtenir la temporada seleccionada o l'actual
+        $selectedSeasonSlug = $request->input('season');
+        
+        if ($selectedSeasonSlug) {
+            $selectedSeason = CampusSeason::where('slug', $selectedSeasonSlug)->first();
+        } else {
+            $selectedSeason = CampusSeason::where('is_current', true)->first();
+            $selectedSeasonSlug = $selectedSeason->slug ?? null;
+        }
+
+        $teachers = collect();
+
+        if ($selectedSeason) {
+            // Obtenir usuaris amb rol teacher que tinguin cursos a la temporada actual
+            $teachers = User::role('teacher')
+                ->whereHas('teacherProfile.courses', function($query) use ($selectedSeason) {
+                    $query->where('season_id', $selectedSeason->id);
+                })
+                ->with([
+                    'teacherProfile.courses' => function($query) use ($selectedSeason) {
+                        $query->where('season_id', $selectedSeason->id)
+                            ->withPivot('role', 'hours_assigned');
+                    },
+                    'consents' => function($query) use ($selectedSeason) {
+                        $query->where('season', $selectedSeason->slug);
+                    },
+                    'teacherProfile.payments' => function($query) use ($selectedSeason) {
+                        $query->where('season_id', $selectedSeason->id);
+                    }
+                ])
+                ->get()
+                ->map(function($user) use ($selectedSeason) {
+                    $teacherProfile = $user->teacherProfile;
+                    $courses = $teacherProfile->courses ?? collect();
+                    
+                    // Agrupar pagaments per curs
+                    $paymentsByCourse = $teacherProfile->payments->keyBy('course_id');
+                    
+                    // Processar cada curs
+                    $coursesWithData = $courses->map(function($course) use ($paymentsByCourse) {
+                        $payment = $paymentsByCourse->get($course->id);
+                        
+                        return [
+                            'course' => $course,
+                            'pivot' => $course->pivot,
+                            'payment' => $payment,
+                            'has_payment_data' => $payment !== null,
+                            'hours_assigned' => $course->pivot->hours_assigned ?? 0,
+                            'role' => $course->pivot->role ?? 'teacher',
+                            'course_code' => $course->code ?? 'Sense codi',
+                            'course_title' => $course->title ?? 'Sense títol',
+                        ];
+                    });
+
+                    // Consentiment RGPD
+                    $rgpdConsent = $user->consents->first();
+                    
+                    return [
+                        'user' => $user,
+                        'teacher_profile' => $teacherProfile,
+                        'courses' => $coursesWithData,
+                        'rgpd_consent' => $rgpdConsent,
+                        'has_rgpd_consent' => $rgpdConsent !== null,
+                        'total_courses' => $coursesWithData->count(),
+                        'courses_with_payment' => $coursesWithData->where('has_payment_data', true)->count(),
+                        'all_courses_have_payment' => $coursesWithData->count() > 0 && 
+                                                    $coursesWithData->where('has_payment_data', true)->count() === $coursesWithData->count(),
+                        'total_hours_assigned' => $coursesWithData->sum('hours_assigned'),
+                        'average_hours_per_course' => $coursesWithData->count() > 0 ? round($coursesWithData->sum('hours_assigned') / $coursesWithData->count(), 2) : 0,
+                        'max_hours_course' => $coursesWithData->max('hours_assigned'),
+                        'min_hours_course' => $coursesWithData->min('hours_assigned'),
+                        'courses_by_role' => $coursesWithData->groupBy('role')->map(fn($group) => $group->count()),
+                    ];
+                });
+        }
+
+        // Passem les variables amb els noms que espera la vista
+        return view('treasury.teachers.index', [
+            'teachersWithCourses' => $teachers,
+            'season' => $selectedSeason,
+            'seasons' => $seasons,
+            'selectedSeasonSlug' => $selectedSeasonSlug,
+            'selectedSeason' => $selectedSeason,
+        ]);
+    }
+
     public function show(User $teacher)
     {
         $this->authorize('campus.teachers.financial_data.view');
@@ -223,7 +314,7 @@ public function index(Request $request)
             ->with('success', 'Consentiment RGPD registrat correctament.');
     }
 
-    public function export(string $format)
+/*     public function export(string $format)
     {
         $this->authorize('campus.teachers.financial_data.view');
 
@@ -293,8 +384,74 @@ public function index(Request $request)
         }, $filename, [
             'Content-Type' => 'text/csv',
         ]);
+    } */
+
+    public function export(Request $request, string $format)
+    {
+        $this->authorize('campus.teachers.financial_data.view');
+
+        $seasonSlug = $request->input('season') ?? CampusSeason::where('is_current', true)->firstOrFail()->slug;
+        $season = CampusSeason::where('slug', $seasonSlug)->firstOrFail();
+
+        if ($format === 'csv') {
+            return $this->exportCsv($seasonSlug);
+        }
+
+        return Excel::download(
+            new TeachersRgpdExport($seasonSlug),
+            "teachers_rgpd_{$seasonSlug}.xlsx"
+        );
     }
 
+    public function exportCsv(string $seasonSlug): StreamedResponse
+    {
+        $this->authorize('campus.teachers.financial_data.view');
+
+        $season = CampusSeason::where('slug', $seasonSlug)->firstOrFail();
+        $filename = "teachers_rgpd_{$seasonSlug}.csv";
+
+        return response()->streamDownload(function () use ($seasonSlug) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, [
+                'teacher_id',
+                'name',
+                'email',
+                'rgpd_status',
+                'rgpd_accepted_at',
+                'delegated',
+                'delegated_by',
+                'season',
+            ]);
+
+            User::role('teacher')
+                ->with(['consents' => function ($q) use ($seasonSlug) {
+                    $q->where('season', $seasonSlug);
+                }])
+                ->orderBy('name')
+                ->chunk(100, function ($teachers) use ($handle, $seasonSlug) {
+                    foreach ($teachers as $teacher) {
+                        $consent = $teacher->consents->first();
+
+                        fputcsv($handle, [
+                            $teacher->id,
+                            $teacher->name,
+                            $teacher->email,
+                            $consent ? 'ACCEPTED' : 'PENDING',
+                            $consent?->accepted_at?->format('Y-m-d H:i'),
+                            $consent && $consent->delegated_by_user_id ? 'YES' : 'NO',
+                            $consent?->delegated_by_user_id,
+                            $seasonSlug,
+                        ]);
+                    }
+                });
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
+    
     public function generateConsentPdf(User $teacher)
     {
         $this->authorize('consents.request');

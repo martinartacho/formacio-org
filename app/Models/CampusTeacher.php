@@ -180,4 +180,28 @@ class CampusTeacher extends Model
             ->exists();
     }
 
+    /**
+     * Get the payment data for this teacher.
+     */
+    public function payments()
+    {
+        return $this->hasMany(CampusTeacherPayment::class, 'teacher_id');
+    }
+
+    /**
+     * Get payments for a specific season.
+     */
+    public function paymentsForSeason($seasonId)
+    {
+        return $this->payments()->where('season_id', $seasonId)->get();
+    }
+
+    /**
+     * Get payments for a specific course.
+     */
+    public function paymentsForCourse($courseId)
+    {
+        return $this->payments()->where('course_id', $courseId)->get();
+    }
+
 }
