@@ -63,7 +63,7 @@
                                     @endcanany
                                     @can('settings.edit')
                                         <x-dropdown-link :href="route('settings.edit')" :active="request()->routeIs('settings.*')">
-                                            {{ __('Settings') }}
+                                            {{ __('site.Settings') }}
                                         </x-dropdown-link>
                                     @endcan
 

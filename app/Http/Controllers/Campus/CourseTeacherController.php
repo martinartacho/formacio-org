@@ -52,8 +52,9 @@ class CourseTeacherController extends Controller
             ],
             'hours_assigned' => [
                 'required',
-                'integer',
-                'min:1',
+                'numeric',
+                'min:0.5',
+                'max:999.99',
             ],
         ]);
 

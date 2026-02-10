@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+
+use App\Models\ConsentHistory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -119,6 +121,56 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasOne(CampusTeacher::class);
     }
 
+    public function treasuryData(): HasMany
+    {
+        return $this->hasMany(
+            TreasuryData::class,
+            'teacher_id', // FK
+            'id'          // users.id
+        );
+        // return $this->hasMany(TreasuryData::class, 'teacher_id');
+    }
+
+    public function consents()
+    {
+        return $this->hasMany(ConsentHistory::class, 'teacher_id');
+    }
+
+    public function consentHistories()
+    {
+        return $this->hasMany(ConsentHistory::class, 'teacher_id');
+    }
+
+    public function latestConsent()
+    {
+        return $this->hasOne(ConsentHistory::class, 'teacher_id')->latest('accepted_at');
+    }
+
+    /**
+     * Get the teacher profile associated with the user.
+     */
+    public function teacherProfile()
+    {
+        return $this->hasOne(CampusTeacher::class, 'user_id');
+    }
+
+    /**
+     * Check if user is a teacher.
+     */
+    public function isTeacher(): bool
+    {
+        return $this->hasRole('teacher') && $this->teacherProfile !== null;
+    }
+
+    /**
+     * Get teacher's courses for a specific season.
+     */
+    public function coursesForSeason($seasonId)
+    {
+        return $this->teacherProfile ? 
+            $this->teacherProfile->courses()->where('season_id', $seasonId)->get() : 
+            collect();
+    }
 
 }
 

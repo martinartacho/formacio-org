@@ -46,8 +46,8 @@
                         document.querySelector('.animate-fade-in-out').style.opacity = '0';
                         setTimeout(() => {
                             document.querySelector('.animate-fade-in-out').remove();
-                        }, 1000);
-                    }, 3000);
+                        }, 10000);
+                    }, 30000);
                 </script>
             @endif
 

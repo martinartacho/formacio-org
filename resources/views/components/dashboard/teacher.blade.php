@@ -5,6 +5,7 @@
     'season' => null,
     'seasons' => collect(),
     'teacherCourses' => collect(),
+    'allCourses' => collect(),
     'stats' => [],
     'debug' => null,
     'error' => null,
@@ -12,19 +13,20 @@
 
 <div class="space-y-6">
 
+
+
     {{-- CARDS SUPERIORES --}}
     @include('components.dashboard-teacher-cards')
 
     {{-- DEBUG --}}
-    @if(config('app.debug'))
-        <pre class="bg-gray-100 p-3 text-xs rounded border">
-        {{ var_export([
+   {{--  @if(config('app.debug'))
+        <pre class="bg-gray-100 p-3 text-xs rounded border">{{ var_export([
             'teacher' => optional($teacher)->teacher_code,
             'courses' => $teacherCourses->count(),
             'stats' => $stats,
         ], true) }}
         </pre>
-    @endif
+    @endif --}}
 
     {{-- ERROR GLOBAL --}}
     @if($error)
@@ -49,14 +51,16 @@
                 <h1 class="text-2xl font-bold text-gray-800">
                     {{ auth()->user()->name }}
                 </h1>
+                @if($teacher)
                 <div class="flex items-center gap-4 mt-2 text-sm text-gray-600">
                     <span class="font-medium">@lang('campus.code'): {{ $teacher->teacher_code }}</span>
                     @if($teacher->specialization)
                         <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                            {{ $teacher->specialization }}
+                            {{ $teacher->specialization }} pepe
                         </span>
                     @endif
                 </div>
+                @endif
             </div>
             
             @if($season)
@@ -106,10 +110,6 @@
 
         @if($teacherCourses->isEmpty())
             <div class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" opacity="0.5" />
-                </svg>
                 <p class="mt-4 text-gray-500">
                     @lang('campus.no_courses')
                 </p>
@@ -153,7 +153,7 @@
                                         </div>
                                     </div>
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $statusColor['bg'] }} {{ $statusColor['text'] }}">
-                                        @lang('campus.course_status_' . $course->status)
+                                        @lang('campus.course_status_'.$course->status)
                                     </span>
                                 </div>
                                 

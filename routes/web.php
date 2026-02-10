@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PushLogController;
@@ -19,6 +20,10 @@ use App\Http\Controllers\Campus\CourseController;
 use App\Http\Controllers\Campus\CourseTeacherController;
 use App\Http\Controllers\Campus\TeacherController;
 use App\Http\Controllers\Campus\CourseRegistrationController;
+use App\Http\Controllers\TeacherAccess\TeacherAccessController;
+// use App\Http\Controllers\Manager\DashboardController; // Per ara inhabilitat
+use App\Http\Controllers\Manager\RegistrationController;
+use App\Http\Controllers\Treasury\TeacherTreasuryController;
 
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\LocaleController;
@@ -38,13 +43,141 @@ Route::get('/', fn () => view('welcome'));
 // Auth
 require __DIR__.'/auth.php';
 
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
+/*     Route::prefix('manager')->name('manager.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Manager\DashboardController::class, 'index'])
+            ->name('dashboard');
+    }); */
+
+    Route::prefix('teacher')->name('teacher.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Teacher\DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
+    Route::prefix('student')->name('student.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Student\DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
+        
+});
+
+Route::middleware(['auth', 'permission:campus.courses.view'])
+->prefix('manager')
+->name('manager.')
+->group(function () {
+
+    Route::get('/courses', [CourseController::class, 'index'])
+        ->name('courses.index');
+    Route::get('/registrations', [RegistrationController::class, 'index'])
+        ->name('registrations.index');
+});
+
+
+
+
+Route::middleware(['auth', 'permission:campus.teachers.view'])
+    ->prefix('campus/treasury')
+    ->name('campus.treasury.')
+    ->group(function () {
+        Route::get('teachers', [TeacherTreasuryController::class, 'index'])
+            ->name('teachers.index');
+        
+        Route::get('teachers/{teacher}', [TeacherTreasuryController::class, 'show'])
+            ->name('teachers.show');
+
+        Route::post('teachers/{teacher}/consent', [TeacherTreasuryController::class, 'storeConsent'])
+            ->name('teachers.consent.store');   
+        
+        Route::get(
+            'teachers/export/csv',
+            [TeacherTreasuryController::class, 'exportCsv']
+        )->name('teachers.export.csv');
+
+        Route::post(
+            'teachers/{teacher}/consent/pdf',
+            [TeacherTreasuryController::class, 'generateConsentPdf']
+        )->name('teachers.consent.pdf');            
+
+        Route::get(
+            'teachers/{teacher}/consents',
+            [TeacherTreasuryController::class, 'consentHistory']
+        )->name('teachers.consents');
+
+        Route::get(
+            'teachers/export/{format}',
+            [TeacherTreasuryController::class, 'export']
+            )->whereIn('format', ['csv', 'xlsx'])
+        ->name('teachers.export');
+
+        //  Per autocompletar dades perfil treasury teacher
+        Route::get(
+            'teacher/complete-profile/{token}',
+            [\App\Http\Controllers\Public\TeacherPublicProfileController::class, 'edit']
+        )->name('teacher.public.profile');
+
+        Route::post(
+            'teacher/complete-profile/{token}',
+            [\App\Http\Controllers\Public\TeacherPublicProfileController::class, 'update']
+        );
+
+
+        });    
+
+        
+
+Route::get(
+        'consents/{consent}/download',
+        [TeacherTreasuryController::class, 'downloadConsent']
+    )->name('consents.download');
+
+//  ruta per veure el resultat del formulari de success
+Route::get('teacher-access/success/{token}', [TeacherAccessController::class, 'success'])
+    ->name('teacher.access.success');
+
+// ENVIAR MAIL (Treasury)    
+Route::middleware(['auth', 'permission:campus.consents.request'])
+    ->prefix('campus/treasury')
+    ->name('campus.treasury.')
+    ->group(function () {
+
+        Route::post(
+            'teachers/{teacher}/send-access',
+            [\App\Http\Controllers\TeacherAccess\SendTeacherAccessController::class, 'send']
+        )->name('teachers.send-access');
+    });
+// OBRIR ENLLAÇ (sense login)
+
+// Consentiments RGPD
+Route::get(
+    '/teacher/access/{token}/{purpose}/{courseCode?}',
+    [TeacherAccessController::class, 'show']
+)->name('teacher.access.form');
+
+
+Route::post(
+    'teacher-access/{token}',
+    [TeacherAccessController::class, 'store']
+)->name('teacher.access.store');
+
+
+        
 //  Rutas protegidas por login y verificación
 Route::middleware(['auth', 'verified'])->group(function () {
-
+   
     
-    
-    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
-        ->name('dashboard');
+    /* Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
+        ->name('dashboard'); */
 
     //  Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

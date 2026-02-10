@@ -95,6 +95,7 @@
                                         'secretaria' => 'bg-purple-500',
                                         'alumno' => 'bg-yellow-500',
                                         'gestor' => 'bg-indigo-500',
+                                        'treasury' => 'bg-pink-500',
                                         'editor' => 'bg-teal-500',
                                         'user' => 'bg-gray-500',
                                     ];

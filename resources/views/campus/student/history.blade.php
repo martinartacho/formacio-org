@@ -1,5 +1,5 @@
 {{-- resources/views/campus/student/history.blade.php --}}
-@extends('layouts.app')
+@extends('campus.shared.layout')
 
 @section('title', __('Historial Acadèmic'))
 

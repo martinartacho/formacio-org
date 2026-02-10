@@ -166,6 +166,7 @@ return [
     'edit_course' => 'Editar curs',
     'course_details' => 'Detalls del curs',
     'no_courses' => 'No hi ha cursos',
+    'completed' => 'Completat',
 
     'course_created' => 'Curs creat correctament',
     'course_updated' => 'Curs actualitzat correctament',
@@ -313,5 +314,21 @@ return [
     'month' => 'Mes',
     'year' => 'Any',
     'all_time' => 'Tot el temps',
+
+    'campus_management' => 'Gestió del curs',
+    // Tresor    
+    'treasury' => 'Tresoreria',
+    'treasury_management' => 'Gestió de la tresoreria',
+    'treasury_RGPD' => 'RGPD',
+    'treasury_RGPD_info' => 'Registre General de Protecció de Dades (RGPD)',
+    'treasury_mail_title_consent' => 'Confirmació de les teves dades',
+    'treasury_mail_title_consent' => 'Consentiment de tractament de les teves dades  - RGPD',
+    'treasury_mail_title_payment' => 'Confirmació de dades economiques.',
+    'treasury_mail_welcome' => 'Hola, :name',
+    
+    'treasury_mail_body' => 'Jo, :name, amb correu electrònic :email, declaro que he llegit i accepto el tractament de les meves dades personals amb finalitats administratives i econòmiques.',
+    'treasury_mail_body2' => 'Jo, :name, amb correu electrònic :email, declaro que he llegit i accepto el tractament de les meves dades personals amb finalitats administratives i econòmiques.',
+    
+   
 
 ];
