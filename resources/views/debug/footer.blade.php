@@ -246,9 +246,9 @@
             }
             
             // Auto-refresh cada 30 segundos (opcional)
-            setTimeout(() => {
-                window.location.reload();
-            }, 30000);
+            // setTimeout(() => {
+            //    window.location.reload();
+            // }, 30000);
         </script>
         
         <style>
