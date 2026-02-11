@@ -424,4 +424,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('courses.students');
     });
 
+    // Treasury Routes
+    Route::middleware(['auth', 'role:treasury'])
+    ->prefix('treasury')
+    ->name('treasury.')
+    ->group(function () {
+        
+        Route::get('/dashboard', [TreasuryController::class, 'dashboard'])
+            ->name('dashboard');
+        
+        Route::get('/payments', [TreasuryController::class, 'payments'])
+            ->name('payments.index');
+            
+        Route::get('/teachers', [TreasuryController::class, 'teachers'])
+            ->name('teachers.index');
+            
+        Route::get('/reports', [TreasuryController::class, 'reports'])
+            ->name('reports.index');
+    });
+
 });

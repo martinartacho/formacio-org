@@ -18,12 +18,14 @@
     <div class="flex space-x-2">
         @if($teachersWithCourses->count() > 0)
             <a href="{{ route('campus.treasury.teachers.export', 'xlsx') }}?season={{ $selectedSeasonSlug }}"
-                class="px-4 py-2 bg-blue-600 text-white rounded">
-                ⬇️ Excel
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center">
+                <i class="bi bi-file-earmark-excel mr-2"></i>
+                Excel
             </a>
             <a href="{{ route('campus.treasury.teachers.export', 'csv') }}?season={{ $selectedSeasonSlug }}"
-                class="px-4 py-2 bg-green-600 text-white rounded">
-                ⬇️ CSV
+                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 flex items-center">
+                <i class="bi bi-file-earmark-csv mr-2"></i>
+                CSV
             </a>
         @endif
     </div>
@@ -133,8 +135,9 @@
                                                             class="inline">
                                                             @csrf
                                                             <button type="submit"
-                                                                    class="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
-                                                                💳
+                                                                    class="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center">
+                                                                <i class="bi bi-credit-card mr-1"></i>
+                                                                Pagament
                                                             </button>
                                                         </form>
                                                     @endif
@@ -167,8 +170,9 @@
                         <div class="flex flex-col space-y-2">
                             <!-- Botón para ver detalles -->
                             <a href="{{ route('campus.treasury.teachers.show', $user) }}"
-                               class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
-                                👁️ Veure
+                               class="px-3 py-1 text-blue-600 hover:text-blue-900 rounded hover:bg-blue-50 text-sm flex items-center">
+                                <i class="bi bi-eye mr-1"></i>
+                                Veure
                             </a>
                             
                             <!-- Botón para enviar recordatorio RGPD -->
@@ -177,25 +181,27 @@
                                     action="{{ route('campus.treasury.teachers.send-access', [
                                             'teacher' => $teacherData['user']->id,
                                             'purpose' => 'consent',
-                                             'courseCode' => $courseData['course_code']
+                                            'courseCode' => $courseData['course_code']
                                     ]) }}"
                                     class="inline">
                                     @csrf
-
                                     <button type="submit"
-                                            class="px-3 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600">
-                                        ⬇️ RGPD
+                                            class="px-3 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center">
+                                        <i class="bi bi-envelope mr-1"></i>
+                                        RGPD
                                     </button>
                                 </form>
-
-                                
+                           
+                            
                             @elseif($rgpdConsent && $rgpdConsent->document_path && $rgpdConsent->document_path !== 'pending')
                                 <!-- Descargar consentimiento RGPD -->
                                 <a href="{{ route('consents.download', $rgpdConsent) }}"
-                                   class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm">
-                                    ⬇️ RGPD
+                                   class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm flex items-center">
+                                    <i class="bi bi-download mr-1"></i>
+                                    RGPD
                                 </a>
                             @endif
+                            
                         </div>
                     </td>
                 </tr>

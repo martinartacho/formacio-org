@@ -112,9 +112,6 @@ class RolesAndPermissionsSeeder extends Seeder
             'campus.teachers.edit',
             'campus.teachers.delete',
             'campus.teachers.assign',
-            // Añadir permisos específicos de tesorería
-            'campus.teachers.financial_data.view',
-            'campus.teachers.financial_data.update',
             
             // Matriculacions/Registres
             'campus.registrations.index',
@@ -143,6 +140,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'campus.consents.request',
             'campus.consents.view',
             'campus.reports.financial',
+            
+            // Permisos financieros de profesores
+            'campus.teachers.financial_data.view',
+            'campus.teachers.financial_data.update',
         ];
 
         // COMBINAR TOTS ELS PERMISOS
@@ -198,6 +199,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'campus.teachers.view',
             'campus.teachers.financial_data.view',
             'campus.teachers.financial_data.update',
+            
+            // CRUD Teachers
+            'campus.teachers.index',
+            'campus.teachers.create',
+            'campus.teachers.edit',
+            'campus.teachers.delete',
+            'campus.teachers.assign',
             
             // Consentiments RGPD
             'campus.consents.request',
