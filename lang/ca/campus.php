@@ -321,13 +321,38 @@ return [
     'treasury_management' => 'Gestió de la tresoreria',
     'treasury_RGPD' => 'RGPD',
     'treasury_RGPD_info' => 'Registre General de Protecció de Dades (RGPD)',
-    'treasury_mail_title_consent' => 'Confirmació de les teves dades',
-    'treasury_mail_title_consent' => 'Consentiment de tractament de les teves dades  - RGPD',
-    'treasury_mail_title_payment' => 'Confirmació de dades economiques.',
+    
+    // Email translations
+    'treasury_mail_title' => 'Accés a la zona de tresoreria',
+    'treasury_mail_title_consent' => 'Consentiment de tractament de les teves dades - RGPD',
+    'treasury_mail_title_payment' => 'Confirmació de dades econòmiques',
     'treasury_mail_welcome' => 'Hola, :name',
     
     'treasury_mail_body' => 'Jo, :name, amb correu electrònic :email, declaro que he llegit i accepto el tractament de les meves dades personals amb finalitats administratives i econòmiques.',
     'treasury_mail_body2' => 'Jo, :name, amb correu electrònic :email, declaro que he llegit i accepto el tractament de les meves dades personals amb finalitats administratives i econòmiques.',
+    
+    // Email content
+    'treasury_mail_payment_intro' => 'Pots accedir al formulari per completar les dades econòmiques mitjançant aquest enllaç:',
+    'treasury_mail_consent_intro' => 'Pots accedir al formulari per completar els consentiments mitjançant aquest enllaç:',
+    'treasury_mail_payment_link' => 'Accedir al formulari de pagaments',
+    'treasury_mail_consent_link' => 'Accedir al formulari de consentiments',
+    'treasury_mail_expires' => 'Aquest enllaç caduca en 7 dies.',
+    
+    // Import functionality
+    'import_teachers' => 'Importar Profesores',
+    'import_file_label' => 'Selecciona un archivo (Excel o CSV)',
+    'import_format_expected' => 'Formato esperado:',
+    'import_format_columns' => '• Columnas: Nombre, Apellidos, Email, DNI, Teléfono, Dirección',
+    'import_format_files' => '• Formatos: Excel (.xlsx, .xls) o CSV (.csv)',
+    'import_format_headers' => '• Primera fila: encabezados de columnas',
+    'import_download_template' => 'Descargar plantilla',
+    'import_cancel' => 'Cancelar',
+    'import_submit' => 'Importar',
+    'import_validating' => 'Importando...',
+    'import_no_file' => 'Por favor, selecciona un archivo para importar.',
+    'import_invalid_file' => 'Por favor, selecciona un archivo Excel o CSV válido.',
+    'import_success' => 'Profesores importados correctamente.',
+    'import_error' => 'Error al importar profesores',
     
    
 

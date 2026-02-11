@@ -400,4 +400,23 @@ class TeacherController extends Controller
             
         abort_if(!$isAssigned, 403, 'No estás asignado a este curso');
     }
+
+    /**
+     * Descargar plantilla de importación de profesores
+     */
+    public function template()
+    {
+        $this->authorize('campus.teachers.create');
+        
+        $filename = 'plantilla_profesores.csv';
+        
+        return response()->download(
+            storage_path('app/templates/plantilla_profesores.csv'),
+            $filename,
+            [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+            ]
+        );
+    }
 }

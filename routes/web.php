@@ -97,7 +97,13 @@ Route::middleware(['auth', 'permission:campus.teachers.view'])
             ->name('teachers.show');
 
         Route::post('teachers/{teacher}/consent', [TeacherTreasuryController::class, 'storeConsent'])
-            ->name('teachers.consent.store');   
+            ->name('teachers.consent.store');
+        
+        Route::post('teachers/import', [TeacherTreasuryController::class, 'import'])
+            ->name('teachers.import');
+        
+        Route::get('teachers/template', [\App\Http\Controllers\Campus\TeacherController::class, 'template'])
+            ->name('teachers.template');
         
         Route::get(
             'teachers/export/csv',
@@ -401,7 +407,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->middleware('can:campus.students.view');
         
         Route::resource('teachers', \App\Http\Controllers\Campus\TeacherController::class)
-            ->middleware('can:campus.teachers.view'); 
+            ->middleware('can:campus.teachers.view');
+        
+        Route::get('teachers/template', [\App\Http\Controllers\Campus\TeacherController::class, 'template'])
+            ->name('teachers.template');
                 
         Route::resource('registrations', \App\Http\Controllers\Campus\RegistrationController::class)
             ->middleware('can:campus.registrations.view'); 

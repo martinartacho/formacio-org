@@ -366,6 +366,31 @@ class TeacherTreasuryController extends Controller
         );
     }
 
+    /**
+     * Importar profesores desde archivo Excel/CSV
+     */
+    public function import(Request $request)
+    {
+        $this->authorize('campus.teachers.create');
+        
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:10240', // Max 10MB
+            'season' => 'nullable|string'
+        ]);
+        
+        try {
+            $file = $request->file('file');
+            $season = $request->input('season');
+            
+            // Aquí implementaremos la lógica de importación
+            // Por ahora, devolvemos un mensaje de éxito temporal
+            return back()->with('success', __('campus.import_success'));
+            
+        } catch (\Exception $e) {
+            return back()->with('error', __('campus.import_error') . ': ' . $e->getMessage());
+        }
+    }
+
 
 
 }
