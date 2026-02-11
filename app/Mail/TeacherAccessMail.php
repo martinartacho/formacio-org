@@ -30,8 +30,8 @@ class TeacherAccessMail extends Mailable
     protected function subjectForPurpose(): string
     {
         return match ($this->purpose) {
-            'payments' => 'Pepe Accés per completar dades econòmiques',
-            default    => 'Pepo Accés per completar consentiments',
+            'payments' => 'Accés per completar dades econòmiques',
+            default    => 'Accés per completar consentiments',
         };
     }
 }

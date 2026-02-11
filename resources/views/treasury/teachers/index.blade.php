@@ -18,13 +18,14 @@
     <div class="flex space-x-2">
         @if($teachersWithCourses->count() > 0)
             <a href="{{ route('campus.treasury.teachers.export', 'xlsx') }}?season={{ $selectedSeasonSlug }}"
-                class="px-4 py-2 bg-blue-800 text-white rounded hover:bg-blue-900 flex items-center shadow-md">
+                >
                 <i class="bi bi-file-earmark-excel mr-2"></i>
                 Excel
             </a>
+            
             <a href="{{ route('campus.treasury.teachers.export', 'csv') }}?season={{ $selectedSeasonSlug }}"
-                class="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 flex items-center shadow-md">
-                <i class="bi bi-file-earmark-csv mr-2"></i>
+                >
+                <i class="bi bi-filetype-csv"></i>
                 CSV
             </a>
         @endif  
@@ -75,6 +76,7 @@
                 @endif
             </p>
         </div>
+
     </div>
 </div>
 @else
@@ -83,7 +85,7 @@
         <tr>
             <th class="p-2 text-left">{{ __('campus.name') }}</th>
             <th class="p-2 text-left">{{ __('campus.email') }}</th>
-            <th class="p-2 text-left">{{ __('campus.courses_and_hours') }}</th>
+            <th class="p-2 text-left">{{ __('campus.courses_and_hours') }} </th>
             <th class="p-2 text-center">{{ __('campus.rgpd') }}</th>
             <th class="p-2 text-center">{{ __('campus.actions') }}</th>
         </tr>
@@ -101,7 +103,7 @@
                 <tr class="border-t">
                     <td class="p-2">{{ $user->name }}</td>
                     <td class="p-2">{{ $user->email }}</td>
-                    <td class="p-2">
+                    <td class="p-2 border-l-4">
                         @if($courses->count() > 0)
                             <div class="space-y-1">
                                 @foreach($courses as $courseData)
@@ -114,11 +116,13 @@
                                                     <span class="font-medium text-blue-600">{{ $courseData['hours_assigned'] }}h</span>/{{ $teacherData['total_hours_assigned'] }}h • 
                                                     <span class="px-1 py-0.5 bg-gray-100 rounded text-xs">{{ __('campus.teacher_role.' . $courseData['role']) }}</span>
                                                 </div>
+                                                
                                             </div>
                                             <div class="ml-2">
                                                 @if($courseData['has_payment_data'])
                                                     <div class="flex flex-col items-end">
-                                                        <span class="text-green-600 text-xs">✅</span>
+                                                        <span class="text-gray-500"><i class="bi bi-file-earmark-check"></i> Acceptat</span>
+                                                        <span class="text-xs text-gray-500">
                                                         @if($courseData['payment_formatted_date'])
                                                             <span class="text-xs text-gray-500">{{ $courseData['payment_formatted_date'] }}</span>
                                                         @endif
@@ -135,8 +139,9 @@
                                                             class="inline">
                                                             @csrf
                                                             <button type="submit"
-                                                                    class="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center">
-                                                                <i class="bi bi-credit-card mr-1"></i>
+                                                                    class="bg-white text-blue-600 border border-blue-600 hover:bg-blue-50 active:bg-blue-100 focus:ring-blue-500">
+                                                                {{-- <i class="bi bi-credit-card mr-1"></i><i class="bi bi-envelope mr-1"></i> --}}
+                                                                <i class="bi bi-card-checklist"></i>
                                                                 Pagament
                                                             </button>
                                                         </form>
@@ -154,27 +159,29 @@
                     <td class="p-2 text-center">
                         @if($teacherData['has_rgpd_consent'] && $rgpdConsent)
                             <div class="flex flex-col items-center">
-                                <span class="text-green-600 font-medium">✅ Acceptat</span>
+                                <i class="bi bi-file-earmark-pdf"></i><span class="text-gray-500"> Acceptat</span>
                                 <span class="text-xs text-gray-500">
                                     {{ $rgpdConsent->accepted_at->format('d/m/Y H:i') }}
                                 </span>
                                 @if($rgpdConsent->delegated_by_user_id)
-                                    <span class="text-xs text-blue-600">(Delegat)</span>
+                                    <span class="text-xs ">(Delegat)</span>
                                 @endif
                             </div>
                         @else
-                            <span class="text-red-600 font-medium">❌ Pendent</span>
+                            ❌ <span class="bg-red-600 text-white hover:bg-red-700 focus:bg-red-700 active:bg-red-800 focus:ring-red-500">Pendent</span>
                         @endif
                     </td>
                     <td class="p-2 text-center">
-                        <div class="flex flex-col space-y-2">
+                        <div class="bg-white text-blue-600 border border-blue-600 hover:bg-blue-50 active:bg-blue-100 focus:ring-blue-500'">
                             <!-- Botón para ver detalles -->
                             <a href="{{ route('campus.treasury.teachers.show', $user) }}"
-                               class="px-3 py-1 text-blue-600 hover:text-blue-900 rounded hover:bg-blue-50 text-sm flex items-center">
+                               class="px-3 py-1  text-sm flex items-center">
                                 <i class="bi bi-eye mr-1"></i>
                                 Veure
                             </a>
-                            
+                        </div>
+
+                        <div class="bg-white text-blue-600 border border-blue-600 hover:bg-blue-50 active:bg-blue-100 focus:ring-blue-500'">
                             <!-- Botón para enviar recordatorio RGPD -->
                             @if(!$teacherData['has_rgpd_consent'])
                                 <form method="POST"
@@ -186,7 +193,7 @@
                                     class="inline">
                                     @csrf
                                     <button type="submit"
-                                            class="px-3 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center">
+                                            class="px-3 py-1 text-sm flex items-center">
                                         <i class="bi bi-envelope mr-1"></i>
                                         RGPD
                                     </button>
@@ -196,7 +203,7 @@
                             @elseif($rgpdConsent && $rgpdConsent->document_path && $rgpdConsent->document_path !== 'pending')
                                 <!-- Descargar consentimiento RGPD -->
                                 <a href="{{ route('consents.download', $rgpdConsent) }}"
-                                   class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm flex items-center">
+                                   class="border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500'">
                                     <i class="bi bi-download mr-1"></i>
                                     RGPD
                                 </a>

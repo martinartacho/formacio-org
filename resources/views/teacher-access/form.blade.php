@@ -195,10 +195,10 @@
                             <div class="text-gray-800">[{{ $course->code ?? '--' }}] {{ $course->title ?? '----' }}</div>
                         </div>
                         
-                        <div class="bg-white p-2 rounded">
+                        {{-- <div class="bg-white p-2 rounded">
                             <div class="font-medium text-gray-500">Hores assignades</div>
                             <div class="text-gray-800">{{ $courseasignat->hours_assigned ?? '----' }}</div>
-                        </div>
+                        </div> --}}
                     </div>
 
                 </div>
