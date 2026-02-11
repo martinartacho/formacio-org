@@ -18,16 +18,16 @@
     <div class="flex space-x-2">
         @if($teachersWithCourses->count() > 0)
             <a href="{{ route('campus.treasury.teachers.export', 'xlsx') }}?season={{ $selectedSeasonSlug }}"
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center">
+                class="px-4 py-2 bg-blue-800 text-white rounded hover:bg-blue-900 flex items-center shadow-md">
                 <i class="bi bi-file-earmark-excel mr-2"></i>
                 Excel
             </a>
             <a href="{{ route('campus.treasury.teachers.export', 'csv') }}?season={{ $selectedSeasonSlug }}"
-                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 flex items-center">
+                class="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 flex items-center shadow-md">
                 <i class="bi bi-file-earmark-csv mr-2"></i>
                 CSV
             </a>
-        @endif
+        @endif  
     </div>
 @endsection
 
@@ -53,7 +53,7 @@
         @if($selectedSeasonSlug)
             <a href="{{ route('campus.treasury.teachers.index') }}"
                class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-                Netejar filtre
+                {{ __('campus.clear_filter') }}
             </a>
         @endif
     </form>
@@ -69,9 +69,9 @@
         <div class="ml-3">
             <p class="text-sm text-yellow-700">
                 @if(!$season)
-                    No hi ha temporada activa actualment. Activa una temporada a la configuració.
+                    {{ __('campus.no_active_season') }}
                 @else
-                    No hi ha professors assignats a cursos en la temporada {{ $season->name }}.
+                    {{ __('campus.no_teachers_in_season', ['season' => $season->name]) }}
                 @endif
             </p>
         </div>
@@ -81,11 +81,11 @@
 <table class="table-auto w-full border">
     <thead class="bg-gray-100">
         <tr>
-            <th class="p-2 text-left">Nom</th>
-            <th class="p-2 text-left">Email</th>
-            <th class="p-2 text-left">Cursos i hores</th>
-            <th class="p-2 text-center">RGPD</th>
-            <th class="p-2 text-center">Accions</th>
+            <th class="p-2 text-left">{{ __('campus.name') }}</th>
+            <th class="p-2 text-left">{{ __('campus.email') }}</th>
+            <th class="p-2 text-left">{{ __('campus.courses_and_hours') }}</th>
+            <th class="p-2 text-center">{{ __('campus.rgpd') }}</th>
+            <th class="p-2 text-center">{{ __('campus.actions') }}</th>
         </tr>
     </thead>
     <tbody>

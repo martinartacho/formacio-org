@@ -32,9 +32,8 @@ return [
     'delete' => 'Eliminar',
     'view' => 'Veure',
     'actions' => 'Accions',
-    'id' => 'ID',
-    'name' => 'Nom',
-    'description' => 'Descripció',
+    
+    // Courses
     'dates' => 'Dates',
     'status' => 'Estat',
     'active' => 'Actiu',
@@ -333,27 +332,34 @@ return [
     
     // Email content
     'treasury_mail_payment_intro' => 'Pots accedir al formulari per completar les dades econòmiques mitjançant aquest enllaç:',
-    'treasury_mail_consent_intro' => 'Pots accedir al formulari per completar els consentiments mitjançant aquest enllaç:',
-    'treasury_mail_payment_link' => 'Accedir al formulari de pagaments',
-    'treasury_mail_consent_link' => 'Accedir al formulari de consentiments',
-    'treasury_mail_expires' => 'Aquest enllaç caduca en 7 dies.',
     
-    // Import functionality
-    'import_teachers' => 'Importar Profesores',
-    'import_file_label' => 'Selecciona un archivo (Excel o CSV)',
-    'import_format_expected' => 'Formato esperado:',
-    'import_format_columns' => '• Columnas: Nombre, Apellidos, Email, DNI, Teléfono, Dirección',
-    'import_format_files' => '• Formatos: Excel (.xlsx, .xls) o CSV (.csv)',
-    'import_format_headers' => '• Primera fila: encabezados de columnas',
-    'import_download_template' => 'Descargar plantilla',
-    'import_cancel' => 'Cancelar',
-    'import_submit' => 'Importar',
-    'import_validating' => 'Importando...',
-    'import_no_file' => 'Por favor, selecciona un archivo para importar.',
-    'import_invalid_file' => 'Por favor, selecciona un archivo Excel o CSV válido.',
-    'import_success' => 'Profesores importados correctamente.',
-    'import_error' => 'Error al importar profesores',
+// Import functionality
+'import_teachers' => 'Importar Profesores',
+'import_file_label' => 'Selecciona un archivo (Excel o CSV)',
+'import_format_expected' => 'Formato esperado:',
+'import_format_columns' => '• Columnas: Nombre, Apellidos, Email, DNI, Teléfono, Dirección',
+'import_format_files' => '• Formatos: Excel (.xlsx, .xls) o CSV (.csv)',
+'import_format_headers' => '• Primera fila: encabezados de columnas',
+'import_download_template' => 'Descargar plantilla',
+'import_cancel' => 'Cancelar',
+'import_submit' => 'Importar',
+'import_validating' => 'Importando...',
+'import_no_file' => 'Por favor, selecciona un archivo para importar.',
+'import_invalid_file' => 'Por favor, selecciona un archivo Excel o CSV válido.',
+'import_success' => 'Profesores importados correctamente.',
+'import_error' => 'Error al importar profesores',
+'import_information' => 'Información de Importación',
+'import_information_alert' => 'Para importar profesores, descarga la plantilla y sigue el formato especificado. ',
+'download_template' => 'Descargar plantilla',
     
-   
+// General UI
+    'clear_filter' => 'Netejar filtre',
+    'no_active_season' => 'No hi ha temporada activa actualment. Activa una temporada a la configuració.',
+    'no_teachers_in_season' => 'No hi ha professors assignats a cursos en la temporada :season.',
+    'name' => 'Nom',
+    'email' => 'Email',
+    'courses_and_hours' => 'Cursos i hores',
+    'rgpd' => 'RGPD',
+    'actions' => 'Accions',
 
 ];
