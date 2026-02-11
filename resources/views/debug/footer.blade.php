@@ -244,10 +244,11 @@
                 }
             }
             
-            // Auto-refresh cada 30 segundos (opcional)
-            setTimeout(() => {
-                window.location.reload();
-            }, 30000);
+            // Auto-refresh desactivado para evitar interrupciones
+            // Si necesitas recargar manualmente, usa F5 o el botón de recarga del navegador
+            // setTimeout(() => {
+            //     window.location.reload();
+            // }, 30000);
         </script>
         
         <style>
