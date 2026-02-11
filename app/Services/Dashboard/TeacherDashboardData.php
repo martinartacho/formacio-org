@@ -34,8 +34,7 @@ class TeacherDashboardData
             }
 
             // Buscar el perfil de profesor
-            // $teacher = CampusTeacher::where('user_id', $user->id)->first();
-            $teacher = $teacher ?? $user->teacher;
+            $teacher = CampusTeacher::where('user_id', $user->id)->first();
 
             if (!$teacher) {
                 Log::warning('TeacherDashboardData - No teacher profile found for user ID: ' . $user->id);

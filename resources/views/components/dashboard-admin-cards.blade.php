@@ -114,7 +114,7 @@
                             <i class="bi bi-sliders text-gray-600 text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-gray-800">{{ __('site.Settings') }}</h3>
+                            <h3 class="font-semibold text-gray-800">{{ __('Settings') }}</h3>
                             <p class="text-sm text-gray-600">{{ __('Configuració general del sistema') }}</p>
                         </div>
                     </div>

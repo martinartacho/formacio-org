@@ -25,7 +25,6 @@ class NotificationSeeder extends Seeder
         // Obtener usuarios con roles específicos
         $admin = User::role('admin')->firstOrFail();
         $gestor = User::role('gestor')->firstOrFail();
-        $treasury = User::role('treasury')->firstOrFail();
 
         $editors = User::role('editor')->take(2)->get();
         if ($editors->count() < 2) {

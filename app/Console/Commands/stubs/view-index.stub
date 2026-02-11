@@ -1,0 +1,5 @@
+@extends('layouts.app')
+
+@section('content')
+    <h1>{{ module }} Index View</h1>
+@endsection

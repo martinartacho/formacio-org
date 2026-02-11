@@ -1,0 +1,6 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use {{ namespace }}\{{ class }};
+
+Route::resource('{{ route }}', {{ class }}::class);

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder;
 
-
 class CampusTeacher extends Model
 {
     use HasFactory;
@@ -126,82 +125,4 @@ class CampusTeacher extends Model
                     ->wherePivot('finished_at', null)
                     ->sum('campus_course_teacher.hours_assigned');
     }
-
-    /**
-     * Get the latest active course assignment.
-     */
-    public function currentCourse()
-    {
-        return $this->courses()
-            ->wherePivotNull('finished_at')
-            ->where('is_active', true)
-            ->where('end_date', '>=', now())
-            ->orderBy('campus_course_teacher.assigned_at', 'desc')
-            ->first();
-    }
-
-    /**
-     * Get detailed course assignments with season and category info.
-     */
-    public function detailedCourseAssignments()
-    {
-        return $this->courses()
-            ->wherePivotNull('finished_at')
-            ->with(['season', 'category'])
-            ->select(
-                'campus_courses.*',
-                'campus_course_teacher.role',
-                'campus_course_teacher.hours_assigned',
-                'campus_course_teacher.assigned_at',
-                'campus_course_teacher.finished_at'
-            )
-            ->orderBy('campus_course_teacher.assigned_at', 'desc')
-            ->get();
-    }
-
-    /**
-     * Get courses grouped by role.
-     */
-    public function coursesByRole()
-    {
-        return $this->courses()
-            ->wherePivotNull('finished_at')
-            ->get()
-            ->groupBy('pivot.role');
-    }
-
-    /**
-     * Check if teacher has active course assignments.
-     */
-    public function hasActiveAssignments(): bool
-    {
-        return $this->courses()
-            ->wherePivotNull('finished_at')
-            ->exists();
-    }
-
-    /**
-     * Get the payment data for this teacher.
-     */
-    public function payments()
-    {
-        return $this->hasMany(CampusTeacherPayment::class, 'teacher_id');
-    }
-
-    /**
-     * Get payments for a specific season.
-     */
-    public function paymentsForSeason($seasonId)
-    {
-        return $this->payments()->where('season_id', $seasonId)->get();
-    }
-
-    /**
-     * Get payments for a specific course.
-     */
-    public function paymentsForCourse($courseId)
-    {
-        return $this->payments()->where('course_id', $courseId)->get();
-    }
-
 }

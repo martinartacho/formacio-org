@@ -100,9 +100,6 @@ php artisan db:seed
 
 bash
 Copia el codi
-crea directori i copia archiu
-mkdir storage\app\imports
-
 php artisan db:seed --class=SettingSeeder
 ▶️ Execució
 bash

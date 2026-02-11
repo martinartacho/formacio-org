@@ -1,0 +1,20 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Support\ServiceProvider;
+
+class {{ module }}ServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        //
+    }
+
+    public function boot()
+    {
+        $this->loadRoutesFrom(__DIR__.'/../../Routes/web.php');
+        $this->loadViewsFrom(__DIR__.'/../../Views', '{{ view }}');
+        $this->loadMigrationsFrom(__DIR__.'/../../Database/Migrations');
+    }
+}

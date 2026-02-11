@@ -1,5 +1,5 @@
 {{-- resources/views/campus/students/courses.blade.php --}}
-@extends('campus.shared.layout')
+@extends('layouts.app')
 
 @section('title', __('Els meus Cursos'))
 
