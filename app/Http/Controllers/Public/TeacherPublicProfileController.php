@@ -14,7 +14,7 @@ class TeacherPublicProfileController extends Controller
 
     public function update(Request $request, string $token)
     {
-        \Log::info('=== UPDATE START ===');
+        \Log::info('=== UPDATE START TeacherPublicProfileController ===');
         \Log::info('Token:', ['token' => $token]);
         
         $accessToken = TeacherAccessToken::where('token', $token)
@@ -56,7 +56,7 @@ class TeacherPublicProfileController extends Controller
         // Marcar token como usado
         $accessToken->update(['used_at' => now()]);
 
-        \Log::info('=== UPDATE COMPLETED ===');
+        \Log::info('=== UPDATE COMPLETED TeacherPublicProfileController ===');
 
         return view('treasury.public.completed');
     }

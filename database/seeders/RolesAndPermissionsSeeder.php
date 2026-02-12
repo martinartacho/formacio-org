@@ -207,6 +207,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'campus.teachers.delete',
             'campus.teachers.assign',
             
+            // CRUD Courses (para poder crear nuevos cursos desde teacher creation)
+            'campus.courses.view',
+            'campus.courses.create',
+            'campus.courses.edit',
+            'campus.courses.delete',
+            
             // Consentiments RGPD
             'campus.consents.request',
             'campus.consents.view',

@@ -407,7 +407,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->middleware('can:campus.students.view');
         
         Route::resource('teachers', \App\Http\Controllers\Campus\TeacherController::class)
-            ->middleware('can:campus.teachers.view');
+            ->middleware('can:campus.teachers.index');
         
         Route::get('teachers/template', [\App\Http\Controllers\Campus\TeacherController::class, 'template'])
             ->name('teachers.template');

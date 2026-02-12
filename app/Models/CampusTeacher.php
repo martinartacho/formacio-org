@@ -8,7 +8,67 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder;
 
-
+/**
+ * App\Models\CampusTeacher
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $teacher_code
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $dni
+ * @property string $email
+ * @property string $phone
+ * @property string $address
+ * @property string $postal_code
+ * @property string $city
+ * @property string $iban
+ * @property string $bank_titular
+ * @property string $fiscal_id
+ * @property string $fiscal_situation
+ * @property string $degree
+ * @property string $specialization
+ * @property string $title
+ * @property array $areas
+ * @property string $status
+ * @property \Illuminate\Support\Carbon $hiring_date
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CampusCourse[] $courses
+ * @property-read int|null $courses_count
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\CampusTeacherFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereBankTitular($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereDegree($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereDni($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereFiscalId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereFiscalSituation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereHiringDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereIban($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher wherePostalCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereSpecialization($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereTeacherCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher withUnique()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampusTeacher withUniqueOr()
+ * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CampusTeacherPayment[] $payments
+ * @property-read int|null $payments_count
+ */
 class CampusTeacher extends Model
 {
     use HasFactory;
@@ -21,6 +81,14 @@ class CampusTeacher extends Model
         'dni',
         'email',
         'phone',
+        'address',
+        'postal_code',
+        'city',
+        'iban',
+        'bank_titular',
+        'fiscal_id',
+        'fiscal_situation',
+        'degree',
         'specialization',
         'title',
         'areas',

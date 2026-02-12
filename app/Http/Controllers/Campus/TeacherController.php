@@ -50,7 +50,11 @@ class TeacherController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        \Log::info('=== STORE START TeacherController ===');
+        \Log::info('Request data:', $request->all());
+        
+        try {
+            $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -69,27 +73,118 @@ class TeacherController extends Controller
             'hiring_date' => 'nullable|date',
             'status' => 'nullable|string|in:active,inactive,on_leave',
             'courses' => 'nullable|array',
-            'courses.*' => 'exists:campus_courses,id',
+            'courses.*' => 'nullable|string|in:new',
             'hours_assigned' => 'nullable|array',
             'hours_assigned.*' => 'nullable|integer|min:1',
             'role' => 'nullable|array',
             'role.*' => 'nullable|string|in:teacher,assistant',
         ]);
+        
+        // Validación adicional para nuevos cursos (simplificada)
+        $newCourseRules = [
+            'new_course_title' => 'nullable|array',
+            'new_course_title.*' => 'required_with:new_course_code.*|string|max:255',
+            'new_course_code' => 'nullable|array',
+            'new_course_code.*' => 'required_with:new_course_title.*|string|max:50|unique:campus_courses,code',
+        ];
+        
+        // Personalizar mensajes de error para nuevos cursos
+        $newCourseMessages = [
+            'new_course_code.*.unique' => 'El codi de curs ":input" ja existeix. Si us plau, utilitza un altre codi.',
+            'new_course_title.*.required_with' => 'El nom del curs és obligatori quan s\'introdueix un codi.',
+            'new_course_code.*.required_with' => 'El codi del curs és obligatori quan s\'introdueix un nom.',
+        ];
+        
+        $newCourseValidated = $request->validate($newCourseRules, $newCourseMessages);
+        
+        // Validación adicional: verificar si el título ya existe (advertencia, no error)
+        if (!empty($newCourseValidated['new_course_title'])) {
+            foreach ($newCourseValidated['new_course_title'] as $index => $title) {
+                if (!empty($title)) {
+                    $existingCourse = \App\Models\CampusCourse::where('title', $title)->first();
+                    if ($existingCourse) {
+                        \Log::warning('Course title already exists:', ['title' => $title, 'existing_id' => $existingCourse->id]);
+                        // No lanzar error, solo registrar advertencia
+                    }
+                }
+            }
+        }
+            
+            \Log::info('Validation passed:', $validated);
+            
+            try {
+                // Procesar nuevos cursos primero (versión simplificada)
+                $newCourses = [];
+                if (!empty($newCourseValidated['new_course_title'])) {
+                    \Log::info('Processing new courses...');
+                    $newCourseTitles = $newCourseValidated['new_course_title'];
+                    $newCourseCodes = $newCourseValidated['new_course_code'];
+                    
+                    // Obtener temporada actual
+                    $currentSeason = \App\Models\CampusSeason::where('is_current', true)->first();
+                    $seasonId = $currentSeason ? $currentSeason->id : 1;
+                    
+                    foreach ($newCourseTitles as $index => $title) {
+                        if (!empty($title) && !empty($newCourseCodes[$index])) {
+                            \Log::info('Creating new course:', ['title' => $title, 'code' => $newCourseCodes[$index]]);
+                            
+                            // Crear nuevo curso con datos automáticos
+                            $newCourse = \App\Models\CampusCourse::create([
+                                'season_id' => $seasonId, // Usar temporada actual
+                                'category_id' => null, // Sin categoría por defecto
+                                'code' => $newCourseCodes[$index],
+                                'title' => $title,
+                                'slug' => \Str::slug($title) . '-' . time(), // Asegurar unicidad
+                                'description' => 'Curs creat automàticament des de l\'assignació de professor', // Descripción automática
+                                'credits' => 1,
+                                'hours' => $validated['hours_assigned'][$index] ?? 20, // Usar horas asignadas como horas totales del curso
+                                'max_students' => 30,
+                                'price' => 100.00,
+                                'level' => 'beginner', // Nivel por defecto
+                                'start_date' => $currentSeason ? $currentSeason->season_start : now()->format('Y-m-d'), // Usar fecha de temporada
+                                'end_date' => $currentSeason ? $currentSeason->season_end : now()->addMonths(3)->format('Y-m-d'), // Usar fecha de temporada
+                                'is_active' => true,
+                                'is_public' => true,
+                            ]);
+                            
+                            $newCourses[$index] = $newCourse->id;
+                            \Log::info('New course created:', ['course_id' => $newCourse->id]);
+                        }
+                    }
+                }
+                
+                // Reemplazar 'new' en el array de cursos con los IDs de los nuevos cursos y validar cursos existentes
+                if (!empty($validated['courses'])) {
+                    foreach ($validated['courses'] as $index => $courseId) {
+                        if ($courseId === 'new' && isset($newCourses[$index])) {
+                            $validated['courses'][$index] = $newCourses[$index];
+                        } elseif ($courseId !== 'new' && $courseId !== null) {
+                            // Validar que el curso existente realmente existe
+                            if (!\App\Models\CampusCourse::find($courseId)) {
+                                throw new \Exception("El curso seleccionado no existe");
+                            }
+                        }
+                    }
+                }
+                
+                // Generar código de profesor único
+                $teacherCode = 'PROF_' . str_pad(CampusTeacher::count() + 1, 4, '0', STR_PAD_LEFT);
+                \Log::info('Teacher code generated:', ['code' => $teacherCode]);
 
-        // Generar código de profesor único
-        $teacherCode = 'PROF_' . str_pad(CampusTeacher::count() + 1, 4, '0', STR_PAD_LEFT);
-
-        // Crear usuario
-        $user = \App\Models\User::create([
+                // Crear usuario
+                \Log::info('Creating user...');
+                $user = \App\Models\User::create([
             'name' => $validated['first_name'] . ' ' . $validated['last_name'],
             'email' => $validated['email'],
             'password' => bcrypt('password123'), // Contraseña temporal
         ]);
         
         // Asignar rol de profesor
+        \Log::info('Assigning teacher role to user:', ['user_id' => $user->id]);
         $user->assignRole('teacher');
 
         // Crear profesor
+        \Log::info('Creating teacher record...');
         $teacher = CampusTeacher::create([
             'user_id' => $user->id,
             'teacher_code' => $teacherCode,
@@ -103,28 +198,69 @@ class TeacherController extends Controller
             'dni' => $validated['dni'] ?? null,
             'iban' => $validated['iban'] ?? null,
             'bank_titular' => $validated['bank_titular'] ?? null,
-            'fiscal_id' => $validated['fiscal_id'] ?? null,
             'fiscal_situation' => $validated['fiscal_situation'] ?? null,
             'degree' => $validated['degree'] ?? null,
             'specialization' => $validated['specialization'] ?? null,
             'title' => $validated['title'] ?? null,
             'areas' => $validated['areas'] ?? null,
-            'hiring_date' => $validated['hiring_date'] ?? null,
+            'hiring_date' => $validated['hiring_date'] ?? now()->format('Y-m-d'),
             'status' => $validated['status'] ?? 'active',
         ]);
 
+        \Log::info('Teacher created successfully:', ['teacher_id' => $teacher->id]);
+
         // Asignar cursos si se proporcionaron
         if (!empty($validated['courses'])) {
-            foreach ($validated['courses'] as $index => $courseId) {
-                $teacher->courses()->attach($courseId, [
-                    'hours_assigned' => $validated['hours_assigned'][$index] ?? 0,
-                    'role' => $validated['role'][$index] ?? 'teacher',
-                ]);
+            // Filtrar cursos que no sean null
+            $validCourses = array_filter($validated['courses'], function($courseId) {
+                return $courseId !== null;
+            });
+            
+            if (!empty($validCourses)) {
+                \Log::info('Assigning courses:', ['courses' => $validCourses]);
+                foreach ($validCourses as $index => $courseId) {
+                    $teacher->courses()->attach($courseId, [
+                        'hours_assigned' => $validated['hours_assigned'][$index] ?? 0,
+                        'role' => $validated['role'][$index] ?? 'teacher',
+                    ]);
+                }
             }
         }
 
-        return redirect()->route('campus.teachers.show', $teacher)
-            ->with('success', 'Professor creat correctament.');
+        \Log::info('Redirecting to teacher show page...');
+            return redirect()->route('campus.teachers.show', $teacher)
+                ->with('success', 'Professor creat correctament.');
+                
+        } catch (\Exception $e) {
+            \Log::error('Error creating teacher:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error al crear el profesor: ' . $e->getMessage());
+        }
+                
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation error:', [
+                'errors' => $e->errors(),
+                'request' => $request->all()
+            ]);
+            
+            return redirect()->back()
+                ->withInput()
+                ->withErrors($e->errors());
+        } catch (\Exception $e) {
+            \Log::error('General error:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error general: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -132,6 +268,9 @@ class TeacherController extends Controller
      */
     public function show(CampusTeacher $teacher)
     {
+        \Log::info('=== SHOW START TeacherController ===');
+        \Log::info('Showing teacher:', ['teacher_id' => $teacher->id]);
+        
         $teacher->load(['user', 'courses' => function($query) {
             $query->with(['season', 'category']);
         }]);
@@ -196,7 +335,7 @@ class TeacherController extends Controller
             'hiring_date' => 'nullable|date',
             'status' => 'nullable|string|in:active,inactive,on_leave',
             'courses' => 'nullable|array',
-            'courses.*' => 'exists:campus_courses,id',
+            'courses.*' => 'nullable|string|in:new',
             'hours_assigned' => 'nullable|array',
             'hours_assigned.*' => 'nullable|integer|min:1',
             'role' => 'nullable|array',
@@ -227,7 +366,7 @@ class TeacherController extends Controller
             'specialization' => $validated['specialization'] ?? null,
             'title' => $validated['title'] ?? null,
             'areas' => $validated['areas'] ? explode(',', str_replace(' ', '', $validated['areas'])) : null,
-            'hiring_date' => $validated['hiring_date'] ?? null,
+            'hiring_date' => $validated['hiring_date'] ?? now()->format('Y-m-d'),
             'status' => $validated['status'] ?? 'active',
         ]);
 
