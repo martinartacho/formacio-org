@@ -25,7 +25,7 @@ return new class extends Migration {
 
             $table->string('season'); // ex: 2025-2026
             $table->string('document_path')->nullable(); // PDF de consentiment
-            $table->string('payment_document_path')->nullable(); // PDF de pagamente
+            $table->string('payment_document_path')->nullable(); // PDF de dades bancariese
             
             
             $table->timestamp('accepted_at');

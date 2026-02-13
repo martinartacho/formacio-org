@@ -24,6 +24,8 @@ use App\Http\Controllers\TeacherAccess\TeacherAccessController;
 // use App\Http\Controllers\Manager\DashboardController; // Per ara inhabilitat
 use App\Http\Controllers\Manager\RegistrationController;
 use App\Http\Controllers\Treasury\TeacherTreasuryController;
+use App\Http\Controllers\TreasuryController;
+
 
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\LocaleController;
@@ -93,8 +95,17 @@ Route::middleware(['auth', 'permission:campus.teachers.view'])
         Route::get('teachers', [TeacherTreasuryController::class, 'index'])
             ->name('teachers.index');
         
+        Route::get('teachers/rgpd', [TeacherTreasuryController::class, 'rgpdIndex'])
+            ->name('teachers.rgpd.index');
+        
         Route::get('teachers/{teacher}', [TeacherTreasuryController::class, 'show'])
             ->name('teachers.show');
+
+        Route::get('teachers/{teacher}/consents', [TeacherTreasuryController::class, 'consentHistory'])
+            ->name('teachers.consents');
+
+        Route::get('teachers/{teacher}/payment-pdf/{season}/{course}', [TeacherTreasuryController::class, 'downloadTeacherPaymentPdf'])
+            ->name('teachers.payment.pdf');
 
         Route::post('teachers/{teacher}/consent', [TeacherTreasuryController::class, 'storeConsent'])
             ->name('teachers.consent.store');
@@ -114,11 +125,6 @@ Route::middleware(['auth', 'permission:campus.teachers.view'])
             'teachers/{teacher}/consent/pdf',
             [TeacherTreasuryController::class, 'generateConsentPdf']
         )->name('teachers.consent.pdf');            
-
-        Route::get(
-            'teachers/{teacher}/consents',
-            [TeacherTreasuryController::class, 'consentHistory']
-        )->name('teachers.consents');
 
         Route::get(
             'teachers/export/{format}',
@@ -146,6 +152,11 @@ Route::get(
         'consents/{consent}/download',
         [TeacherTreasuryController::class, 'downloadConsent']
     )->name('consents.download');
+
+Route::get(
+        'consents/{consent}/download-payment',
+        [TeacherTreasuryController::class, 'downloadPayment']
+    )->name('consents.download.payment');
 
 //  ruta per veure el resultat del formulari de success
 Route::get('teacher-access/success/{token}', [TeacherAccessController::class, 'success'])

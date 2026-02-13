@@ -1,7 +1,7 @@
 @extends('campus.shared.layout')
 
-@section('title', __('campus.treasury'))
-@section('subtitle', __('campus.treasury_management'))
+@section('title', __('campus.financial_data_management'))
+@section('subtitle', __('campus.financial_data_info'))
 
 @section('breadcrumbs')
     <li>
@@ -15,24 +15,27 @@
 @endsection
 
 @section('actions')
-    <div class="flex space-x-2">
-        @if($teachersWithCourses->count() > 0)
-            <a href="{{ route('campus.treasury.teachers.export', 'xlsx') }}?season={{ $selectedSeasonSlug }}"
-                >
-                <i class="bi bi-file-earmark-excel mr-2"></i>
-                Excel
-            </a>
-            
-            <a href="{{ route('campus.treasury.teachers.export', 'csv') }}?season={{ $selectedSeasonSlug }}"
-                >
-                <i class="bi bi-filetype-csv"></i>
-                CSV
-            </a>
-        @endif  
-    </div>
+    <!-- Las acciones de exportación están en el contenido principal -->
 @endsection
 
 @section('content')
+
+<!-- Botones de exportación -->
+@if($teachersWithCourses->count() > 0)
+<div class="mb-4 flex space-x-2">
+    <a href="{{ route('campus.treasury.teachers.export', 'xlsx') }}?season={{ $selectedSeasonSlug }}"
+        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        <i class="bi bi-file-earmark-excel mr-2"></i>
+        Excel
+    </a>
+    
+    <a href="{{ route('campus.treasury.teachers.export', 'csv') }}?season={{ $selectedSeasonSlug }}"
+        class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+        <i class="bi bi-filetype-csv"></i>
+        CSV
+    </a>
+</div>
+@endif
 
 <!-- Selector de temporada -->
 @if($seasons->count() > 0)
@@ -83,10 +86,11 @@
 <table class="table-auto w-full border">
     <thead class="bg-gray-100">
         <tr>
+            <th class="p-2 text-left">{{ __('campus.courses_and_hours') }}</th>
             <th class="p-2 text-left">{{ __('campus.name') }}</th>
             <th class="p-2 text-left">{{ __('campus.email') }}</th>
-            <th class="p-2 text-left">{{ __('campus.courses_and_hours') }} </th>
-            <th class="p-2 text-center">{{ __('campus.rgpd') }}</th>
+            <th class="p-2 text-left">{{ __('campus.reminder_status') }}</th>
+            <th class="p-2 text-left">{{ __('campus.invoice') }}</th>
             <th class="p-2 text-center">{{ __('campus.actions') }}</th>
         </tr>
     </thead>
@@ -99,119 +103,75 @@
                 $rgpdConsent = $teacherData['rgpd_consent'] ?? null;
             @endphp
             
-            @if($user && $teacherProfile)
-                <tr class="border-t">
-                    <td class="p-2">{{ $user->name }}</td>
-                    <td class="p-2">{{ $user->email }}</td>
-                    <td class="p-2 border-l-4">
-                        @if($courses->count() > 0)
-                            <div class="space-y-1">
-                                @foreach($courses as $courseData)
-                                    <div class="border-l-4 {{ $courseData['has_payment_data'] ? 'border-green-500' : 'border-yellow-500' }} pl-2 py-1 text-sm">
-                                        <div class="flex justify-between items-start">
-                                            <div class="flex-1">
-                                                <div class="font-medium text-gray-800">{{ $courseData['course_title'] }}</div>
-                                                <div class="text-xs text-gray-600">
-                                                    {{ $courseData['course_code'] }} • 
-                                                    <span class="font-medium text-blue-600">{{ $courseData['hours_assigned'] }}h</span>/{{ $teacherData['total_hours_assigned'] }}h • 
-                                                    <span class="px-1 py-0.5 bg-gray-100 rounded text-xs">{{ __('campus.teacher_role.' . $courseData['role']) }}</span>
-                                                </div>
-                                                
-                                            </div>
-                                            <div class="ml-2">
-                                                @if($courseData['has_payment_data'])
-                                                    <div class="flex flex-col items-end">
-                                                        <span class="text-gray-500"><i class="bi bi-file-earmark-check"></i> Acceptat</span>
-                                                        <span class="text-xs text-gray-500">
-                                                        @if($courseData['payment_formatted_date'])
-                                                            <span class="text-xs text-gray-500">{{ $courseData['payment_formatted_date'] }}</span>
-                                                        @endif
-                                                    </div>
-                                                @else
-                                                  <!-- Botó per enviar condicions de pagament -->
-                                                    @if($teacherData['courses_with_payment'] < $teacherData['total_courses'])
-                                                        <form method="POST"
-                                                            action="{{ route('campus.treasury.teachers.send-access', [
-                                                                    'teacher' => $teacherData['user']->id,
-                                                                    'purpose' => 'payments',
-                                                                    'courseCode' => $courseData['course_code']
-                                                            ]) }}"
-                                                            class="inline">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                    class="bg-white text-blue-600 border border-blue-600 hover:bg-blue-50 active:bg-blue-100 focus:ring-blue-500">
-                                                                {{-- <i class="bi bi-credit-card mr-1"></i><i class="bi bi-envelope mr-1"></i> --}}
-                                                                <i class="bi bi-card-checklist"></i>
-                                                                Pagament
-                                                            </button>
-                                                        </form>
-                                                    @endif
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
+            @if($user && $teacherProfile && $courses->count() > 0)
+                @foreach($courses as $courseData)
+                    <tr class="border-t">
+                        <td class="p-2 border-l-4 {{ $courseData['has_payment_data'] ? 'border-green-500' : 'border-yellow-500' }}">
+                            <div class="text-sm">
+                                <div class="font-medium text-gray-800">{{ $courseData['course_title'] }}</div>
+                                <div class="text-xs text-gray-600">
+                                    {{ $courseData['course_code'] }} • 
+                                    <span class="font-medium text-blue-600">{{ $courseData['hours_assigned'] }}h</span>
+                                </div>
                             </div>
-                        @else
-                            <span class="text-gray-500 italic text-sm">Sense cursos assignats</span>
-                        @endif
-                    </td>
-                    <td class="p-2 text-center">
-                        @if($teacherData['has_rgpd_consent'] && $rgpdConsent)
-                            <div class="flex flex-col items-center">
-                                <i class="bi bi-file-earmark-pdf"></i><span class="text-gray-500"> Acceptat</span>
-                                <span class="text-xs text-gray-500">
-                                    {{ $rgpdConsent->accepted_at->format('d/m/Y H:i') }}
-                                </span>
-                                @if($rgpdConsent->delegated_by_user_id)
-                                    <span class="text-xs ">(Delegat)</span>
-                                @endif
+                        </td>
+                        <td class="p-2">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium mr-3">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <div class="font-medium">{{ $user->name }}</div>
+                                    <div class="text-sm text-gray-500">{{ $teacherProfile->nif ?? 'Sense NIF' }}</div>
+                                </div>
                             </div>
-                        @else
-                            ❌ <span class="bg-red-600 text-white hover:bg-red-700 focus:bg-red-700 active:bg-red-800 focus:ring-red-500">Pendent</span>
-                        @endif
-                    </td>
-                    <td class="p-2 text-center">
-                        <div class="bg-white text-blue-600 border border-blue-600 hover:bg-blue-50 active:bg-blue-100 focus:ring-blue-500'">
-                            <!-- Botón para ver detalles -->
-                            <a href="{{ route('campus.treasury.teachers.show', $user) }}"
-                               class="px-3 py-1  text-sm flex items-center">
-                                <i class="bi bi-eye mr-1"></i>
-                                Veure
-                            </a>
-                        </div>
-
-                        <div class="bg-white text-blue-600 border border-blue-600 hover:bg-blue-50 active:bg-blue-100 focus:ring-blue-500'">
-                            <!-- Botón para enviar recordatorio RGPD -->
-                            @if(!$teacherData['has_rgpd_consent'])
-                                <form method="POST"
-                                    action="{{ route('campus.treasury.teachers.send-access', [
-                                            'teacher' => $teacherData['user']->id,
-                                            'purpose' => 'consent',
-                                            'courseCode' => $courseData['course_code']
-                                    ]) }}"
-                                    class="inline">
-                                    @csrf
-                                    <button type="submit"
-                                            class="px-3 py-1 text-sm flex items-center">
-                                        <i class="bi bi-envelope mr-1"></i>
-                                        RGPD
-                                    </button>
-                                </form>
-                           
-                            
-                            @elseif($rgpdConsent && $rgpdConsent->document_path && $rgpdConsent->document_path !== 'pending')
-                                <!-- Descargar consentimiento RGPD -->
-                                <a href="{{ route('consents.download', $rgpdConsent) }}"
-                                   class="border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500'">
-                                    <i class="bi bi-download mr-1"></i>
-                                    RGPD
+                        </td>
+                        <td class="p-2">{{ $user->email }}</td>
+                        <td class="p-2 text-center">
+                            @if($courseData['payment_pdf_exists'])
+                                <!-- Botón para descargar PDF de pago -->
+                                <a href="{{ route('campus.treasury.teachers.payment.pdf', [
+                                        'teacher' => $teacherProfile->id,
+                                        'season' => $selectedSeason->slug,
+                                        'course' => $courseData['course_code']
+                                ]) }}"
+                                   class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                                    <i class="bi bi-file-earmark-pdf mr-1"></i>
+                                    Descargar 
                                 </a>
+                            @elseif($courseData['has_active_payment_token'])
+                                <!-- Mostrar fecha de expiración del token -->
+                                <div class="text-green-600">
+                                    <i class="bi bi-clock-fill"></i>
+                                    <div class="text-xs">{{ $courseData['payment_token_expires_at'] }}</div>
+                                </div>
+                            @else
+                                <span class="text-gray-400">-</span>
                             @endif
-                            
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                        <td class="p-2 text-left">
+                            {{ $teacherProfile->invoice ?? '-' }}
+                        </td>
+                        <td class="p-2 text-center">
+                            <div class="flex justify-center space-x-2">
+                                <form method="POST"
+                                        action="{{ route('campus.treasury.teachers.send-access', [
+                                                'teacher' => $user->id,
+                                                'purpose' => 'payments',
+                                                'courseCode' => $courseData['course_code']
+                                        ]) }}"
+                                        class="inline">
+                                    @csrf                                   
+                                        <button type="submit"
+                                            class="px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 text-sm">
+                                              <i class="bi bi-envelope mr-1"></i>
+                                            Recordar 
+                                        </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
             @endif
         @endforeach
     </tbody>

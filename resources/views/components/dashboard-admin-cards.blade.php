@@ -130,7 +130,7 @@
                             <i class="bi bi-cash-stack text-emerald-600 text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-gray-800">{{ __('Tesoreria') }}</h3>
+                            <h3 class="font-semibold text-gray-800">{{ __('Tresoreria') }}</h3>
                             <p class="text-sm text-gray-600">{{ __('Gestió financera i pagaments') }}</p>
                         </div>
                     </div>

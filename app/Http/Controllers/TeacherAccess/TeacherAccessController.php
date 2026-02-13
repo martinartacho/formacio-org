@@ -304,6 +304,7 @@ class TeacherAccessController extends Controller
             'city' => 'required_if:payment_option,own_fee,ceded_fee|nullable|string|max:100',
             'iban' => 'required_if:payment_option,own_fee,ceded_fee|nullable|string|size:24',
             'bank_titular' => 'required_if:payment_option,own_fee,ceded_fee|nullable|string|max:255',
+            'invoice' => 'nullable|string|max:255',
             
             
             // Declaración fiscal
@@ -426,7 +427,7 @@ class TeacherAccessController extends Controller
             \Log::info('Nuevo pago creado');
         }
 
-        // ========== NUEVO: GENERAR PDF DE PAGAMENT ==========
+        // ========== NUEVO: GENERAR PDF DE DADES BANCARIES ==========
         $acceptedAt = now();
         $seasonSlug = $validated['season_id'];
         
@@ -436,7 +437,7 @@ class TeacherAccessController extends Controller
         // Definir ruta al mateix directori que els consentiments
         $paymentPath = "consents/teachers/{$teacher->id}/payment_{$seasonSlug}_{$courseId}.pdf";
         
-        // Calcular checksum per al document de pagament
+        // Calcular checksum per al document de dades bancaries
         $paymentChecksum = hash('sha256', implode('|', [
             $teacher->id,
             $seasonSlug,
@@ -478,7 +479,7 @@ class TeacherAccessController extends Controller
        
         \Log::info('GENERACIÓN PDF DStorage:', ['path' => $paymentPath]);   
 
-        // Actualitzar consent_histories amb la ruta del PDF de pagament
+        // Actualitzar consent_histories amb la ruta del PDF de dades bancaries
         ConsentHistory::updateOrCreate(
             [
                 'teacher_id' => $user->id,
@@ -490,11 +491,11 @@ class TeacherAccessController extends Controller
                 'checksum' => $paymentChecksum,
 
                 
-                // Si vols una data separada per al pagament, pots afegir un camp nou
+                // Si vols una data separada per al dades bancaries, pots afegir un camp nou
             ]
         );
-        \Log::info('FIN GENERACIÓN PDF DE PAGAMENT ConsentHistory actualitzat:', ['teacher_id' => $user->id, 'season' => $seasonSlug, 'path' => $paymentPath]);     
-        // Actualitzar el registre de pagament amb la ruta del PDF dins de metadata
+        \Log::info('FIN GENERACIÓN PDF DE DADES BANCARIES ConsentHistory actualitzat:', ['teacher_id' => $user->id, 'season' => $seasonSlug, 'path' => $paymentPath]);     
+        // Actualitzar el registre de dades bancaries amb la ruta del PDF dins de metadata
         $paymentRecord = $existingPayment ?? CampusTeacherPayment::where('teacher_id', $teacher->id)
             ->where('season_id', $season->id ?? null)
             ->where('course_id', $course->id ?? null)
@@ -514,14 +515,14 @@ class TeacherAccessController extends Controller
                 ]),
             ]);
             
-            Log::info('paymentRecord  pagament generat:', [
+            Log::info('paymentRecord  dades bancaries generat:', [
                 'teacher_id' => $teacher->id,
                 'season' => $seasonSlug,
                 'path' => $paymentPath,
                 'checksum' => $paymentChecksum
             ]);
         }
-        // ========== FIN GENERACIÓN PDF DE PAGAMENT ==========
+        // ========== FIN GENERACIÓN PDF DE DADES BANCARIES ==========
     
         // Actualizar profesor con datos fiscales si son propios
         if (in_array($validated['payment_option'], ['own_fee', 'ceded_fee'])) {
@@ -529,6 +530,7 @@ class TeacherAccessController extends Controller
             // Actualizar metadata del profesor
             $teacher->update([
                 'dni' => $validated['fiscal_id'] ?? null,
+                'invoice' => $validated['invoice'] ?? null,
                 'metadata' => array_merge($teacherMetadata, [
                     'fiscal_id' => $validated['fiscal_id'] ?? null,
                     'address' => $validated['address'] ?? null,
@@ -539,7 +541,7 @@ class TeacherAccessController extends Controller
                     'payment_document_path' => $paymentPath ?? null, // Afegir ruta del PDF
                 ]),
             ]);
-            \Log::info('FIN GENERACIÓN PDF DE PAGAMENT Profesor actualitzat:', ['teacher_id' => $teacher->id]);
+            \Log::info('FIN GENERACIÓN PDF DE DADES BANCARIES Profesor actualitzat:', ['teacher_id' => $teacher->id]);
         }
     
         // Marcar token como completamente usado
@@ -558,7 +560,7 @@ class TeacherAccessController extends Controller
         ]);
         \Log::info('Token actualitzat:', ['teacher_id' => $teacher->id]);
         
-        // Opcional: Actualizar ConsentHistory amb referència al document de pagament
+        // Opcional: Actualizar ConsentHistory amb referència al document de dades bancaries
         // SOLAMENTE si realment necesites relacionar-los, pero mejor mantener separados
         // ConsentHistory es para RGPD, Payment es para datos bancarios
 
@@ -661,7 +663,7 @@ class TeacherAccessController extends Controller
         $message = $request->input('message', 'default');
         $messages = [
             'basic_data_saved' => 'Les dades personals s\'han registrat correctament.',
-            'payment_saved' => 'Les dades de pagament s\'han registrat correctament.',
+            'payment_saved' => 'Les dades de dades bancaries s\'han registrat correctament.',
             'waived_payment_saved' => 'Has renunciat voluntàriament al cobrament. Les dades s\'han registrat correctament.',
             'default' => 'Les dades s\'han registrat correctament.',
         ];

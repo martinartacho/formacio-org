@@ -400,13 +400,10 @@
                                 
                                 <div>
                                     <label class="block font-medium">Factura (opcional):</label>
-                                    
-                                    <input type="checkbox" name="invoice" value="1" required 
-                                    class="mr-2 mt-1">
-                                <span class="text-sm">
-                                    Explicació.
-                                </span>
-                                <p class="text-xs text-gray-500 mt-1">Marcar</p>
+                                    <input type="text" name="invoice" 
+                                        value="{{ old('invoice', $teacher->invoice ?? '') }}"
+                                        class="border p-2 w-full"
+                                        placeholder="Número de factura">
                                     @error('invoice')
                                         <span class="text-red-600 text-sm">{{ $message }}</span>
                                     @enderror

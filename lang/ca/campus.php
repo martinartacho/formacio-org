@@ -328,7 +328,6 @@ return [
     'treasury_mail_welcome' => 'Hola, :name',
     
     'treasury_mail_body' => 'Jo, :name, amb correu electrònic :email, declaro que he llegit i accepto el tractament de les meves dades personals amb finalitats administratives i econòmiques.',
-    'treasury_mail_body2' => 'Jo, :name, amb correu electrònic :email, declaro que he llegit i accepto el tractament de les meves dades personals amb finalitats administratives i econòmiques.',
     
     // Email content
     'treasury_mail_payment_intro' => 'Pots accedir al formulari per completar les dades econòmiques mitjançant aquest enllaç:',
@@ -359,7 +358,14 @@ return [
     'name' => 'Nom',
     'email' => 'Email',
     'courses_and_hours' => 'Cursos i hores',
+    'courses' => 'Cursos',
     'rgpd' => 'RGPD',
+    'rgpd_consent_management' => 'Gestió de Consentiments RGPD',
+    'rgpd_status' => 'Estat RGPD',
+    'financial_data_management' => 'Gestió de Dades Financeres',
+    'financial_data_info' => 'Informació bancària i fiscal del professorat',
+    'reminder_status' => 'Estat Recordatori',
+    'invoice' => 'Factura',
     'actions' => 'Accions',
 
 ];

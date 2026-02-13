@@ -1,7 +1,7 @@
 @extends('campus.shared.layout')
 
 @section('title', __('campus.treasury'))
-@section('subtitle', __('campus.treasury_mail_title'))
+@section('subtitle', __('campusAccés a la zona de tresoreria'))
 
 @section('content')
 <div class="container mx-auto py-8">

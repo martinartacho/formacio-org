@@ -14,6 +14,7 @@ class ConsentHistory extends Model
         'teacher_id',
         'season',
         'document_path',
+        'payment_document_path',
         'accepted_at',
         'checksum',
         'delegated_by_user_id',

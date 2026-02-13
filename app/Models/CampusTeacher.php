@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string $bank_titular
  * @property string $fiscal_id
  * @property string $fiscal_situation
+ * @property string $invoice
  * @property string $degree
  * @property string $specialization
  * @property string $title

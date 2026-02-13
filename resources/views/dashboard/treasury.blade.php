@@ -6,7 +6,7 @@
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">
             <i class="bi bi-cash-stack me-3"></i>
-            Tesoreria
+            {{ __('Tresoreria') }}
         </h1>
         <p class="text-gray-600">Gestió financera i pagaments del campus</p>
     </div>
@@ -97,7 +97,7 @@
         
         {{-- Consentimientos RGPD --}}
         @can('campus.consents.view')
-        <a href="{{ route('campus.treasury.teachers.index') }}" 
+        <a href="{{ route('campus.treasury.teachers.rgpd.index') }}" 
            class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-gray-200">
             <div class="flex items-center mb-4">
                 <div class="p-3 bg-orange-100 rounded-lg mr-4">

@@ -123,8 +123,8 @@ class CampusUPGSeeder extends Seeder
             return;
         }
         
-        $rowCount = 5; // Comença a la fila 5
-        $maxRows = 40; // Limitar a 2 registres com has demanat
+        $rowCount =0; // Comença a la fila n
+        $maxRows = 40; // Limitar a 2 registres 
         
         while (($row = fgetcsv($handle)) !== false && $rowCount < $maxRows) {
             $rowCount++;

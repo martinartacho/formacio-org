@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ __('campus.treasury_mail_title') }}</title>
+    <title>{{ __('Dades del professorat de la UPG') }}</title>
 </head>
 <body>
-    <h1>{{ __('campus.treasury_mail_title') }}</h1>
+    <h1>{{ __('Dades del professorat de la UPG') }}</h1>
     <div>
         <p>
-            {{ __('campus.treasury_mail_welcome', ['name' => $teacher->name]) }},
+            {{ __('Hola', ['name' => $teacher->name]) }},
         </p>
 
         @if ($purpose === 'payments')
-            <h2>{{ __('campus.treasury_mail_title_payment') }}</h2>
+           
             <p>
-                {{ __('campus.treasury_mail_payment_intro') }}
+                {{ __('Benvingut/a dades professorat UPG') }}
             </p>
 
             <p>
@@ -22,13 +22,13 @@
                     'purpose' => 'payments',
                     'courseCode' => $courseCode
                 ]) }}">
-                    {{ __('campus.treasury_mail_payment_link') }}
+                    {{ __('Formulari dades professorat UPG') }}
                 </a>
             </p>
         @else
-            <h2>{{ __('campus.treasury_mail_title_consent') }}</h2>
+            
             <p>
-                {{ __('campus.treasury_mail_consent_intro') }}
+                 {{ __('Benvingut/a dades professorat UPG') }}
             </p>
 
             <p>
@@ -37,13 +37,13 @@
                     'purpose' => 'consent',
                     'courseCode' => $courseCode
                 ]) }}">
-                    {{ __('campus.treasury_mail_consent_link') }}
+                    {{ __('Formulari dades professorat UPG') }}
                 </a>
             </p>
         @endif
 
         <p>
-            {{ __('campus.treasury_mail_expires') }}
+            {{ __('Aquest enllaç caduca en 7 dies.') }}
         </p>
 
         <p>

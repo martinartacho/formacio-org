@@ -63,12 +63,21 @@ class TeacherTreasuryController extends Controller
                     $teacherProfile = $user->teacherProfile;
                     $courses = $teacherProfile->courses ?? collect();
                     
-                    // Agrupar pagaments per curs
+                    // Agrupar dades bancariess per curs
                     $paymentsByCourse = $teacherProfile->payments->keyBy('course_id');
                     
                     // Processar cada curs
-                    $coursesWithData = $courses->map(function($course) use ($paymentsByCourse) {
+                    $coursesWithData = $courses->map(function($course) use ($paymentsByCourse, $user, $selectedSeason, $teacherProfile) {
                         $payment = $paymentsByCourse->get($course->id);
+                        
+                        // Verificar si existe el PDF de pago del profesor
+                        $paymentPdfPath = "consents/teachers/{$teacherProfile->id}/payment_" . ($selectedSeason->slug ?? 'unknown') . "_{$course->code}.pdf";
+                        $paymentPdfExists = Storage::disk('local')->exists($paymentPdfPath);
+                        
+                        // Verificar si hay un token activo para recordatorio de pago
+                        $activeToken = \App\Models\TeacherAccessToken::where('teacher_id', $user->id)
+                            ->where('metadata', 'LIKE', '%' . $course->code . '%')
+                            ->first();
                         
                         return [
                             'course' => $course,
@@ -81,6 +90,10 @@ class TeacherTreasuryController extends Controller
                             'course_title' => $course->title ?? 'Sense títol',
                             'payment_date' => $payment ? $payment->created_at : null,
                             'payment_formatted_date' => $payment ? $payment->created_at->format('d/m/Y') : null,
+                            'payment_pdf_path' => $paymentPdfPath,
+                            'payment_pdf_exists' => $paymentPdfExists,
+                            'has_active_payment_token' => $activeToken !== null,
+                            'payment_token_expires_at' => $activeToken ? $activeToken->expires_at->format('d/m/Y H:i') : null,
                         ];
                     });
 
@@ -94,6 +107,7 @@ class TeacherTreasuryController extends Controller
                         'rgpd_consent' => $rgpdConsent,
                         'has_rgpd_consent' => $rgpdConsent !== null,
                         'total_courses' => $coursesWithData->count(),
+                        'invoice' => $teacherProfile->invoice,
                         'courses_with_payment' => $coursesWithData->where('has_payment_data', true)->count(),
                         'all_courses_have_payment' => $coursesWithData->count() > 0 && 
                                                     $coursesWithData->where('has_payment_data', true)->count() === $coursesWithData->count(),
@@ -108,6 +122,69 @@ class TeacherTreasuryController extends Controller
 
         // Passem les variables amb els noms que espera la vista
         return view('treasury.teachers.index', [
+            'teachersWithCourses' => $teachers,
+            'season' => $selectedSeason,
+            'seasons' => $seasons,
+            'selectedSeasonSlug' => $selectedSeasonSlug,
+            'selectedSeason' => $selectedSeason,
+        ]);
+    }
+
+    public function rgpdIndex(Request $request)
+    {
+        $this->authorize('campus.teachers.view');
+
+        // Obtenir totes les temporades per al selector
+        $seasons = CampusSeason::orderBy('season_start', 'desc')->get();
+        
+        // Obtenir la temporada seleccionada o l'actual
+        $selectedSeasonSlug = $request->input('season');
+        
+        if ($selectedSeasonSlug) {
+            $selectedSeason = CampusSeason::where('slug', $selectedSeasonSlug)->first();
+        } else {
+            $selectedSeason = CampusSeason::where('is_current', true)->first();
+            $selectedSeasonSlug = $selectedSeason->slug ?? null;
+        }
+
+        $teachers = collect();
+
+        if ($selectedSeason) {
+            // Obtenir usuaris amb rol teacher que tinguin cursos a la temporada actual
+            $teachers = User::role('teacher')
+                ->whereHas('teacherProfile.courses', function($query) use ($selectedSeason) {
+                    $query->where('season_id', $selectedSeason->id);
+                })
+                ->with([
+                    'teacherProfile.courses' => function($query) use ($selectedSeason) {
+                        $query->where('season_id', $selectedSeason->id)
+                            ->withPivot('role', 'hours_assigned');
+                    },
+                    'consents' => function($query) use ($selectedSeason) {
+                        $query->where('season', $selectedSeason->slug);
+                    }
+                ])
+                ->get()
+                ->map(function($user) use ($selectedSeason) {
+                    $teacherProfile = $user->teacherProfile;
+                    $courses = $teacherProfile->courses ?? collect();
+                    
+                    // Consentiment RGPD
+                    $rgpdConsent = $user->consents->first();
+                    
+                    return [
+                        'user' => $user,
+                        'teacher_profile' => $teacherProfile,
+                        'courses' => $courses,
+                        'rgpd_consent' => $rgpdConsent,
+                        'has_rgpd_consent' => $rgpdConsent !== null,
+                        'total_courses' => $courses->count(),
+                    ];
+                });
+        }
+
+        // Passem les variables amb els noms que espera la vista
+        return view('treasury.teachers.rgpd-index', [
             'teachersWithCourses' => $teachers,
             'season' => $selectedSeason,
             'seasons' => $seasons,
@@ -330,16 +407,27 @@ class TeacherTreasuryController extends Controller
 
     public function consentHistory(User $teacher)
     {
-        $this->authorize('consents.view');
+        $this->authorize('campus.consents.view');
         
-        dd('Pepe en 152 de consentHistory');
-
         $consents = ConsentHistory::where('teacher_id', $teacher->id)
             ->orderByDesc('season')
             ->get();
 
 
         return view('treasury.teachers.consents', compact('teacher', 'consents'));
+    }
+
+    public function downloadTeacherPaymentPdf(User $teacher, $season, $course)
+    {
+        $this->authorize('campus.teachers.view');
+        
+        $paymentPdfPath = "consents/teachers/{$teacher->id}/payment_{$season}_{$course}.pdf";
+        
+        if (!Storage::disk('local')->exists($paymentPdfPath)) {
+            abort(404, 'PDF de pago no encontrado');
+        }
+        
+        return Storage::disk('local')->download($paymentPdfPath, "payment_{$season}_{$course}.pdf");
     }
 
 
@@ -363,6 +451,29 @@ class TeacherTreasuryController extends Controller
         return Storage::disk('local')->download(
             $consent->document_path,
             basename($consent->document_path)
+        );
+    }
+
+    public function downloadPayment(ConsentHistory $consent)
+    {
+        if (
+            auth()->id() !== $consent->teacher_id &&
+            ! auth()->user()->can('campus.consents.view')
+        ) {
+            abort(403);
+        }
+
+        if (! $consent->payment_document_path || $consent->payment_document_path === 'pending') {
+            abort(404, 'Document de dades bancaries no trobat');
+        }
+
+        if (! Storage::disk('local')->exists($consent->payment_document_path)) {
+            abort(404, 'Document de dades bancaries no trobat');
+        }
+
+        return Storage::disk('local')->download(
+            $consent->payment_document_path,
+            basename($consent->payment_document_path)
         );
     }
 

@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\CampusTeacher;
 use App\Models\CampusTeacherPayment;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TreasuryController extends Controller
 {
+    use AuthorizesRequests;
     public function __construct()
     {
         $this->middleware('auth');
@@ -20,6 +22,8 @@ class TreasuryController extends Controller
      */
     public function dashboard()
     {
+        $this->authorize('campus.teachers.view');
+        
         // Estadísticas básicas
         $pendingPayments = CampusTeacherPayment::whereNull('payment_option')->count();
         $approvedPayments = CampusTeacherPayment::whereNotNull('payment_option')->count();
