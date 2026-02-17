@@ -18,6 +18,8 @@ class SendTeacherAccessController extends Controller
 
         $token = TeacherAccessToken::create([
             'teacher_id' => $teacher->id,
+            // 'season_id'  => $seasonId, // millorar
+            // 'course_id'  => $courseId, // millorar
             'token' => Str::uuid(),
             'expires_at' => now()->addDays(7),
         ]);

@@ -66,7 +66,6 @@
                 <th class="p-3 text-left">{{ __('campus.name') }}</th>
                 <th class="p-3 text-left">{{ __('campus.email') }} Usuari/Professor</th>
                 <th class="p-3 text-center">{{ __('campus.rgpd_status') }}</th>
-                <th class="p-3 text-left">{{ __('campus.invoice') }}</th>
                 <th class="p-3 text-center">{{ __('campus.actions') }}</th>
             </tr>
         </thead>
@@ -112,9 +111,6 @@
                                     ❌ Pendent
                                 </span>
                             @endif
-                        </td>
-                        <td class="p-3 text-left">
-                            {{ $teacherProfile->invoice ?? '-' }}
                         </td>
                         <td class="p-3 text-center">
                             <div class="flex justify-center space-x-2">

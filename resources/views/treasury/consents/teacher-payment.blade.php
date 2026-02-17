@@ -119,6 +119,11 @@
 </head>
 <body>
     <div class="header">
+        @if(isset($isFinalConsent) && $isFinalConsent)
+        <div style="background-color: #28a745; color: white; padding: 8px; margin-bottom: 10px; text-align: center; font-weight: bold;">
+            🎯 CONSENTIMENT FINAL COMPLET - PROCÉS FINALITZAT
+        </div>
+        @endif
         <h1>DOCUMENT DE DADES DE PAGAMENT</h1>
         <p>Universitat Popular de Granollers - Tresoreria</p>
         <p>Temporada: {{ $season->name ?? 'N/A' }} ({{ $seasonSlug ?? 'N/A' }})</p>
@@ -251,12 +256,25 @@
     <div class="section">
         <div class="section-title">5. DECLARACIONS I AUTORITZACIONS</div>
         <div class="declaration">
-            <p><strong>✅ Declaració fiscal:</strong> Soc coneixedor/a de la fiscalitat corresponent als ingressos 
-            prevists i soc conscient de les responsabilitats que comporta.</p>
+            @if(isset($declaracioFiscal) && $declaracioFiscal)
+            <p><strong>✅ Declaració fiscal:</strong> El beneficiari declara sota la seva responsabilitat que les dades facilitades són certes 
+            i que es troba en alguna de les següents situacions fiscals:</p>
+            <ul style="margin-left: 20px; font-size: 11px;">
+                <li>Soc autònom i presento declaracions trimestrals d'IVA</li>
+                <li>Soc pensionista i els meus ingressos estan exempts d'IRPF</li>
+                <li>Soc aturat i no tinc ingressos subjectes a retenció</li>
+                <li>Altres situacions exentes o amb retencions específiques</li>
+            </ul>
+            @else
+            <p><strong>❌ Declaració fiscal:</strong> No s'ha registrat la declaració fiscal del beneficiari.</p>
+            @endif
             
-            <p><strong>✅ Autorització tractament de dades:</strong> Autoritzo la inclusió de les meves dades 
-            en el fitxer «professorat» de la UPG per a la tramitació administrativa relacionada amb el pagament 
-            dels meus serveis.</p>
+            @if(isset($autoritzacioDades) && $autoritzacioDades)
+            <p><strong>✅ Autorització tractament de dades:</strong> El beneficiari autoritza el tractament de les seves dades personals 
+            amb finalitats fiscals i administratives, d'acord amb la normativa vigent de protecció de dades.</p>
+            @else
+            <p><strong>❌ Autorització tractament de dades:</strong> No s'ha registrat l'autorització de tractament de dades del beneficiari.</p>
+            @endif
         </div>
     </div>
 

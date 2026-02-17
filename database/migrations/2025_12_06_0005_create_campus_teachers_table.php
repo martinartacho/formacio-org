@@ -20,12 +20,14 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('postal_code')->nullable();
             $table->string('city')->nullable();
+            $table->string('observacions')->nullable();
             
             $table->string('iban')->nullable();
             $table->string('bank_titular')->nullable(); //$bankHolder
             $table->string('fiscal_id')->nullable();
             $table->string('fiscal_situation')->nullable();
             $table->enum('needs_payment', ['own_fee', 'ceded_fee', 'waived_fee'])->default('own_fee');
+            $table->string('invoice')->nullable();
             
             $table->string('degree')->nullable();
             $table->string('specialization')->nullable();

@@ -91,9 +91,12 @@ class CampusTeacher extends Model
         'fiscal_situation',
         'degree',
         'specialization',
+        'needs_payment',
+        'invoice',
         'title',
         'areas',
         'status',
+        'observacions',
         'hiring_date',
         'metadata'
     ];

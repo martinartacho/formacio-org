@@ -70,6 +70,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make(env('SEEDER_DEFAULT_PASSWORD', 'password123')),
             'email_verified_at' => Carbon::now(),
             'locale' => 'ca',
+            
         ]);
         $teacher1->assignRole('teacher');
         

@@ -25,8 +25,10 @@ return new class extends Migration
         $table->string('postal_code')->nullable();
         $table->string('city')->nullable();
         $table->string('fiscal_situation')->nullable();
+        $table->string('invoice')->nullable();
+        $table->text('observacions')->nullable();
         $table->string('address')->nullable();
-
+           
         $table->string('iban')->nullable();
         $table->string('bank_titular')->nullable(); // bankHolder es el titular del compte
         $table->json('metadata')->nullable();

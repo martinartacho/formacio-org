@@ -132,7 +132,12 @@ Route::middleware(['auth', 'permission:campus.teachers.view'])
             )->whereIn('format', ['csv', 'xlsx'])
         ->name('teachers.export');
 
-        //  Per autocompletar dades perfil treasury teacher
+      
+
+
+        });    
+
+  //  Per autocompletar dades perfil treasury teacher
         Route::get(
             'teacher/complete-profile/{token}',
             [\App\Http\Controllers\Public\TeacherPublicProfileController::class, 'edit']
@@ -141,11 +146,12 @@ Route::middleware(['auth', 'permission:campus.teachers.view'])
         Route::post(
             'teacher/complete-profile/{token}',
             [\App\Http\Controllers\Public\TeacherPublicProfileController::class, 'update']
-        );
+        )->name('teacher.complete.profile');
 
-
-        });    
-
+        Route::post(
+            'teacher/tab-dades-personals/{token}',
+            [\App\Http\Controllers\Public\TeacherPublicProfileController::class, 'tabDadesPersonals']
+        )->name('teacher.tab.dades.personals');        
         
 
 Route::get(
@@ -181,9 +187,20 @@ Route::get(
     [TeacherAccessController::class, 'show']
 )->name('teacher.access.form');
 
+Route::get(
+    '/teacher/access/{token}/payments',
+    [TeacherAccessController::class, 'show']
+)->name('teacher.access.payments')
+->defaults('purpose', 'payments');
 
 Route::post(
-    'teacher-access/{token}',
+    '/teacher/access/{token}/personal-data',
+    [TeacherAccessController::class, 'updatePersonalData']
+)->name('teacher.access.personal-data.update');
+
+
+Route::post(
+    '/teacher-access/{token}',
     [TeacherAccessController::class, 'store']
 )->name('teacher.access.store');
 

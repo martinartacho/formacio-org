@@ -17,14 +17,14 @@ class CampusTeacherPayment extends Model
         'payment_option',
         'first_name',
         'last_name',
-        'fiscal_id', // Cambiado de dni a fiscal_id
-        'address',
+        'fiscal_id',
         'postal_code',
         'city',
         'iban',
-        'bank_holder',
-        'titol',
+        'bank_titular',
         'fiscal_situation',
+        'invoice',
+        'observacions',
         'metadata',
     ];
 

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('teacher_id')->constrained('users')->cascadeOnDelete();
             $table->string('token', 64)->unique();
+            $table->foreignId('season_id')->nullable()->constrained('campus_seasons')->cascadeOnDelete();
+            $table->foreignId('course_id')->nullable()->constrained('campus_courses')->cascadeOnDelete();
             $table->timestamp('expires_at');
             $table->timestamp('used_at')->nullable();
             $table->json('metadata')->nullable();
