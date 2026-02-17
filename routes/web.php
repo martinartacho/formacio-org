@@ -470,6 +470,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [TreasuryController::class, 'dashboard'])
             ->name('dashboard');
         
+        Route::get('/consents', [TreasuryController::class, 'consents'])
+            ->name('consents');
+        
+        Route::get('/consents/{consent}', [TreasuryController::class, 'showConsent'])
+            ->name('consents.show');
+        
+        Route::get('/consents/export', [TreasuryController::class, 'exportConsents'])
+            ->name('consents.export');
+        
         Route::get('/payments', [TreasuryController::class, 'payments'])
             ->name('payments.index');
             

@@ -7,6 +7,8 @@
     'teacherCourses' => collect(),
     'allCourses' => collect(),
     'stats' => [],
+    'consentments' => collect(),
+    'currentSeason' => null,
     'debug' => null,
     'error' => null,
 ])
@@ -56,7 +58,7 @@
                     <span class="font-medium">@lang('campus.code'): {{ $teacher->teacher_code }}</span>
                     @if($teacher->specialization)
                         <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                            {{ $teacher->specialization }} pepe
+                            {{ $teacher->specialization }} 
                         </span>
                     @endif
                 </div>
@@ -96,6 +98,11 @@
             <div class="text-2xl font-bold text-orange-600">{{ $stats['upcoming_registrations'] ?? 0 }}</div>
             <div class="text-xs text-gray-500">@lang('campus.pending_registrations_teacher')</div>
         </div>
+
+        {{-- <div class="bg-white p-4 rounded shadow text-center">
+            <div class="text-2xl font-bold text-purple-600">{{ $stats['completed_consents'] ?? 0 }}</div>
+            <div class="text-xs text-gray-500">Consentiments completats</div>
+        </div> --}}
     </div>
 
     {{-- CURSOS --}}
@@ -257,6 +264,14 @@
                                 </div>
                             </div>
 
+                            {{-- Indicador de consentimiento --}}
+                            @if($course->consent_status)
+                                <div class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium 
+                                    {{ $course->consent_status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                    {{ $course->consent_status === 'completed' ? '📄 Consentiment Completat' : '📝 Consentiment Pendent' }}
+                                </div>
+                            @endif
+
                             {{-- Fechas del curso --}}
                             <div class="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded">
                                 <svg class="w-4 h-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -309,5 +324,103 @@
             </div>
         @endif
     </div>
+
+    {{-- CONSENTIMIENTOS Y PAGOS --}}
+    @if($consentments && $consentments->isNotEmpty())
+        <div class="bg-white p-6 rounded shadow mt-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-gray-800">📄 Consentiments i Pagaments</h2>
+                <div class="text-sm text-gray-500">
+                    Temporada: {{ $currentSeason->name ?? '---' }}
+                </div>
+            </div>
+            
+            <!-- Lista de consentimientos por curso -->
+            <div class="space-y-4">
+                @foreach($consentments as $consent)
+                    <div class="border rounded-lg p-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-gray-800">{{ $consent->course->title ?? 'Curso no encontrado' }}</h3>
+                                <p class="text-sm text-gray-600">
+                                    {{ $consent->course->code ?? '---' }} • {{ $consent->season }}
+                                </p>
+                                @if($consent->accepted_at)
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        Acceptat: {{ $consent->accepted_at->format('d/m/Y H:i') }}
+                                    </p>
+                                @endif
+                            </div>
+                            <div class="text-right ml-4">
+                                @if($consent->document_path)
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        ✅ Completat
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        📝 Pendent
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        @if($consent->document_path)
+                            <div class="mt-3 flex items-center justify-between">
+                                <div class="text-sm text-gray-600">
+                                    PDF generat: {{ $consent->updated_at?->format('d/m/Y H:i') }}
+                                </div>
+                                <div class="flex gap-2">
+                                    <a href="{{ route('consents.download', $consent) }}" 
+                                       class="inline-flex items-center text-sm font-medium text-blue-700 hover:text-blue-800">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        Descarregar PDF
+                                    </a>
+                                    <a href="{{ route('campus.courses.show', $consent->course_id) }}" 
+                                       class="inline-flex items-center text-sm font-medium text-green-700 hover:text-green-800">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/>
+                                        </svg>
+                                        Veure curs
+                                    </a>
+                                </div>
+                            </div>
+                        @else
+                            {{-- Consentimiento pendiente - mostrar enlace para completar --}}
+                            <div class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-blue-800 font-medium">
+                                            📝 Necessites completar el consentiment per aquest curs
+                                        </p>
+                                        <p class="text-xs text-blue-600 mt-1">
+                                            Per generar el PDF final, accedeix al formulari de teacher-access
+                                        </p>
+                                    </div>
+                                    <a href="{{ route('teacher.access.form', ['token' => 'generar-nuevo-token', 'purpose' => 'payments', 'courseCode' => $consent->course->code]) }}" 
+                                       class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm-6 4h6v-6"/>
+                                        </svg>
+                                        Completar consentiment
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+            
+            @if($consentments->whereNull('document_path')->count() > 0)
+                <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                    <p class="text-sm text-yellow-800">
+                        <strong>⚠️ Tens {{ $consentments->whereNull('document_path')->count() }} consentiments pendents de completar.</strong>
+                        Si us plau, accedeix als formularis de teacher-access per finalitzar el procés.
+                    </p>
+                </div>
+            @endif
+        </div>
+    @endif
 
 </div>

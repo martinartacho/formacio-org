@@ -114,38 +114,69 @@
     </div>
     
     <!-- Resumen de datos -->
-    @if($teacher)
+    @if($teacher && $latestPayment && $courseInfo)
         <div class="mt-8 p-6 bg-gray-50 border border-gray-200 rounded-lg">
-            <h3 class="text-lg font-semibold mb-4">📋 Resum de les teves dades</h3>
+            <h3 class="text-lg font-semibold mb-4">📋 Resum del procés completat</h3>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Datos del profesor -->
                 <div>
-                    <h4 class="font-medium text-gray-700 mb-2">Dades personals</h4>
+                    <h4 class="font-medium text-gray-700 mb-2">👤 Professor</h4>
                     <ul class="text-sm text-gray-600 space-y-1">
-                        <li><strong>Nom:</strong> {{ $teacher->first_name }}</li>
-                        <li><strong>Cognoms:</strong> {{ $teacher->last_name }}</li>
-                        <li><strong>Email:</strong> {{ $teacher->email }}</li>
-                        <li><strong>Telèfon:</strong> {{ $teacher->phone ?? 'No especificat' }}</li>
+                        <li><strong>Nom:</strong> {{ $teacher->first_name }} {{ $teacher->last_name }}</li>
+                        <li><strong>Codi:</strong> {{ $teacher->teacher_code }}</li>
+                        <li><strong>Estat:</strong> 
+                            <span class="px-2 py-1 rounded text-xs {{ $teacher->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                {{ $teacher->status === 'active' ? 'Actiu' : 'Inactiu' }}
+                            </span>
+                        </li>
                     </ul>
                 </div>
                 
-                @if($token->metadata && isset($token->metadata['payment_option']))
-                    <div>
-                        <h4 class="font-medium text-gray-700 mb-2">Dades de pagament</h4>
-                        <ul class="text-sm text-gray-600 space-y-1">
-                            <li>
-                                <strong>Estat:</strong> 
-                                <span class="px-2 py-1 rounded text-xs {{ $token->metadata['payment_option'] === 'waived_fee' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
-                                    {{ $token->metadata['payment_option'] === 'waived_fee' ? 'Renúncia' : 'Actiu' }}
-                                </span>
-                            </li>
-                            @if(isset($token->metadata['payment_completed_at']))
-                                <li><strong>Data:</strong> {{ \Carbon\Carbon::parse($token->metadata['payment_completed_at'])->format('d/m/Y') }}</li>
-                            @endif
-                        </ul>
-                    </div>
-                @endif
+                <!-- Datos del curso -->
+                <div>
+                    <h4 class="font-medium text-gray-700 mb-2">📚 Activitat formativa</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li><strong>Codi:</strong> {{ $courseInfo->code }}</li>
+                        <li><strong>Títol:</strong> {{ $courseInfo->title }}</li>
+                        <li><strong>Hores:</strong> {{ $courseInfo->hours }}h</li>
+                        <li><strong>Crèdits:</strong> {{ $courseInfo->credits }}</li>
+                    </ul>
+                </div>
+                
+                <!-- Opción de pago -->
+                <div>
+                    <h4 class="font-medium text-gray-700 mb-2">💰 Opció de cobrament</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>
+                            <strong>Tipo:</strong> 
+                            <span class="px-2 py-1 rounded text-xs {{ 
+                                $latestPayment->needs_payment === 'waived_fee' ? 'bg-yellow-100 text-yellow-800' : 
+                                ($latestPayment->needs_payment === 'ceded_fee' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800') 
+                            }}">
+                                {{ 
+                                    $latestPayment->needs_payment === 'waived_fee' ? 'Renúncia' : 
+                                    ($latestPayment->needs_payment === 'ceded_fee' ? 'Cedut' : 'Propi') 
+                                }}
+                            </span>
+                        </li>
+                        <li><strong>Factura:</strong> {{ $latestPayment->invoice ? 'Sí' : 'No' }}</li>
+                        @if($latestPayment->updated_at)
+                            <li><strong>Completat:</strong> {{ \Carbon\Carbon::parse($latestPayment->updated_at)->format('d/m/Y H:i') }}</li>
+                        @endif
+                    </ul>
+                </div>
             </div>
+            
+            <!-- Información adicional -->
+            @if($latestConsent && $latestConsent->document_path)
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                    <p class="text-sm text-blue-800">
+                        <strong>📄 Document de consentiment generat:</strong> 
+                        El PDF final ha estat creat i emmagatzemat correctament.
+                    </p>
+                </div>
+            @endif
         </div>
     @endif
 </div>

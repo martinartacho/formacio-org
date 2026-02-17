@@ -34,7 +34,11 @@ class TeacherAccessController extends Controller
                 ->firstOrFail();
 
             $user = User::findOrFail($accessToken->teacher_id);
-            // dd($request->all(), $token);
+            
+            // Verificar si es el proceso final (solo autorizaciones)
+            if ($request->has('end_autoritzacio_dades') && $request->has('end_declaracio_fiscal')) {
+                return $this->processFinalConsent($request, $accessToken, $user);
+            }
 
             $needsPayment = $request->input('needs_payment');
 
@@ -459,6 +463,9 @@ class TeacherAccessController extends Controller
                 'season' => $seasonSlug,
             ],
             [
+                'accepted_at' => $acceptedAt,
+                'checksum' => $finalChecksum,
+                'document_path' => $finalConsentPath,
                 'final_consent_document_path' => $finalConsentPath,
                 'final_consent_accepted_at' => $acceptedAt,
                 'final_consent_checksum' => $finalChecksum,
@@ -500,12 +507,25 @@ class TeacherAccessController extends Controller
         $user = User::findOrFail($accessToken->teacher_id);
         $teacher = CampusTeacher::where('user_id', $user->id)->first();
         
-        // Obtener último consentimiento
+        // Obtener último consentimiento y datos relacionados
         $latestConsent = null;
+        $latestPayment = null;
+        $courseInfo = null;
+        
         if ($teacher) {
-            $latestConsent = ConsentHistory::where('teacher_id', $teacher->id)
+            $latestConsent = ConsentHistory::where('teacher_id', $user->id)
                 ->latest('accepted_at')
                 ->first();
+                
+            // Obtener el pago más reciente del profesor
+            $latestPayment = CampusTeacherPayment::where('teacher_id', $teacher->id)
+                ->latest('updated_at')
+                ->first();
+                
+            // Si hay pago, obtener datos del curso
+            if ($latestPayment) {
+                $courseInfo = CampusCourse::find($latestPayment->course_id);
+            }
         }
         
         // Determinar mensaje según parámetro
@@ -523,7 +543,80 @@ class TeacherAccessController extends Controller
             'teacher' => $teacher,
             'user' => $user,
             'latestConsent' => $latestConsent,
+            'latestPayment' => $latestPayment,
+            'courseInfo' => $courseInfo,
+            'token' => $accessToken,
             'message' => $messages[$message] ?? $messages['default'],
         ]);
+    }
+
+    /**
+     * Procesar el consentimiento final: generar PDF y finalizar
+     */
+    private function processFinalConsent($request, $accessToken, $user)
+    {
+        \Log::info('=== PROCESANDO CONSENTIMIENTO FINAL ===');
+        
+        try {
+            // 1. Obtener datos existentes
+            $teacher = CampusTeacher::where('user_id', $user->id)->first();
+            if (!$teacher) {
+                throw new \Exception('No se encontró el profesor relacionado');
+            }
+
+            // 2. Obtener datos de pago usando course_id y season_id del request
+            $payment = CampusTeacherPayment::where('teacher_id', $teacher->id)
+                ->where('course_id', $request->input('course_id'))
+                ->where('season_id', $request->input('season_id'))
+                ->first();
+
+            if (!$payment) {
+                throw new \Exception('No se encontraron datos de pago para el curso y temporada especificados');
+            }
+
+            // 3. Obtener temporada y curso
+            $season = CampusSeason::find($request->input('season_id'));
+            $course = CampusCourse::find($request->input('course_id'));
+
+            if (!$season || !$course) {
+                throw new \Exception('No se encontró la temporada o el curso');
+            }
+
+            \Log::info('Datos encontrados:', [
+                'teacher_id' => $teacher->id,
+                'payment_id' => $payment->id,
+                'season_id' => $season->id,
+                'course_id' => $course->id
+            ]);
+
+            // 4. Generar PDF
+            $this->generateFinalConsentPdf($teacher, $user, $season, $course, $payment, $request);
+
+            // 5. Actualizar metadatos del payment con las autorizaciones
+            $existingMetadata = $payment->metadata ?? [];
+            $payment->update([
+                'metadata' => array_merge($existingMetadata, [
+                    'end_autoritzacio_dades' => true,
+                    'end_declaracio_fiscal' => true,
+                    'final_consent_accepted_at' => now()->toDateTimeString(),
+                    'ip_address' => $request->ip(),
+                ])
+            ]);
+
+            // 6. Marcar token como usado
+            $accessToken->update(['used_at' => now()]);
+
+            \Log::info('=== CONSENTIMIENTO FINAL PROCESADO CORRECTAMENTE ===');
+
+            // 7. Redirigir a página de éxito
+            return redirect()->route('teacher.access.success', $accessToken->token)
+                ->with('message', 'final_consent_saved');
+
+        } catch (\Exception $e) {
+            \Log::error('Error en processFinalConsent: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'Error al procesar el consentimiento final: ' . $e->getMessage()]);
+        }
     }
 }

@@ -75,11 +75,12 @@ class TeacherDashboardData
             $sql = $coursesQuery->toSql();
             Log::info('TeacherDashboardData - Courses query SQL: ' . $sql);
 
-            // Si hay temporada actual, filtrar por ella
-            if ($currentSeason) {
-                $coursesQuery->where('season_id', $currentSeason->id);
-                Log::info('TeacherDashboardData - Filtering by season: ' . $currentSeason->id);
-            }
+            // Mostrar todos los cursos del teacher sin filtrar por temporada
+            // if ($currentSeason) {
+            //     $coursesQuery->where('season_id', $currentSeason->id);
+            //     Log::info('TeacherDashboardData - Filtering by season: ' . $currentSeason->id);
+            // }
+            Log::info('TeacherDashboardData - Showing ALL courses for teacher');
 
             $teacherCourses = $coursesQuery->get();
             Log::info('TeacherDashboardData - Teacher courses count: ' . $teacherCourses->count());
@@ -136,6 +137,14 @@ class TeacherDashboardData
                 }
             }
 
+            // Obtener consentimientos del teacher
+            $consentments = \App\Models\ConsentHistory::where('teacher_id', $user->id)
+                ->with(['course', 'season'])
+                ->latest('accepted_at')
+                ->get();
+            
+            Log::info('TeacherDashboardData - Consentments found: ' . $consentments->count());
+            
             $stats = [
                 'total_courses' => $teacherCourses->count(),
                 'active_courses' => $activeCoursesCount,
@@ -147,6 +156,8 @@ class TeacherDashboardData
                 'upcoming_registrations' => CampusRegistration::whereIn('course_id', $teacherCourses->pluck('id'))
                     ->where('status', 'pending')
                     ->count(),
+                'pending_consents' => $consentments->whereNull('document_path')->count(),
+                'completed_consents' => $consentments->whereNotNull('document_path')->count(),
             ];
 
             Log::info('TeacherDashboardData - Stats calculated', $stats);
@@ -158,6 +169,7 @@ class TeacherDashboardData
                 'teacherCourses' => $teacherCourses,
                 'allCourses' => $allTeacherCourses,
                 'stats' => $stats,
+                'consentments' => $consentments,
                 'debug' => [
                     'user_id' => $user->id,
                     'has_teacher_role' => $user->hasRole('teacher'),

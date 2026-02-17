@@ -96,7 +96,7 @@
         @endcan
         
         {{-- Consentimientos RGPD --}}
-        @can('campus.consents.view')
+{{--         @can('campus.consents.view')
         <a href="{{ route('campus.treasury.teachers.rgpd.index') }}" 
            class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-gray-200">
             <div class="flex items-center mb-4">
@@ -104,7 +104,7 @@
                     <i class="bi bi-shield-check text-orange-600 text-2xl"></i>
                 </div>
                 <div>
-                    <h3 class="text-xl font-semibold text-gray-900">Consentiments RGPD</h3>
+                    <h3 class="text-xl font-semibold text-gray-900"> Consentiments RGPD</h3>
                     <p class="text-sm text-gray-600">Gestió de consentiments RGPD</p>
                 </div>
             </div>
@@ -113,15 +113,9 @@
                 Veure i gestionar consentiments
             </div>
         </a>
-        @endcan
+        @endcan --}}
         
-        {{-- Gestió professors (Tresoreria) --}}
-        {{-- <div class="mt-4">
-        <a href="{{ route('campus.treasury.teachers.index') }}"
-           class="text-blue-600 hover:underline">
-            → Gestió professors (Tresoreria)
-        </a>
-        </div> --}}
+
         
     </div>
     

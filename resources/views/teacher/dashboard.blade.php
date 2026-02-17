@@ -14,6 +14,8 @@
                 :seasons="$seasons"
                 :teacher-courses="$teacherCourses"
                 :stats="$stats"
+                :consentments="$consentments"
+                :current-season="$currentSeason"
                 :debug="$debug"
                 :error="$error"
             />

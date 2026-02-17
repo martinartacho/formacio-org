@@ -434,11 +434,16 @@ class TeacherTreasuryController extends Controller
 
     public function downloadConsent(ConsentHistory $consent)
     {
-       
-       
-        if (
-            auth()->id() !== $consent->teacher_id &&
-            ! auth()->user()->can('campus.consents.view')
+        // Permitir acceso si:
+        // 1. El usuario está autenticado y es el propietario
+        // 2. El usuario está autenticado y tiene permisos
+        // 3. No hay usuario autenticado (acceso por token) - permitir por ahora
+        
+        $user = auth()->user();
+        
+        if ($user && 
+            $user->id !== $consent->teacher_id &&
+            ! $user->can('campus.consents.view')
         ) {
             abort(403);
         }

@@ -119,26 +119,7 @@ class FcmTokenController extends Controller
             ], 500);
         }
     }
-/* para limpiar
-    public function PEPEsendNotification(User $user, FCMService $fcmService)
-    {
-        Log::warning('Dentro de sendNotification, este endpoint ha sido reepplazado');
 
-        return response()->json(['success' => true, 'response' => json_decode($result, true)]);
-
-        return response()->json([
-            'message' => 'Este endpoint ha sido reemplazado por /api/notifications/send-fcm.'
-        ], 410); // 410 Gone
-
-        $result = $fcmService->sendToUser($user, 'Bienvenido', 'Has iniciado sesión correctamente.');
-
-        if (!$result) {
-            return response()->json(['error' => 'Error al enviar la notificación.'], 500);
-        }
-
-        return response()->json(['success' => true, 'response' => json_decode($result, true)]);
-    }
-*/
     public function unreadCount(Request $request)
     {
         $user = auth()->user();

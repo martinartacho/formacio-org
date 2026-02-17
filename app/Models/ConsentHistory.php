@@ -35,6 +35,16 @@ class ConsentHistory extends Model
         return $this->belongsTo(CampusTeacher::class, 'teacher_id');
     }
 
+    public function course()
+    {
+        return $this->belongsTo(CampusCourse::class, 'course_id');
+    }
+
+    public function season()
+    {
+        return $this->belongsTo(CampusSeason::class, 'season_id');
+    }
+
     public function delegatedBy()
     {
         return $this->belongsTo(User::class, 'delegated_by_user_id');
