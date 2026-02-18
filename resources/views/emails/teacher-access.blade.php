@@ -13,7 +13,9 @@
         @if ($purpose === 'payments')
            
             <p>
-                {{ __('Benvingut docent de la Universitat Popular de Granollers - UPG') }}
+                {{ __('Et donem la benvinguda al grup de professorat de la Universitat Popular de Granollers (UPG) i agraïm  la teva participació en la confinaça que serà de mútua satisfacció.') }}
+            </p>
+            <p>
                 {{ __('Per tal de gestionar correctament la formació que imparteixes aquest curs, et donem seguidament l´enllaç al formulari per a completar les teves dades.') }}
                 Consideracions:
                 {{ __('Rebràs un missatge com aquest si imparteix més d´un curs.') }}
@@ -27,20 +29,24 @@
                     'purpose' => 'payments',
                     'courseCode' => $courseCode
                 ]) }}">
-                    {{ __('Formulari dades professorat UPG') }}
+                    {{ __('Formulari dades professorat UPG') }} 
                 </a>
                 
                 <br>
                 <span>{{ __('o copi i enganxa aquest enllaç al teu navegador:') }}</span>
                 <code>
-                    http://localhost:8000/teacher.access.form?token={{ $token->token }}&purpose=payments&courseCode={{ $courseCode }}
+                    https://campus.upg.cat/teacher.access.form?token={{ $token->token }}&purpose=payments&courseCode={{ $courseCode }}
                 </code>
             </p>
         @else
             
             <p>
                 {{ __('Benvingut docent de la Universitat Popular de Granollers - UPG') }}
+            </p>
+            <p>
                 {{ __('Per tal de gestionar correctament la formació que imparteixes aquest curs, et donem seguidament l´enllaç al formulari per a completar les teves dades.') }}
+            </p>
+            <p>
                 Consideracions:
                 {{ __('Rebràs un missatge com aquest si imparteix més d´un curs.') }}
                 {{ __('A cada curs impartit, pots triar diferents modalitats de cobrament, tria la que consideris.') }}
@@ -59,13 +65,18 @@
                 <br>
                 <span>{{ __('o copi i enganxa aquest enllaç al teu navegador:') }}</span>
                 <code>
-                    http://localhost:8000/teacher.access.form?token={{ $token->token }}&purpose=consent&courseCode={{ $courseCode }}
+                    https://campus.upg.cat/teacher.access.form?token={{ $token->token }}&purpose=consent&courseCode={{ $courseCode }}
                 </code>
             </p>
         @endif
 
         <p>
             {{ __('Aquest enllaç caduca en 7 dies.') }}
+        </p>
+
+        <p>
+            [{{ config('Associaió per  a l´impuls d´Estudis Populars (AIEP) - CIF G-66314998 -Carrer Mare de Deu de Montserrat, edifici Roca Umbert, 36 - 08401 Granollers') }}]
+            
         </p>
 
         <p>

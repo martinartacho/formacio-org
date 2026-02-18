@@ -47,7 +47,7 @@ return [
     'total_courses' => 'Cursos totals',
     'active_courses' => 'Cursos actius',
     'category' => 'Categoria',
-    'teachers' => 'Professors',
+    'teachers' => 'Professorat',
     'registrations' => 'Matriculacions',
     'unique_students' => 'Estudiants únics',
     'no_courses' => 'No hi ha cursos',
@@ -70,7 +70,7 @@ return [
     'dashboard' => 'Panell de control',
 
     'no_category' => 'Sense categoria',
-    'no_teachers' => 'Sense professors',
+    'no_teachers' => 'Sense professorat',
     'mark_as_current' => 'Marcar com a actual',
     'deactivate' => 'Desactivar',
     'activate' => 'Activar',

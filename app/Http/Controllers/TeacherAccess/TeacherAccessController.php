@@ -77,7 +77,6 @@ class TeacherAccessController extends Controller
 
                 $rules = array_merge($rules, [
                     'beneficiary_first_name' => 'required|string|max:255',
-                    'beneficiary_last_name'  => 'required|string|max:255',
                     'beneficiary_email'      => 'required|email|max:255',
                     'beneficiary_phone'      => 'required|string|max:20',
 
@@ -160,7 +159,6 @@ class TeacherAccessController extends Controller
                         [
                             'payment_option' => $needsPayment,
                             'first_name'     => $validated['beneficiary_first_name'],
-                            'last_name'      => $validated['beneficiary_last_name'],
                             'fiscal_id'      => $validated['beneficiary_fiscal_id'] ?? null,
                             'address'        => $validated['beneficiary_address'] ?? null,
                             'postal_code'    => $validated['beneficiary_postal_code'] ?? null,
@@ -349,9 +347,15 @@ class TeacherAccessController extends Controller
             Log::error('Línea del error: ' . $e->getLine());
             Log::error('Archivo del error: ' . $e->getFile());
             
+            // Generar referencia única para este error
+            $errorReference = 'ERR-' . date('YmdHis') . '-' . strtoupper(substr(md5($e->getMessage()), 0, 6));
+            Log::error("Referencia de error: {$errorReference}");
+            
             return back()
                 ->withInput()
-                ->withErrors(['error' => 'Error al guardar los datos: ' . $e->getMessage()]);
+                ->withErrors([
+                    'error' => "Error al guardar los datos. Por favor, contacta con soporte técnico con la referencia: {$errorReference}"
+                ]);
         }
     }
        
@@ -614,9 +618,28 @@ class TeacherAccessController extends Controller
 
         } catch (\Exception $e) {
             \Log::error('Error en processFinalConsent: ' . $e->getMessage());
-            return back()
+            
+            // Generar referencia única para este error
+            $errorReference = 'ERR-' . date('YmdHis') . '-' . strtoupper(substr(md5($e->getMessage()), 0, 6));
+            \Log::error("Referencia de error: {$errorReference}");
+            
+            // Debug: Verificar qué pasa con la sesión
+            \Log::error('Intentando redirigir con error a: ' . url()->previous());
+            \Log::error('Session data: ' . json_encode(session()->all()));
+            
+            // Redirigir a la ruta limpia del formulario (sin courseCode)
+            $formUrl = route('teacher.access.form', [
+                'token' => request()->route('token'),
+                'purpose' => 'payments'
+            ]);
+            
+            \Log::error("Redirigiendo a formulario limpio: {$formUrl}");
+            
+            return redirect($formUrl)
                 ->withInput()
-                ->withErrors(['error' => 'Error al procesar el consentimiento final: ' . $e->getMessage()]);
+                ->withErrors([
+                    'error' => "Error al procesar el consentimiento final. Por favor, contacta con soporte técnico con la referencia: {$errorReference}"
+                ]);
         }
     }
 }

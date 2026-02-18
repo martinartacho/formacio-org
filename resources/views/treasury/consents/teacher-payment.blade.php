@@ -178,10 +178,7 @@
                     <div class="label">Temporada:</div>
                     <div class="value">[{{ $season->slug ?? 'N/A' }}] {{ $season->name ?? 'N/A' }}</div>
                 </div>
-                <div class="info-item">
-                    <div class="label">Hores assignades:</div>
-                    <div class="value">{{ $courseasignat->hours_assigned ?? '0' }} hores</div>
-                </div>
+                
             </div>
         </div>
     </div>

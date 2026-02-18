@@ -1,18 +1,29 @@
 @extends('campus.shared.layout')
 
-@section('title', __('campus.cobrament'))
+@section('title', __('Professorat'))
 @section('subtitle', __('campusAccés a la zona de cobrament'))
 
 @section('content')
 
 <div class="container mx-auto py-8">
     @if(session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {{ session('error') }}
+        <div class="bg-red-100 border-2 border-red-400 text-red-700 px-6 py-4 rounded-lg mb-6 shadow-md">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 2.502-2.308V7.308c0-1.641-1.962-2.308-3.502-2.308H5.084c-1.54 0-2.502 1.667-2.502 2.308v8.384c0 1.641 1.962 2.308 3.502 2.308z"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-lg font-medium text-red-800">Error en el formulario</h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        {{ session('error') }}
+                    </div>
+                </div>
+            </div>
         </div>
     @endif
 
-    <h1 class="text-2xl font-bold mb-6">Dades de cobrament</h1>
     
 
     <!-- Formulari únic: Dades de cobrament -->
@@ -48,20 +59,14 @@
             <h3 class="text-xl font-bold mb-6 text-center text-gray-800">
                 👤 Verifica les teves dades personals
             </h3>
-            <p>
-            
+             <p class="text-sm text-gray-600 mb-4">
+            Les dades marcades amb * són obligatories.
             </p>
             @php
                 $needs = old('needs_payment', $teacher->needs_payment ?? '');
             @endphp
 
-            <div class="space-y-2">
-                <label class="flex items-center">
-                    <input type="radio" name="needs_payment" value="waived_fee"
-                        class="mr-2" {{ $needs == 'waived_fee' ? 'checked' : '' }}>
-                    Renuncio al cobrament (waived_fee)
-                </label>
-            </div>
+            
             <div class="border rounded-lg p-6 mb-6 bg-gray-50">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -143,25 +148,30 @@
                     </div>
 
                 </div>
+
             </div>
+            <div class="space-y-2">
+                <label class="flex items-center">
+                    <input type="radio" name="needs_payment" value="waived_fee"
+                        class="mr-2" {{ $needs == 'waived_fee' ? 'checked' : '' }}>
+                    Renuncio al cobrament
+                </label>
+            </div>
+            </div>
+            
+
 
             <!-- Bloc fiscal i bancari -->
             <div class="border rounded-lg p-6 bg-white space-y-6">
+                <label class="flex items-center">
+                    <input type="radio" name="needs_payment" value="own_fee"
+                        class="mr-2" {{ $needs == 'own_fee' ? 'checked' : '' }}>
+                        Accepto cobrament
+                </label>
                 <h3 class="font-semibold text-lg">💳 Dades bancàries i fiscals</h3>
-                    <label class="block font-medium mb-2">Opció de cobrament</label>
-
-                        <label class="flex items-center">
-                            <input type="radio" name="needs_payment" value="own_fee"
-                                class="mr-2" {{ $needs == 'own_fee' ? 'checked' : '' }}>
-                             Accepto cobrament (own_fee)
-                        </label>
-
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 
-                  
                     <!-- Datos bancarios del beneficiario -->
                     <div class="mb-6 p-4 border rounded bg-yellow-50">
-                        <h5 class="font-medium mb-3 text-yellow-800">💳 Dades bancàries del beneficiari</h5>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -175,7 +185,7 @@
                                     <span class="text-red-600 text-sm">{{ $message }}</span>
                                 @enderror
 
-                                <label class="block font-medium">IBAN del beneficiari (24 dígits):</label>
+                                <label class="block font-medium">IBAN (24 dígits):</label>
                                 <input type="text" name="iban" 
                                     value="{{ old('iban', $payment?->iban ?? '') }}"
                                     class="border p-2 w-full" 
@@ -187,7 +197,7 @@
                                     <span class="text-red-600 text-sm">{{ $message }}</span>
                                 @enderror
                             
-                                <label class="block font-medium">Titular del compte (beneficiari):</label>
+                                <label class="block font-medium">Titular del compte:</label>
                                 <input type="text" name="bank_titular" 
                                     value="{{ old('bank_titular', $payment?->bank_titular ?? '') }}"
                                     class="border p-2 w-full"
@@ -214,37 +224,37 @@
                     
                     <!-- Datos fiscales del beneficiario -->
                     <div class="mb-6 p-4 border rounded bg-purple-50">
-                        <h5 class="font-medium mb-3 text-purple-800">📊 Situació fiscal del beneficiari</h5>
+                        <h5 class="font-medium mb-3 text-purple-800">📊 Situació fiscal</h5>
                         
                         <div class="space-y-2 mb-4">
                             <label class="flex items-center">
                                 <input type="radio" name="fiscal_situation" value="autonom" 
                                     class="mr-2" 
                                     {{ old('fiscal_situation') == 'autonom' ? 'checked' : '' }}>
-                                <span>Autònom</span>
+                                <span>Autònom/a</span>
                             </label>
                             
                             <label class="flex items-center">
                                 <input type="radio" name="fiscal_situation" value="employee" 
                                     class="mr-2" 
                                     {{ old('fiscal_situation') == 'employee' ? 'checked' : '' }}>
-                                <span>Assalariat</span>
+                                <span>Treballador/a per compte alié</span>
                             </label>
                             
                             <label class="flex items-center">
                                 <input type="radio" name="fiscal_situation" value="pensioner" 
                                     class="mr-2" 
                                     {{ old('fiscal_situation') == 'pensioner' ? 'checked' : '' }}>
-                                <span>Pensionista</span>
-                            </label>
-                            
-                            <label class="flex items-center">
-                                <input type="radio" name="fiscal_situation" value="unemployed" 
-                                    class="mr-2" 
-                                    {{ old('fiscal_situation') == 'unemployed' ? 'checked' : '' }}>
-                                <span>Aturat</span>
+                                <span>Pensionista o jubilat/jubilada</span>
                             </label>
 
+                            <label class="flex items-center">
+                                <input type="radio" name="fiscal_situation" value="pensioner" 
+                                    class="mr-2" 
+                                    {{ old('fiscal_situation') == 'pensioner' ? 'checked' : '' }}>
+                                <span>Jubilat/jubilada amb conveni especial amb la Seguretat Social o amb jubilació activa</span>
+                            </label>
+                            
                             <label class="flex items-center">
                             <input type="radio" name="fiscal_situation" value="altre"
                                 class="mr-2" {{ old('fiscal_situation') == 'altre' ? 'checked' : '' }}>
@@ -256,28 +266,21 @@
 
                 </div>
                 
-                        
-
-                <!-- Observacions -->
-                <div>
-                    <label class="block font-medium mb-2">Observacions</label>
-                    {{-- En un <textarea> el contingut ha d’anar a la mateixa línia, així: --}}
-                    <textarea name="observacions" rows="4" class="border p-2 w-full">{{ old('observacions', $payment?->observacions ?? $teacher->observacions ?? '') }}</textarea>
-                </div>
-
                 </div>
 
                 <div class="mb-6 p-4 border rounded bg-blue-50">
+                    <div>
                     <label class="flex items-center">
                         <input type="radio" name="needs_payment" value="ceded_fee"
                             class="mr-2" {{ $needs == 'ceded_fee' ? 'checked' : '' }}>
-                            Derivo el cobrament a altra persona o entitat (ceded_fee) 
+                            Derivo el cobrament a altra persona o entitat 
                     </label>
+                    <br>
+                    </div>
 
-                    <h5 class="font-medium mb-3 text-blue-800">🏠 Dades de contacte del beneficiari</h5>
+                    <h5 class="font-medium mb-3 text-blue-800">🏠 Dades de contacte del perceptor</h5>
                     <p class="text-sm text-gray-600 mb-4">
-                        Completa les dades completes de la persona o entitat que rebrà el pagament. 
-                        Inclou dades bancàries, fiscals i de contacte per poder comunicar-se si és necessari.
+                        Completa les dades. Imprescindibles les dades per contactar si és necessari.
                     </p>
         
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -291,16 +294,7 @@
                         @enderror
                     </div>
 
-                    <!-- Cognoms -->
-                    <div>
-                        <label class="block font-medium">Cognoms *</label>
-                        <input type="text" name="beneficiary_last_name"
-                            value="{{ old('beneficiary_last_name', $payment?->last_name ?? $teacher->last_name ?? '') }}"
-                            class="border p-2 w-full" >
-                        @error('beneficiary_last_name')
-                            <span class="text-red-600 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+ 
 
                     <!-- Email -->
                     <div>
@@ -324,7 +318,7 @@
                         @enderror
                     </div>
                     <div>
-                        <label class="block font-medium">Adreça postal del beneficiari:</label>
+                        <label class="block font-medium">Adreça postal :</label>
                         <input type="text" name="beneficiary_address" 
                             value="{{ old('beneficiary_address', $payment?->address ?? $teacher->address ?? '') }}"
                             class="border p-2 w-full"
@@ -335,7 +329,7 @@
                     </div>
                     
                     <div>
-                        <label class="block font-medium">Codi postal del beneficiari:</label>
+                        <label class="block font-medium">Codi postal :</label>
                         <input type="text" name="beneficiary_postal_code" 
                             value="{{ old('beneficiary_postal_code', $payment?->postal_code ?? $teacher->postal_code ?? '') }}"
                             class="border p-2 w-full"
@@ -346,7 +340,7 @@
                     </div>
                     
                     <div>
-                        <label class="block font-medium">Població del beneficiari:</label>
+                        <label class="block font-medium">Població :</label>
                         <input type="text" name="beneficiary_city" 
                             value="{{ old('beneficiary_city', $payment?->city ?? $teacher->city ?? '') }}"
                             class="border p-2 w-full"
@@ -365,13 +359,13 @@
                             <span class="text-red-600 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-                    <!-- Datos bancarios del beneficiario -->
+                    <!-- Datos bancarios o -->
                     <div class="mb-6 p-4 border rounded bg-yellow-50">
-                        <h5 class="font-medium mb-3 text-yellow-800">💳 Dades bancàries del beneficiari</h5>
+                        <h5 class="font-medium mb-3 text-yellow-800">💳 Dades bancàries </h5>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block font-medium">IBAN del beneficiari (24 dígits):</label>
+                                <label class="block font-medium">IBAN  (24 dígits):</label>
                                 <input type="text" name="beneficiary_iban" 
                                     value="{{ old('beneficiary_iban', $payment?->iban ?? '') }}"
                                     class="border p-2 w-full" 
@@ -408,9 +402,9 @@
                         </div>
                     </div>
                     
-                    <!-- Datos fiscales del beneficiario -->
-                    <div class="mb-6 p-4 border rounded bg-purple-50">
-                        <h5 class="font-medium mb-3 text-purple-800">📊 Situació fiscal del beneficiari</h5>
+                    <!-- Datos fiscales o -->
+                    <!-- <div class="mb-6 p-4 border rounded bg-purple-50">
+                        <h5 class="font-medium mb-3 text-purple-800">📊 Situació fiscal</h5>
                         
                         <div class="space-y-2 mb-4">
                             <label class="flex items-center">
@@ -447,23 +441,33 @@
                             Altre (no llistat)
                         </label>
                         </div>
-                    </div>
+                    </div> -->
                     
                    
                 </div>
+                </div>
                 
-                <div class="border rounded-lg p-6 bg-white space-y-6">
+<!--                 <div class="border rounded-lg p-6 bg-white space-y-6">
                     <label class="block font-medium mb-2">Observacions </label>
                     {{-- En un <textarea> el contingut ha d’anar a la mateixa línia, així: --}}
                     <textarea name="beneficiary_observacions2" rows="4" class="border p-2 w-full">{{ old('observacions', $payment->metadata['observacions'] ?? null ?? '') }}</textarea>
+                </div> -->
+
+
+                
+                    <!-- Observacions -->
+                 <div>
+                    <label class="block font-medium mb-2">Observacions</label>
+                    {{-- En un <textarea> el contingut ha d’anar a la mateixa línia, així: --}}
+                    <textarea name="observacions" rows="4" class="border p-2 w-full">{{ old('observacions', $payment?->observacions ?? $teacher->observacions ?? '') }}</textarea>
                 </div>
 
-                    <div class="mt-6 text-center">
+                <div class="mt-6 text-center">
                         <div class="mb-3 text-sm text-gray-600">
                             ⚠️ Pots guardar les teves dades com a esborrany i completar el procés més tard
                         </div>
                         <button type="submit"
-                            class="bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600 font-medium text-lg shadow">
+                            class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 font-medium text-lg shadow">
                             📝 Guardar esborrany
                         </button>
                     </div>
@@ -480,7 +484,7 @@
                                 class="mr-2 mt-1" @checked(old('end_autoritzacio_dades', $payment?->metadata['end_autoritzacio_dades'] ?? false))
                                 @if(old('end_autoritzacio_dades', $payment?->metadata['end_autoritzacio_dades'] ?? false)) checked @endif>
                             <span class="text-sm">
-                                <strong>Requerido:</strong> El beneficiari autoritza el tractament de les seves dades personals amb finalitats fiscals 
+                                <strong>Necessari:</strong> Autoritzo el tractament de les meves dades personals amb finalitats fiscals 
                                 i administratives, d'acord amb la normativa vigent de protecció de dades.
                             </span>
                         </label>
@@ -496,17 +500,10 @@
                                     class="mr-2 mt-1" @checked(old('end_declaracio_fiscal', $payment?->metadata['end_declaracio_fiscal'] ?? false))
                                     @if(old('end_declaracio_fiscal', $payment?->metadata['end_declaracio_fiscal'] ?? false)) checked @endif>
                                 <span class="text-sm">
-                                    <strong>Requerido:</strong> El beneficiari declara sota la seva responsabilitat que les dades facilitades són certes 
-                                    i que es troba en alguna de les següents situacions fiscals:
+                                    <strong>Necessari:</strong> Declaro que les dades facilitades són certes i que sóc coneixedor/a de la fiscalitat corresponent                                     als ingressos previstos.
                                 </span>
                             </label>
-                            <ul class="text-xs text-gray-600 mt-2 ml-6 list-disc">
-                                <li>Soc autònom i presento declaracions trimestrals d'IVA</li>
-                                <li>Soc pensionista i els meus ingressos estan exempts d'IRPF</li>
-                                <li>Soc aturat i no tinc ingressos subjectes a retenció</li>
-                                <li>Altres situacions exentes o amb retencions específiques</li>
-                                <li>Altres situacions exentes o amb retencions específiques</li>
-                            </ul>
+                            
                             @error('end_declaracio_fiscal')
                                 <span class="text-red-600 text-sm">{{ $message }}</span>
                             @enderror
@@ -553,7 +550,7 @@
                     🎯 Comprova que tot és correcte abans de finalitzar. Aquesta acció generarà el PDF final i no es podrà modificar.
                 </div>
                 <button type="submit"
-                    class="bg-green-700 text-white px-8 py-3 rounded-lg hover:bg-green-800 font-bold text-lg shadow border-2 border-green-800">
+                    class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 font-bold text-lg shadow border-2 border-blue-600">
                     ✅ Guardar dades, crear PDF i finalitzar
                 </button>
             </div>
