@@ -140,7 +140,7 @@
                                           class="inline">
                                         @csrf
                                         <button type="submit"
-                                                class="px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 text-sm">
+                                                class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
                                             <i class="bi bi-envelope mr-1"></i>
                                             Recordar
                                         </button>
